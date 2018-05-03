@@ -54,6 +54,17 @@ R = 10.**np.linspace(np.log10(Rmin), np.log10(Rmax), nRbins)
 #Rbins = np.append(Rbins,Rmax)
 #R = np.array([(Rbins[r] + Rbins[r+1])/2 for r in xrange(nRbins)])
 
+def Sersic(Mb, n, r_eff, r):
+    
+    b = 2*n - 1/3 + 0.009876/n
+    A = b**(2*n) / (2*pi*n*sp.gamma(2*n))
+    alpha = 1 - 1.188/(2*n) + 0.22/(4*n**2.)
+    print(b, A, alpha)
+    
+    rhob_r = Mb * A * (r/r_eff)**-alpha * np.exp(-b*(r/r_eff)**(1/n))
+    
+    return rhob_r
+
 def calc_Md(Mb_r, r):
 
     H = H0# * np.sqrt(O_matter*(1+z)**3 + O_lambda)
@@ -77,24 +88,28 @@ Re_vD = 3.1e3 # in pc
 Me_vD = 3.2e8 # in Msun
 
 # Compute Mb(r) and Md(r) for multiple Sersic indices
-nlist = [0.6, 1, 2, 3, 4]
+nlist = [0.6, 1, 2]
 rlist = [2.2e3, 1e3, 0.5e3]
+
+#nlist = [1]
+#rlist = [1e3]
+
 for i in range(len(nlist)):
 
-    # Sersic profile density and mass
+    """
+    # Projected Sersic profile
     s_vD = Sersic1D(amplitude=1, r_eff=1e3, n=nlist[i]) # Van Dokkum et al. 2018
     rhob_r = s_vD(R)
-    #rhob_r = R**(-3) # Test density
-
     Mb_r = 4.*pi * cumtrapz(rhob_r * R**2, x = R, initial=0.)
     Mb_last = Mb_r[-1]
-
 
     # Adjust the amplitude of rhob and Mb according to Mtot
     rhob_r = rhob_r * Mb_vD/Mb_last
     Mb_r = Mb_r * Mb_vD/Mb_last
+    """
 
     """
+    # Test stuff
     Mb_an = 4.*pi*Mb_vD/Mb_last * np.log(R) # Test mass
     Md_an = np.sqrt(Cd * 4.*pi*Mb_vD/Mb_last * (np.log(R)+1.)) * R
     Md_an = np.sqrt(Cd * np.gradient(Mb_an * R, R)) * R
@@ -109,6 +124,10 @@ for i in range(len(nlist)):
     quit()
     """
 
+    # Sersic profile density and mass
+    rhob_r = Sersic(Mb_vD, nlist[i], rlist[i], R)
+    Mb_r = 2.*pi * cumtrapz(rhob_r * R/rlist[i], x = R/rlist[i], initial=0.)
+    
     # Calculate the baryonic and DM distributions
 
     Md_r, rhod_r = calc_Md(Mb_r, R)
@@ -141,18 +160,18 @@ for i in range(len(nlist)):
     plt.plot(R/1e3, Mtot_r, color=colors[i], label=r'M$_{\rm tot,EG}$(\textless r) (Sersic profile)')
     """
     
-    #plt.plot(R/1e3, rhob_r*1e6, ls='--', color=colors[i], label=r'n=%g'%nlist[i])
-    plt.plot(R/1e3, Mb_r, ls='--', color=colors[i], label=r'n=%g'%nlist[i])
-    plt.plot(R/1e3, Md_add, ls=':', color=colors[i])
-    plt.plot(R/1e3, Mtot_r, ls='-', color=colors[i])
+    #plt.plot(R/1e3, rhob_r*1e6, ls='--', color=colors[i], label=r'$\rho_{\rm b}$(r) for n=%g'%nlist[i])
+    plt.plot(R/1e3, Mb_r, ls='--', color=colors[i], label=r'M$_{\rm b}$(\textless r) for n=%g'%nlist[i])
+    #plt.plot(R/1e3, Md_add, ls=':', color=colors[i])
+    #plt.plot(R/1e3, Mtot_r, ls='-', color=colors[i])
     #plt.plot(R/1e3, Md_r, label=r'M$_{\rm D}$(\textless r) (Sersic profile)')
     #plt.plot(R/1e3, Mtot_r, color=colors[i])
 
 
 # Plot point mass results
 Md_point = np.sqrt(Cd*Mb_vD)*R
-plt.plot(R/1e3, [Mb_vD]*len(R), ls='--', label=r'$M_{\rm b}$(\textless r) (Point mass)')
-plt.plot(R/1e3, Mb_vD+Md_point, ls='--', label=r'M$_{\rm tot,EG}$(\textless r) (Point mass)')
+plt.plot(R/1e3, [Mb_vD]*len(R), ls='--', label=r'$M$_{\rm b}$(\textless r) (Point mass)')
+#plt.plot(R/1e3, Mb_vD+Md_point, ls='--', label=r'M$_{\rm tot,EG}$(\textless r) (Point mass)')
 
 #plt.axvline(x=Re_vD/1e3, ls=':', color='red', label=r'r$_{\rm 1/2}$ (=%g kpc)'%(Re_vD/1e3))
 #plt.axhline(y=Me_vD, ls=':', color='red', label=r'M$_{\rm obs,1/2}$ (=%g M$_\odot$)'%Me_vD)
