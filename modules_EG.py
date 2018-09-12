@@ -118,10 +118,10 @@ def import_lenscat(cat, h):
     if 'mice' in cat:
         fields = ['M1']
         lenscatname = 'mice_gama_catalog.fits'
-        lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
+        lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
-        
-    return fields, lenscatname, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar
+
+    return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar
 
 # Import source catalogue
 def import_srccat(path_srccat, srccatname):
@@ -184,9 +184,8 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
         # Import lens parameters
         lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
         lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
-        paramlist = paramlist.append(lenscat[paramnames[p]])
         
-    print(paramlist)
+        paramlist.append(lenscat[paramnames[p]])
         
     # Selecting the lenses
     masklist = np.ones(len(paramlist[0]))
@@ -194,10 +193,10 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
     
     # Applying the mask for each parameter
     for m in range(len(paramnames)):
-        lensmask = (maskval[m,0] <= paramlist[m]) & (paramlist[m] < maskval[m,1])
+        lensmask = (maskvals[m,0] <= paramlist[m]) & (paramlist[m] < maskvals[m,1])
         masklist[np.logical_not(lensmask)] = 0
         
-        filename_var = '%s~%s_%g_%g'%(filename_var, paramnames[m], maskvals[m,0], maskvals[m,1])
+        filename_var = '%s~%s~%g~%g'%(filename_var, paramnames[m], maskvals[m,0], maskvals[m,1])
         
     lensmask = (masklist == 1)
     
@@ -208,8 +207,10 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
     filename_var = filename_var.split('-', 1)[1]
     
     print()
-    print(filename_var)
-    print('Selected:', np.sum(masklist), 'of', len(masklist), 'lenses', '(', np.sum(masklist)/np.len(masklist)*100., 'percent )')
+
+    print('Selection:', filename_var)
+    print('Selected: %i of %i lenses (%g percent)'\
+    %(np.sum(masklist), len(masklist), np.sum(masklist)/len(masklist)*100.))
     print()
     
     return lensmask, filename_var
@@ -338,6 +339,42 @@ def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
     print('Written: ESD profile data:', filename)
 
     return
+
+def write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot):
+    
+    plt.plot(Rcenters, gamma_t)
+    plt.axhline(y=0., ls=':', color='black')
+    #plt.axvline(x=thetalist[p], ls=':', color='black')
+
+    if 'pc' in Runit:
+        xlabel = r'Radius $R$ (%s/h$_{%g}$)'%(Runit, h*100)
+        ylabel = r'ESD $\langle\Delta\Sigma\rangle$ [h$_{%g}$ M$_{\odot}$/pc$^2$]'%(h*100)
+    else:
+        xlabel = r'Angular separation $\theta$ (arcmin)'
+        ylabel = r'Shear $\gamma$'
+    
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    
+    if Rlog:
+        plt.xscale('log')
+        
+    #plt.axis([Rmin,Rmax,ymin,ymax])
+    #plt.ylim(ymin, ymax)
+       
+    plt.tight_layout()
+
+    # Save plot
+    for ext in ['pdf']:
+        plotname = '%s.%s'%(filename_output, ext)
+        plt.savefig(plotname, format=ext, bbox_inches='tight')
+        
+    print('Written: ESD profile plot:', plotname)
+
+    if plot:
+        plt.show()
+
+    plt.clf
 
 def calc_chi2(data, model, covariance, nbins):
     

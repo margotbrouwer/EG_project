@@ -113,9 +113,10 @@ errorh_cres = 10**(cres[1]+cres[3]) - 10**cres[1]
 
 # Import Kyle's RAR from LCDM
 kyle9 = np.loadtxt('RAR_profiles/RAR_Mstar1.0E9.txt').T
+kyle10 = np.loadtxt('RAR_profiles/RAR_Mstar2.1E10.txt').T
 kyle11 = np.loadtxt('RAR_profiles/RAR_Mstar1.0E11.txt').T
-gbar_kyle = np.array([kyle9[1], kyle11[1]])
-gtot_kyle = np.array([kyle9[1]+kyle9[0], kyle11[1]+kyle11[0]])
+gbar_kyle = np.array([kyle9[1], kyle10[1], kyle11[1]])
+gtot_kyle = np.array([kyle9[1]+kyle9[0], kyle10[1]+kyle10[0], kyle11[1]+kyle11[0]])
 
 try:
     # Importing the mock shearprofiles
@@ -272,7 +273,8 @@ ax_sub.errorbar(gbar_cres, gtot_cres, yerr=[errorl_cres, errorh_cres], ls='', ma
 
 # Plot Kyle's prediction
 ax_sub.plot(gbar_kyle[0], gtot_kyle[0], ls='-', marker='', label="Navarro+2017 ($M_*=10^{9} M_\odot$)", zorder=5)
-ax_sub.plot(gbar_kyle[1], gtot_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
+ax_sub.plot(gbar_kyle[1], gtot_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
+ax_sub.plot(gbar_kyle[2], gtot_kyle[2], ls='-', marker='', label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
 
 # Define the labels for the plot
 ax.set_xlabel(xlabel, fontsize=16)

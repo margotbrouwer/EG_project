@@ -46,24 +46,26 @@ pi = np.pi
 inf = np.inf
 
 # Creating the galaxy projected distance bins
-nRbins = int(1e3)
-Rmin = 0.01e3 # in pc
-Rmax = 100e3 #18.6e3 # in pc
+nRbins = int(1e5)
+Rmin = 1e-3 # in pc
+Rmax = 1e5 #18.6e3 # in pc
 
 R = 10.**np.linspace(np.log10(Rmin), np.log10(Rmax), nRbins)
 #Rbins = np.append(Rbins,Rmax)
 #R = np.array([(Rbins[r] + Rbins[r+1])/2 for r in xrange(nRbins)])
 
-def Sersic(Mb, n, r_eff, r):
+def Sersic(Mb, N, r_eff, r):
     
-    b = 2*n - 1/3 + 0.009876/n
-    A = b**(2*n) / (2*pi*n*sp.gamma(2*n))
-    alpha = 1 - 1.188/(2*n) + 0.22/(4*n**2.)
+    b = 2*N - 1/3 + 0.009876/N
+    #A = (b**(2*n)) / (2*pi*n*sp.gamma(2*n))
+    A=1.
+    alpha = 1 - 1.188/(2*N) + 0.22/(4*N**2.)
     print(b, A, alpha)
     
-    rhob_r = Mb * A * (r/r_eff)**-alpha * np.exp(-b*(r/r_eff)**(1/n))
+    rhob_R = Mb * A * np.exp(-b*((r/r_eff)**(1/N) - 1.))
+    rhob_r = Mb * A * (r/r_eff)**-alpha * np.exp(-b*((r/r_eff)**(1/N)))
     
-    return rhob_r
+    return rhob_R, rhob_r
 
 def calc_Md(Mb_r, r):
 
@@ -81,32 +83,34 @@ def calc_radvel(M_r, r):
     
     return vel_r, acc_r
 
-Mb_vD = 2.2e8 # in Msun
+#Mb_vD = 2.2e8 # in Msun
+Mb_vD = 1. # in Msun
 Rout_vD = 7.6e3 # in pc
 Mtot_vD = 3.4e8 # in Msun
 Re_vD = 3.1e3 # in pc
 Me_vD = 3.2e8 # in Msun
 
 # Compute Mb(r) and Md(r) for multiple Sersic indices
-nlist = [0.6, 1, 2]
-rlist = [2.2e3, 1e3, 0.5e3]
+nlist = [0.6,1,2,3,4]
+rlist = [1e3]*len(nlist)
 
 #nlist = [1]
 #rlist = [1e3]
 
 for i in range(len(nlist)):
 
-    """
+  
     # Projected Sersic profile
-    s_vD = Sersic1D(amplitude=1, r_eff=1e3, n=nlist[i]) # Van Dokkum et al. 2018
-    rhob_r = s_vD(R)
-    Mb_r = 4.*pi * cumtrapz(rhob_r * R**2, x = R, initial=0.)
-    Mb_last = Mb_r[-1]
-
+    s_vD = Sersic1D(amplitude=1., r_eff=1e3, n=nlist[i]) # Van Dokkum et al. 2018
+    rhob_Rpy = s_vD(R)
+    #Mb_Rpy = 4.*pi * cumtrapz(rhob_Rpy * R**2, x = R, initial=0.)
+    Mb_Rpy = 2.*pi * cumtrapz(rhob_Rpy * R, x = R, initial=0.)
+    
     # Adjust the amplitude of rhob and Mb according to Mtot
-    rhob_r = rhob_r * Mb_vD/Mb_last
-    Mb_r = Mb_r * Mb_vD/Mb_last
-    """
+    #Mb_last = Mb_Rpy[-1]
+    #rhob_Rpy = rhob_Rpy * Mb_vD/Mb_last
+    #Mb_Rpy = Mb_Rpy * Mb_vD/Mb_last
+
 
     """
     # Test stuff
@@ -125,8 +129,9 @@ for i in range(len(nlist)):
     """
 
     # Sersic profile density and mass
-    rhob_r = Sersic(Mb_vD, nlist[i], rlist[i], R)
-    Mb_r = 2.*pi * cumtrapz(rhob_r * R/rlist[i], x = R/rlist[i], initial=0.)
+    rhob_R, rhob_r = Sersic(Mb_vD, nlist[i], rlist[i], R)
+    Mb_r = 2.*pi * cumtrapz(rhob_r * R, x = R, initial=0.)
+    Mb_R = 2.*pi * cumtrapz(rhob_R * R, x = R, initial=0.)
     
     # Calculate the baryonic and DM distributions
 
@@ -147,30 +152,39 @@ for i in range(len(nlist)):
 
     print('At Re=%g kpc: EG mass=%g Msun, sigma=%g km/s'%((Re_vD/1e3), Me_eg, sigma_e))
     print('At Rout=%g kpc: EG mass=%g Msun, sigma=%g km/s'%((Rout_vD/1e3), Mout_eg, sigma_out))
-
+    print
+    
     #vb_r, ab_r = calc_radvel(Mb_r, R)
     #vd_r, ad_r = calc_radvel(Md_r, R)
 
     # Plot Sersic profile results
 
     """
-    #plt.plot(R/1e3, rhob_r, label=r'$\rho_{\rm b}$(r)')
-    plt.plot(R/1e3, Mb_r, color=colors[i], label=r'$M_{\rm b}$(\textless r) (Sersic profile)')
-    #plt.plot(R/1e3, Md_r, label=r'M$_{\rm D}$(\textless r) (Sersic profile)')
-    plt.plot(R/1e3, Mtot_r, color=colors[i], label=r'M$_{\rm tot,EG}$(\textless r) (Sersic profile)')
+    #plt.plot(R, rhob_r, label=r'$\rho_{\rm b}$(r)')
+    plt.plot(R, Mb_r, color=colors[i], label=r'$M_{\rm b}$(\textless r) (Sersic profile)')
+    #plt.plot(R, Md_r, label=r'M$_{\rm D}$(\textless r) (Sersic profile)')
+    plt.plot(R, Mtot_r, color=colors[i], label=r'M$_{\rm tot,EG}$(\textless r) (Sersic profile)')
     """
     
-    #plt.plot(R/1e3, rhob_r*1e6, ls='--', color=colors[i], label=r'$\rho_{\rm b}$(r) for n=%g'%nlist[i])
-    plt.plot(R/1e3, Mb_r, ls='--', color=colors[i], label=r'M$_{\rm b}$(\textless r) for n=%g'%nlist[i])
-    #plt.plot(R/1e3, Md_add, ls=':', color=colors[i])
-    #plt.plot(R/1e3, Mtot_r, ls='-', color=colors[i])
-    #plt.plot(R/1e3, Md_r, label=r'M$_{\rm D}$(\textless r) (Sersic profile)')
-    #plt.plot(R/1e3, Mtot_r, color=colors[i])
+    #plt.plot(R, rhob_R, ls='--', color=colors[i], label=r'$\rho_{\rm b}$(r) for n=%g (projected)'%nlist[i])
+    #plt.plot(R, rhob_Rpy, ls=':', color=colors[i], label=r'$\rho_{\rm b}$(r) for n=%g (python)'%nlist[i])
+
+    plt.plot(R, Mb_R, ls='--', color=colors[i], label=r'$M_{\rm b}$(r) for n=%g (projected)'%nlist[i])
+    plt.plot(R, Mb_Rpy, ls=':', color=colors[i], label=r'$M_{\rm b}$(r) for n=%g (python)'%nlist[i])
+
+    
+    #plt.plot(R, rhob_r, ls=':', color=colors[i], label=r'$\rho_{\rm b}$(r) for n=%g (de-projected)'%nlist[i])
+    
+    #plt.plot(R, Mb_R, ls='--', color=colors[i], label=r'M$_{\rm b}$(\textless r) for n=%g'%nlist[i])
+    #plt.plot(R, Md_add, ls=':', color=colors[i])
+    #plt.plot(R, Mtot_r, ls='-', color=colors[i])
+    #plt.plot(R, Md_r, label=r'M$_{\rm D}$(\textless r) (Sersic profile)')
+    #plt.plot(R, Mtot_r, color=colors[i])
 
 
 # Plot point mass results
-Md_point = np.sqrt(Cd*Mb_vD)*R
-plt.plot(R/1e3, [Mb_vD]*len(R), ls='--', label=r'$M$_{\rm b}$(\textless r) (Point mass)')
+#Md_point = np.sqrt(Cd*Mb_vD)*R
+#plt.plot(R/1e3, [Mb_vD]*len(R), ls='--', label=r'$M$_{\rm b}$(\textless r) (Point mass)')
 #plt.plot(R/1e3, Mb_vD+Md_point, ls='--', label=r'M$_{\rm tot,EG}$(\textless r) (Point mass)')
 
 #plt.axvline(x=Re_vD/1e3, ls=':', color='red', label=r'r$_{\rm 1/2}$ (=%g kpc)'%(Re_vD/1e3))
@@ -186,19 +200,20 @@ plt.xscale('log')
 plt.yscale('log')
 
 xlabel = r'Radius r (kpc)$'
-ylabel = r'Mass [M$_\odot$]'# / 
-#ylabel = r'Density'# [M$_\odot$/pc$^3$]'
+#ylabel = r'Mass [M$_\odot$]'# / 
+ylabel = r'Density'# [M$_\odot$/pc$^3$]'
+
 plt.xlabel(xlabel)
 plt.ylabel(ylabel)
 
-plt.xlim(0.1,10)
-#plt.ylim(1e3, 1e10)
+plt.xlim(1e2,1e5)
+#plt.ylim(1e0, 1e10)
 #plt.ylim(1e7, 1e10)
 
 
 plt.tight_layout()
 #lgd = plt.legend(bbox_to_anchor=(1.5, 0.5))
-plt.legend()
+plt.legend(loc='best')
 
 for ext in ['pdf']:
 
