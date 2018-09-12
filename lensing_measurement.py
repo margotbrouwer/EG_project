@@ -38,10 +38,18 @@ cosmo = LambdaCDM(H0=h*100, Om0=O_matter, Ode0=O_lambda)
 # Data selection
 cat = 'mice' # Select the lens catalogue (kids/gama/mice)
 
+"""
 # Profile selection
 Runit = 'arcmin' # Select distance unit (arcmin/Xpc/acc)
 Rmin = 2 # Minimum radius (in selected unit)
 Rmax = 100 # Minimum radius (in selected unit)
+Nbins = 20 # Number of radial bins
+"""
+
+# Profile selection
+Runit = 'kpc' # Select distance unit (arcmin/Xpc/acc)
+Rmin = 20 # Minimum radius (in selected unit)
+Rmax = 2000 # Maximum radius (in selected unit)
 Nbins = 20 # Number of radial bins
 
 plot = True
@@ -57,7 +65,7 @@ path_output = '/data2/brouwer/shearprofile/EG_results_Sep18/%s'%(cat)
 ## Pipeline
 
 # Import lens catalog
-fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
+fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h)
 
 # Define radial bins
@@ -106,7 +114,6 @@ for f in range(len(fields)):
     # Masking the sources
     srcRA, srcDEC, srcZ, srcDc, e1, e2  = \
     srcRA[srcmask], srcDEC[srcmask], srcZ[srcmask], srcDc[srcmask], e1[srcmask], e2[srcmask]
-    srcDc = srcDc*1e6 # Convert source distances from Mpc to pc
     
     print('Number of sources:', len(srcZ))
     
@@ -117,16 +124,17 @@ for f in range(len(fields)):
     #srcZbins = np.arange(0.025,3.5,0.05)
     #nsrcZ = np.hist(srcZ,srcZbins)
     
-    if 'pc' in Runit:
-        lensZhist, lensZlims = np.hist(lensZ, bins=10)
-        lensZbins = lensZlims[0:-1] + np.diff(lensZlims)/2.
-        print(lensZhist, lensZbins)
-    else:
-        lensZbins = [0.]
+    #if 'pc' in Runit:
+    #    lensZhist, lensZlims = np.hist(lensZ, bins=10)
+    #    lensZbins = lensZlims[0:-1] + np.diff(lensZlims)/2.
+    #    print(lensZhist, lensZbins)
+    #else:
+    lensZbins = [0.]
     
     # For every lens redshift bin...
     for l in np.arange(len(lensZbins)):
         
+        """
         if 'pc' in Runit:
             
             # Select lenses in the redshift bin            
@@ -138,16 +146,18 @@ for f in range(len(fields)):
             srcZmask = (srcZ > Zbin)
             srcmask = srcmask * srcZmask
             
-            # Calculate the lens distance
-            lensDc = (cosmo.comoving_distance(Zbin).to('pc')).value
+            # Calculate the lens distances
+            lensDc = (cosmo.comoving_distance(lensZ).to('pc')).value
             lensDa = lensDc / (1+Zbin)
+            print(lensDc)
             
             # Calculating Sigma_crit for every source
             DlsoDs = (srcDc - lensDc)/srcDc
             Sigma_crit = (c.value**2)/(4*np.pi*G.value) * 1/(lensDa*DlsoDs)
         else:
             Sigma_crit = np.ones(len(srcDc))
-
+        """
+        
         # Masking the lenses
         RA, DEC, Z, weights = lensRA[lensmask], lensDEC[lensmask], lensZ[lensmask], lensweights[lensmask]
         
@@ -171,13 +181,15 @@ for f in range(len(fields)):
         
         ### Calculate ESD profile
         
-        # Defining the source sample
-        srccat = treecorr.Catalog(ra=srcRA, dec=srcDEC, ra_units='deg', dec_units='deg', g1=e1*Sigma_crit, g2=e2*Sigma_crit, w=1/Sigma_crit**2.)
-        
         # Defining the lens sample
-        lenscat = treecorr.Catalog(ra=RA, dec=DEC, ra_units='deg', dec_units='deg')#, w=weights)
+        lenscat = treecorr.Catalog(ra=RA, dec=DEC, r=lensDc, ra_units='deg', dec_units='deg')
         
-        config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins, 'sep_units': 'arcmin', 'verbose': 2}
+        # Defining the source sample
+        srccat = treecorr.Catalog(ra=srcRA, dec=srcDEC, r=srcDc, ra_units='deg', dec_units='deg', g1=e1, g2=e2)
+        
+        config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins,\
+            'metric': 'Rlens', 'min_rpar': 0, 'verbose': 2}
+            
         ng = treecorr.NGCorrelation(config)
         ng.process(lenscat,srccat) # Compute the cross-correlation.
         
@@ -187,7 +199,8 @@ for f in range(len(fields)):
 
         
         Rbins, gamma_t, gamma_x, gamma_error, Nsrc = \
-        [shearfile[0], shearfile[3], shearfile[4], np.sqrt(shearfile[5]), shearfile[7]]
+        [ng.rnom, ng.xi, ng.xi_im, np.sqrt(ng.varxi), ng.npairs]
+        #[shearfile[0], shearfile[3], shearfile[4], np.sqrt(shearfile[5]), shearfile[7]]
 
     filename_output = '%s/%s'%(path_output, filename_var)
 
@@ -196,10 +209,10 @@ for f in range(len(fields)):
         print 'Creating new folder:', path_output
 
     bias = np.ones(len(gamma_t))
-    gamma_error = np.zeros(len(gamma_t))
+    #gamma_error = np.zeros(len(gamma_t))
     utils.write_stack(filename_output+'.txt', Rcenters, Runit, gamma_t, gamma_x, \
         gamma_error, bias, h, Nsrc)
 
 # Plot the resulting shear profile
 
-utils.write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot)
+utils.write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot, h)

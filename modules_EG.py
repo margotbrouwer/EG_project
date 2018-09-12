@@ -87,7 +87,7 @@ def import_micecat(path_micecat, micecatname, h):
     e2 = micecat['gamma2']
     
     try:
-        galDc = micecat['d_c']/h
+        galDc = micecat['d_c']*1.e6/h # Convert source distances from Mpc to pc/h
     except:
         galDc = np.ones(len(galZ))
     try:
@@ -121,7 +121,7 @@ def import_lenscat(cat, h):
         lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
 
-    return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar
+    return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar
 
 # Import source catalogue
 def import_srccat(path_srccat, srccatname):
@@ -165,9 +165,14 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
         else:
             xvalue = 1.
 
+        # Translate radial distances from Xpc to pc
+        Rarcmin = Rmin*xvalue
+        Rarcmax = Rmax*xvalue
+
         # Translate radial distances from Xpc to arcmin
-        Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60
-        Rarcmax = np.degrees(Rmax/(lensDa/xvalue))*60
+        #Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60.
+        #Rarcmax = np.degrees(Rmax/(lensDa/xvalue))*60.
+    
     
     if 'acc' in Runit:
         pass
@@ -340,7 +345,7 @@ def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
 
     return
 
-def write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot):
+def write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot, h):
     
     plt.plot(Rcenters, gamma_t)
     plt.axhline(y=0., ls=':', color='black')
