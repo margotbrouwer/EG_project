@@ -149,12 +149,13 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
     if Rlog:
         Rbins = np.logspace(np.log10(Rmin), np.log10(Rmax), Nbins+1)
     else:
-        Rbins = np.arange(Rmin, Rmax, Nbins+1)
+        Rbins = np.linspace(Rmin, Rmax, Nbins+1)
     Rcenters = Rbins[0:-1] + np.diff(Rbins)/2.
 
     if 'arcmin' in Runit:
         Rarcmin = Rmin
-        Rarcmax = Rmax   
+        Rarcmax = Rmax
+        xvalue = 1.
 
     if 'pc' in Runit:
         # Define the value of X in Xpc
@@ -173,11 +174,7 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
         #Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60.
         #Rarcmax = np.degrees(Rmax/(lensDa/xvalue))*60.
     
-    
-    if 'acc' in Runit:
-        pass
-    
-    return Rbins, Rcenters, Rarcmin, Rarcmax
+    return Rbins, Rcenters, Rarcmin, Rarcmax, xvalue
 
 
 def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
@@ -345,9 +342,11 @@ def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
 
     return
 
-def write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot, h):
+def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, filename_output, Runit, Rlog, plot, h):
     
-    plt.plot(Rcenters, gamma_t)
+    #plt.plot(Rcenters, gamma_t)
+    plt.errorbar(Rcenters, gamma_t, gamma_error)
+    plt.errorbar(Rcenters, gamma_x, gamma_error)
     plt.axhline(y=0., ls=':', color='black')
     #plt.axvline(x=thetalist[p], ls=':', color='black')
 
@@ -363,6 +362,7 @@ def write_plot(Rcenters, gamma_t, filename_output, Runit, Rlog, plot, h):
     
     if Rlog:
         plt.xscale('log')
+        #plt.yscale('log')
         
     #plt.axis([Rmin,Rmax,ymin,ymax])
     #plt.ylim(ymin, ymax)

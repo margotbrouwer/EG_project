@@ -1,0 +1,44 @@
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 20000..2e+06, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
+nbins = 20, min,max sep = 1..100 arcmin, bin_size = 0.230259
