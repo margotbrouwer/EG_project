@@ -152,23 +152,22 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
         Rbins = np.linspace(Rmin, Rmax, Nbins+1)
     Rcenters = Rbins[0:-1] + np.diff(Rbins)/2.
 
+    xvalue = 1.
     if 'arcmin' in Runit:
         Rarcmin = Rmin
         Rarcmax = Rmax
-        xvalue = 1.
-
     if 'pc' in Runit:
         # Define the value of X in Xpc
         if 'M' in Runit:
             xvalue = 10.**6
         if 'k' in Runit:
             xvalue = 10.**3
-        else:
-            xvalue = 1.
 
         # Translate radial distances from Xpc to pc
         Rarcmin = Rmin*xvalue
         Rarcmax = Rmax*xvalue
+        
+        print('Translating Rbins from %s to pc: multiplying by %g'%(Runit, xvalue))
 
         # Translate radial distances from Xpc to arcmin
         #Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60.
