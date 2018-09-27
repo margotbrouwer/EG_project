@@ -341,31 +341,49 @@ def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
 
     return
 
-def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, filename_output, Runit, Rlog, plot, h):
+def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output, Runit, Rlog, plot, h):
     
-    #plt.plot(Rcenters, gamma_t)
-    plt.errorbar(Rcenters, gamma_t, gamma_error)
-    plt.errorbar(Rcenters, gamma_x, gamma_error)
-    plt.axhline(y=0., ls=':', color='black')
-    #plt.axvline(x=thetalist[p], ls=':', color='black')
+    shape = np.shape(gamma_t)
+    
+    if len(shape) == 1:
+        plt.errorbar(Rcenters, gamma_t, gamma_error)
+        try:
+            plt.errorbar(Rcenters, gamma_x, gamma_error)
+        except:
+            pass
 
-    if 'pc' in Runit:
-        xlabel = r'Radius $R$ (%s/h$_{%g}$)'%(Runit, h*100)
-        ylabel = r'ESD $\langle\Delta\Sigma\rangle$ [h$_{%g}$ M$_{\odot}$/pc$^2$]'%(h*100)
+        
     else:
-        xlabel = r'Angular separation $\theta$ (arcmin)'
-        ylabel = r'Shear $\gamma$'
+        for i in np.arange(len(gamma_t)):
+            plt.errorbar(Rcenters[i], gamma_t[i], gamma_error[i], label=labels[i])
+            try:
+                plt.errorbar(Rcenters[i], gamma_x[i], gamma_error[i])
+            except:
+                pass
+        plt.legend(loc='best')        
+    
+    if 'ms2' in Runit:
+        xlabel = r'Expected baryonic acceleration $g_{\rm bar}$ $(m/s^2)$'
+        ylabel = r'Observed acceleration $g_{\rm obs}$ $(m/s^2)$'
+    else:
+        if 'pc' in Runit:
+            xlabel = r'Radius $R$ (%s/h$_{%g}$)'%(Runit, h*100)
+            ylabel = r'ESD $\langle\Delta\Sigma\rangle$ [h$_{%g}$ M$_{\odot}$/pc$^2$]'%(h*100)
+        else:
+            xlabel = r'Angular separation $\theta$ (arcmin)'
+            ylabel = r'Shear $\gamma$'
+    
+    plt.axhline(y=0., ls=':', color='black')
     
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     
     if Rlog:
         plt.xscale('log')
-        #plt.yscale('log')
+#        plt.yscale('log')
         
     #plt.axis([Rmin,Rmax,ymin,ymax])
     #plt.ylim(ymin, ymax)
-       
     plt.tight_layout()
 
     # Save plot

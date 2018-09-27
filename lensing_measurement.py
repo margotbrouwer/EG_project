@@ -110,7 +110,7 @@ else:
 
 # Creating the source mask
 srcmask = (srcZmin < srcZ) & (srcZ < srcZmax) & (rmag_src > 20.) & (rmag_abs_src > -19.3)
-fieldmask_src = (fieldRAs[0]-5. < srcRA)&(srcRA < fieldRAs[1]+5.) & (fieldDECs[0]-5. < srcDEC)&(srcDEC < fieldDECs[1]+5.)
+fieldmask_src = (fieldRAs[0]-1. < srcRA)&(srcRA < fieldRAs[1]+1.) & (fieldDECs[0]-1. < srcDEC)&(srcDEC < fieldDECs[1]+1.)
 srcmask = srcmask * fieldmask_src
 
 # Masking the sources
@@ -126,7 +126,7 @@ lensRA, lensDEC, lensZ, lensDc, lensweights = \
 lensRA[lensmask], lensDEC[lensmask], lensZ[lensmask], lensDc[lensmask], lensweights[lensmask]
 lensDa = lensDc/(1+lensZ)
 
-if 'pc' not in Runit:
+if ('pc' not in Runit) and ('acc' not in Runit):
 
     ### Calculate shear profile
     config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins, 'sep_units': Runit, 'verbose': 2}
@@ -146,50 +146,102 @@ if 'pc' not in Runit:
     [ng.rnom, ng.xi, ng.xi_im, np.sqrt(ng.varxi), ng.npairs]
     
     print('Nsources:', len(srcRA))
+
+#if 'acc' in Runit:
+if 'pc' in Runit:
+
+    ### Calculate the ESD profile
+    config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins,\
+        'metric': 'Rlens', 'min_rpar': 0, 'verbose': 0}
+#   config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins, 'sep_units': 'arcmin', 'verbose': 0}
+
+    ng = treecorr.NGCorrelation(config)
+    print('Rbins (pc):', Rarcmin, Rarcmax, Nbins)
     
-else:
+    # Define the lens redshift bins
+    nZbins = 20
     
+    Zlims = np.linspace(np.amin(lensZ), np.amax(lensZ), nZbins+1)
+    Zbins = Zlims[0:-1] + np.diff(Zlims)/2.
+    Dcbins = (cosmo.comoving_distance(Zbins).to('pc')).value
+    print('Zbins:', Zlims, 'dZ:', (np.amax(Zlims)-np.amin(Zlims))/nZbins)
+    
+    Zmasks = [((Zlims[b] < lensZ) & (lensZ <= Zlims[b+1])) for b in np.arange(nZbins)]
+    Ngals = [np.sum(Zmasks[b]) for b in np.arange(nZbins)]
+    
+    print('Ngalaxies:', Ngals, np.sum(Ngals), len(srcZ))
+    
+    # For every source redshift bin...
+    for b in np.arange(nZbins):
+    
+        # Select lenses in the redshift bin
+        binZ, binDc, binDa = Zbins[b], Dcbins[b], Dcbins[b]/(1+Zbins[b])
+        Zmask = Zmasks[b]
+
+        print('Zbin %i: %g - %g'%(b+1, Zlims[b], Zlims[b+1]))
+        print('Number of lenses:', np.sum(Zmask))
+        
+        if np.sum(Zmask) > 0:
+            
+            # Calculate Sigma_crit for every source
+            DlsoDs = (srcDc - binDc)/srcDc
+            Sigma_crit = (c.value**2)/(4*np.pi*G.value) * 1/(binDa*DlsoDs)
+            #Sigma_crit = np.ones(len(srcZ))
+            
+            # Define the lens sample
+            lenscat = treecorr.Catalog(ra=lensRA[Zmask], dec=lensDEC[Zmask], ra_units='deg', dec_units='deg',\
+            r=lensDc[Zmask])
+            
+            # Define the source sample
+            srccat = treecorr.Catalog(ra=srcRA, dec=srcDEC, ra_units='deg', dec_units='deg', g1=Sigma_crit*e1, g2=Sigma_crit*e2,\
+            r=srcDc, w=1/Sigma_crit**2.)
+            
+            # Compute the cross-correlation for this source redshift bin
+            ng.process_cross(lenscat,srccat)
+    
+    varg = treecorr.catalog.calculateVarG(srccat)
+    
+    print('VarG:', varg)
+    
+    # Finalize by applying the total weight
+    ng.finalize(varg)
+
+    # The resulting ESD profile
+    Rnom, gamma_t, gamma_x, gamma_error, Nsrc = \
+    [ng.rnom, ng.xi, ng.xi_im, np.sqrt(ng.varxi), ng.npairs]
+
+"""
+if 'pc' in Runit:
+
     ### Calculate the ESD profile
 
     config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins,\
         'metric': 'Rlens', 'min_rpar': 0, 'verbose': 0}
-#   config = {'min_sep': Rarcmin, 'max_sep': Rarcmax, 'nbins': Nbins, 'sep_units': 'arcmin', 'verbose': 2}
 
     kg = treecorr.KGCorrelation(config)
     print('Rbins:', Rarcmin, Rarcmax, Nbins)
     
     # Define the source redshift bins
-    
     nZbins = 20
     
-    Zlims = np.linspace(srcZmin, srcZmax, nZbins+1) # Source redshift bins
-    #Zlims = np.linspace(np.amin(lensZ), np.amax(lensZ), nZbins+1) # Lens redshift bins
+    Zlims = np.linspace(srcZmin, srcZmax, nZbins+1)
     Zbins = Zlims[0:-1] + np.diff(Zlims)/2.
     Dcbins = (cosmo.comoving_distance(Zbins).to('pc')).value
     print('Zbins:', Zlims, 'dZ:', (np.amax(Zlims)-np.amin(Zlims))/nZbins)
     
-    Zmasks = [(Zlims[b] < srcZ) & (srcZ <= Zlims[b+1]) for b in np.arange(nZbins)] # Source redshift bins
-    #Zmasks = [((Zlims[b] < lensZ) & (lensZ <= Zlims[b+1])) for b in np.arange(nZbins)] # Lens redshift bins
+    Zmasks = [(Zlims[b] < srcZ) & (srcZ <= Zlims[b+1]) for b in np.arange(nZbins)]
     Ngals = [np.sum(Zmasks[b]) for b in np.arange(nZbins)]
     
-        
     print('Ngalaxies:', Ngals, np.sum(Ngals), len(srcZ))
     
     lenscat_list = []
     srccat_list = []
 
-    """
-    lens_cats = [ treecorr.Catalog(ra=lensRA, dec=lensDEC, ra_units='deg', dec_units='deg') for Zmask in Zmasks]
-    
-    source_cats = [ treecorr.Catalog(ra=srcRA[Zmask], dec=srcDEC[Zmask], ra_units='deg', dec_units='deg', \
-            g1=e1[Zmask], g2=e2[Zmask]) for Zmask in Zmasks]
-    """
-    
     # For every source redshift bin...
     for b in np.arange(nZbins):
 
         # Select sources in the redshift bin
-        binZ, binDc = Zbins[b], Dcbins[b]
+        binZ, binDc, binDa = Zbins[b], Dcbins[b], Dcbins[b]/(1+Zbins[b])
         Zmask = Zmasks[b]
 
         print('Zbin %i: %g - %g'%(b+1, Zlims[b], Zlims[b+1]))
@@ -202,48 +254,39 @@ else:
             Sigma_crit = (c.value**2)/(4*np.pi*G.value) * 1/(lensDa*DlsoDs)
             #Sigma_crit = np.ones(len(lensZ))
             
-            #"""
             # Define the lens sample
             lenscat = treecorr.Catalog(ra=lensRA, dec=lensDEC, ra_units='deg', dec_units='deg', \
             k=Sigma_crit, w=1/Sigma_crit**2., r=lensDc)
-            lenscat_list.append(lenscat)
             
             # Define the source sample
             srccat = treecorr.Catalog(ra=srcRA[Zmask], dec=srcDEC[Zmask], ra_units='deg', dec_units='deg', \
             g1=e1[Zmask], g2=e2[Zmask], r=srcDc[Zmask])
-            srccat_list.append(srccat)
-            """
-            # Define the lens sample
-            lenscat = treecorr.Catalog(ra=lensRA[Zmask], dec=lensDEC[Zmask], ra_units='deg', dec_units='deg')# r=lensDc, w=1/Sigma_crit**2.)
             
-            # Define the source sample
-            srccat = treecorr.Catalog(ra=srcRA, dec=srcDEC, ra_units='deg', dec_units='deg', g1=e1, g2=e2)# r=srcDc[Zmask])
-            """
+            srccat_list.append(srccat)
+            lenscat_list.append(lenscat)
             
             # Compute the cross-correlation for this source redshift bin
             kg.process_cross(lenscat,srccat)
-    
-    
+
     vark = treecorr.catalog.calculateVarK(lenscat)
-    varg = treecorr.catalog.calculateVarG(srccat_list) # Source redshift bins
-    #varg = treecorr.catalog.calculateVarG(srccat) # Lens redshift bins
+    varg = treecorr.catalog.calculateVarG(srccat_list)
+
     print('VarK:', vark)
     print('VarG:', varg)
 
-    
     # Finalize by applying the total weight
     kg.finalize(vark, varg)
 
     # The resulting ESD profile
     Rnom, gamma_t, gamma_x, gamma_error, Nsrc = \
     [kg.rnom, kg.xi, kg.xi_im, np.sqrt(kg.varxi), kg.npairs]
+"""
 
-    
 print('Lens-source pairs:', np.sum(Nsrc))
 print()
 
 # Write the result to a file
-filename_output = '%s/lenssel-%s_Rbins-%i-%g-%g-%s_Zbins-%g'%(path_output, filename_var, Nbins, Rmin, Rmax, Runit, nZbins)
+filename_output = '%s/lenssel-%s_Rbins-%i-%g-%g-%s_Zbins-%g_lenssplit'%(path_output, filename_var, Nbins, Rmin, Rmax, Runit, nZbins)
 
 if not os.path.isdir(path_output):
     os.makedirs(path_output)
@@ -256,4 +299,4 @@ utils.write_stack(filename_output+'.txt', Rcenters, Runit, gamma_t, gamma_x, \
 gamma_error, bias, h, Nsrc)
 
 # Plot the resulting shear profile
-utils.write_plot(Rcenters, gamma_t, gamma_x, gamma_error, filename_output, Runit, Rlog, plot, h)
+utils.write_plot(Rcenters, gamma_t, gamma_x, gamma_error, None, filename_output, Runit, Rlog, plot, h)
