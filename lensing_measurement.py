@@ -29,7 +29,7 @@ G = const.G.to('pc3/Msun s2')
 c = const.c.to('pc/s')
 inf = np.inf
    
-h, O_matter, O_lambda = [0.7, 0.25, 0.75]
+h, O_matter, O_lambda = [0.7, 0.325, 0.685]
 cosmo = LambdaCDM(H0=h*100, Om0=O_matter, Ode0=O_lambda)
 
 
@@ -46,23 +46,22 @@ Rmax = 100. # Minimum radius (in selected unit)
 Nbins = 20 # Number of radial bins
 """
 # Profile selection
-Runit = 'Mpc' # Select distance unit (shear: arcsec/arcmin/degrees/hours/radians, ESD: pc/kpc/Mpc)
-Rmin = 0.2 # Minimum radius (in selected unit). Note: MICE lensing is only accurate down to ~0.2 Mpc (at z=0.2).
-Rmax = 20 # Maximum radius (in selected unit)
-Nbins = 20 # Number of radial bins
-#"""
+Runit = 'kpc' # Select distance unit (shear: arcsec/arcmin/degrees/hours/radians, ESD: pc/kpc/Mpc)
+Rmin = 20 # Minimum radius (in selected unit). Note: MICE lensing is only accurate down to ~0.2 Mpc (at z=0.2).
+Rmax = 2000 # Maximum radius (in selected unit)
+Nbins = 10 # Number of radial bins
 
 plot = True
 Rlog = True
 
 # Lens selection
-paramnames = np.array(['abs_mag_r'])
-maskvals = np.array([ [-20., -19.5] ])
+paramnames = np.array(['lmstellar'])
+maskvals = np.array([ [8.5,11.] ])
 #maskvals = np.array([ [-inf, inf] ])
 
 srcZmin, srcZmax = [0.1, 0.9]
 
-path_output = '/data2/brouwer/shearprofile/EG_results_Sep18/%s'%(cat)
+path_output = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18/%s'%(cat)
 
 
 ## Pipeline
@@ -91,7 +90,7 @@ lensweights = np.ones(len(lensZ))
 
 # Boundaries of the field
 #fieldRAs, fieldDECs = [[i*20.+5.,(i+1)*20.+5.], [j*20.+5.,(j+1)*20.+5.]]
-fieldRAs, fieldDECs = [[5., 25.], [5., 25.]]
+fieldRAs, fieldDECs = [[0., 10.], [0., 10.]]
 
 # Selecting the galaxies lying within this field
 fieldmask_lens = (fieldRAs[0] < lensRA)&(lensRA < fieldRAs[1]) & (fieldDECs[0] < lensDEC)&(lensDEC < fieldDECs[1])
@@ -100,13 +99,17 @@ fieldmask_lens = (fieldRAs[0] < lensRA)&(lensRA < fieldRAs[1]) & (fieldDECs[0] <
 # Importing the sources
 path_srccat = '/data2/brouwer/KidsCatalogues'
 if 'mice' in cat:
-    srccatname = 'mice_source_catalog_dc.fits'
+    #srccatname = 'mice_source_catalog_dc.fits'
+    srccatname = 'mice2_source_catalog_100deg2.fits'
     srcRA, srcDEC, srcZ, srcDc, rmag_src, rmag_abs_src, e1, e2, logmstar_src =\
     utils.import_micecat(path_srccat, srccatname, h)
 else:
     srccatname = 'KiDS-450_mask_%s.fits'%fields[f]
     srcRA, srcDEC, srcZ, rmag, e1, e2, weight =\
     utils.import_srccat(path_srccat, srccatname)
+    
+print(srcRA, srcDEC, srcDc, e1, e2)
+print(lensRA, lensDEC, lensDc)
 
 # Creating the source mask
 srcmask = (srcZmin < srcZ) & (srcZ < srcZmax) & (rmag_src > 20.) & (rmag_abs_src > -19.3)
@@ -147,6 +150,7 @@ if ('pc' not in Runit) and ('acc' not in Runit):
     
     print('Nsources:', len(srcRA))
 
+"""
 #if 'acc' in Runit:
 if 'pc' in Runit:
 
@@ -177,7 +181,7 @@ if 'pc' in Runit:
         # Select lenses in the redshift bin
         binZ, binDc, binDa = Zbins[b], Dcbins[b], Dcbins[b]/(1+Zbins[b])
         Zmask = Zmasks[b]
-
+        
         print('Zbin %i: %g - %g'%(b+1, Zlims[b], Zlims[b+1]))
         print('Number of lenses:', np.sum(Zmask))
         
@@ -219,7 +223,7 @@ if 'pc' in Runit:
         'metric': 'Rlens', 'min_rpar': 0, 'verbose': 0}
 
     kg = treecorr.KGCorrelation(config)
-    print('Rbins:', Rarcmin, Rarcmax, Nbins)
+    print('Rbins (pc):', Rarcmin, Rarcmax, Nbins)
     
     # Define the source redshift bins
     nZbins = 20
@@ -280,13 +284,18 @@ if 'pc' in Runit:
     # The resulting ESD profile
     Rnom, gamma_t, gamma_x, gamma_error, Nsrc = \
     [kg.rnom, kg.xi, kg.xi_im, np.sqrt(kg.varxi), kg.npairs]
-"""
+#"""
 
 print('Lens-source pairs:', np.sum(Nsrc))
 print()
 
 # Write the result to a file
-filename_output = '%s/lenssel-%s_Rbins-%i-%g-%g-%s_Zbins-%g_lenssplit'%(path_output, filename_var, Nbins, Rmin, Rmax, Runit, nZbins)
+#filename_output = '%s/lenssel-%s_Rbins-%i-%g-%g-%s_Zbins-%g_lenssplit'%(path_output, filename_var, Nbins, Rmin, Rmax, Runit, nZbins)
+
+filename_output = '%s/%s/zcgal_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins%i_%g_%g_%s/shearcovariance/No_bins_A'\
+                %(path_output, filename_var, Nbins, Rmin, Rmax, Runit)
+
+path_output = filename_output.rsplit('/', 1)[0]
 
 if not os.path.isdir(path_output):
     os.makedirs(path_output)

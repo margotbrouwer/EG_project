@@ -16,8 +16,8 @@ from astropy import constants as const, units as u
 # Import lens catalog
 cat = 'gama'
 h=0.7
-fields, lenscatname, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
-utils.import_lenscat(cat, h)
+fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc,\
+rmag, rmag_abs, logmstar = utils.import_lenscat(cat, h)
 
 # Calculate the total baryonic mass (stars + cold gas)
 fcold = 10.**(-0.69*logmstar + 6.63)

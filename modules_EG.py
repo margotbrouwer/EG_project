@@ -19,6 +19,11 @@ from matplotlib.colors import LogNorm
 from matplotlib import gridspec
 from matplotlib import rc, rcParams
 
+# Import constants
+G = const.G.to('pc3/Msun s2')
+c = const.c.to('pc/s')
+inf = np.inf
+
 # Import and mask all used data from the sources in this KiDS field
 def import_kidscat(path_kidscat, kidscatname, h):
     
@@ -75,25 +80,29 @@ def import_micecat(path_micecat, micecatname, h):
     micecatfile = '%s/%s'%(path_micecat, micecatname)
     micecat = pyfits.open(micecatfile, memmap=True)[1].data
     
-    # List of the observables of all sources in the KiDS catalogue
-    galRA = micecat['ra']
-    galDEC = micecat['dec']
-    galZ = micecat['z']
+    # List of the observables of all galaxies in the mice catalogue
+    galRA = micecat['ra_gal']
+    galDEC = micecat['dec_gal']
     
-    rmag = micecat['r_sdss_true']
-    rmag_abs = micecat['abs_mag_r']
+    galZ = micecat['z_cgal']
+    galDc = micecat['cgal']*1.e6/h # Convert source distances from Mpc to pc/h
     
-    e1 = -micecat['gamma1']
-    e2 = micecat['gamma2']
+    rmag = micecat['sdss_r_true']
+    rmag_abs = micecat['sdss_r_abs_mag']
     
+    # For the lenses
     try:
-        galDc = micecat['d_c']*1.e6/h # Convert source distances from Mpc to pc/h
-    except:
-        galDc = np.ones(len(galZ))
-    try:
-        logmstar = micecat['log_m']
+        logmstar = micecat['lmstellar']
     except:
         logmstar = np.ones(len(galZ))
+    
+    # For the sources
+    try:
+        e1 = -micecat['gamma1']
+        e2 = micecat['gamma2']
+    except:
+        e1 = np.zeros(len(galZ))
+        e2 = np.zeros(len(galZ))
     
     return galRA, galDEC, galZ, galDc, rmag, rmag_abs, e1, e2, logmstar
 
@@ -102,13 +111,13 @@ def import_micecat(path_micecat, micecatname, h):
 def import_lenscat(cat, h):
 
     path_lenscat = '/data2/brouwer/MergedCatalogues'
-
+    
     if 'gama' in cat:
         fields = ['G9', 'G12', 'G15']
         lenscatname = 'GAMACatalogue_2.0.fits'
         lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_gamacat(path_lenscat, lenscatname, h)
-
+        
     if 'kids' in cat:
         fields = ['G9', 'G12', 'G15', 'G23', 'GS']
         lenscatname = 'kids_masses/catalog_DR2_DR3_5M_234params_FULL_2017-10-10.fits'
@@ -117,10 +126,14 @@ def import_lenscat(cat, h):
 
     if 'mice' in cat:
         fields = ['M1']
-        lenscatname = 'mice_gama_catalog.fits'
+        #lenscatname = 'mice_gama_catalog.fits'
+        lenscatname = 'mice2_gama_catalog_100deg2.fits'
         lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
-
+    
+    if 'mice' not in cat:
+        lensDc = np.zeros(len(lensZ))
+    
     return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar
 
 # Import source catalogue
@@ -152,28 +165,26 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
         Rbins = np.linspace(Rmin, Rmax, Nbins+1)
     Rcenters = Rbins[0:-1] + np.diff(Rbins)/2.
 
-    xvalue = 1.
-    if 'arcmin' in Runit:
-        Rarcmin = Rmin
-        Rarcmax = Rmax
     if 'pc' in Runit:
         # Define the value of X in Xpc
         if 'M' in Runit:
             xvalue = 10.**6
         if 'k' in Runit:
             xvalue = 10.**3
-
+            
         # Translate radial distances from Xpc to pc
-        Rarcmin = Rmin*xvalue
-        Rarcmax = Rmax*xvalue
-        
-        print('Translating Rbins from %s to pc: multiplying by %g'%(Runit, xvalue))
-
-        # Translate radial distances from Xpc to arcmin
-        #Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60.
-        #Rarcmax = np.degrees(Rmax/(lensDa/xvalue))*60.
+        Rmin = Rmin*xvalue
+        Rmax = Rmax*xvalue
+    else:
+        xvalue = 1.
     
-    return Rbins, Rcenters, Rarcmin, Rarcmax, xvalue
+    print('Translating Rbins from %s to pc: multiplying by %g'%(Runit, xvalue))
+
+    # Translate radial distances from Xpc to arcmin
+    #Rarcmin = np.degrees(Rmin/(lensDa/xvalue))*60.
+    #Rarcmax = np.degrees(Rmax/(lensDa/xvalue))*60.
+    
+    return Rbins, Rcenters, Rmin, Rmax, xvalue
 
 
 def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
@@ -204,8 +215,8 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
     # Define filename
     filename_var = filename_var.replace('.', 'p')
     filename_var = filename_var.replace('-', 'm')
-    filename_var = filename_var.replace('~', '-')
-    filename_var = filename_var.split('-', 1)[1]
+    filename_var = filename_var.replace('~', '_')
+    filename_var = filename_var.split('_', 1)[1]
     
     print()
 
@@ -285,6 +296,7 @@ def read_esdfiles(esdfiles):
     error_l = []
     
     print('Imported ESD profiles: %i'%len(esdfiles))
+    print(esdfiles)
     
     for f in range(len(esdfiles)):
         # Load the text file containing the stacked profile
@@ -346,25 +358,27 @@ def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output,
     shape = np.shape(gamma_t)
     
     if len(shape) == 1:
-        plt.errorbar(Rcenters, gamma_t, gamma_error)
+        plt.errorbar(Rcenters, gamma_t, gamma_error, ls='', marker='.')
         try:
-            plt.errorbar(Rcenters, gamma_x, gamma_error)
+            plt.errorbar(Rcenters, gamma_x, gamma_error, ls='', marker='.')
         except:
             pass
 
         
     else:
         for i in np.arange(len(gamma_t)):
-            plt.errorbar(Rcenters[i], gamma_t[i], gamma_error[i], label=labels[i])
+            plt.errorbar(Rcenters[i], gamma_t[i], gamma_error[i], label=labels[i], ls='', marker='.')
             try:
-                plt.errorbar(Rcenters[i], gamma_x[i], gamma_error[i])
+                plt.errorbar(Rcenters[i], gamma_x[i], gamma_error[i], ls='', marker='.')
             except:
                 pass
         plt.legend(loc='best')        
     
-    if 'ms2' in Runit:
+    if 'mps2' in Runit:
         xlabel = r'Expected baryonic acceleration $g_{\rm bar}$ $(m/s^2)$'
-        ylabel = r'Observed acceleration $g_{\rm obs}$ $(m/s^2)$'
+        #ylabel = r'Observed acceleration $g_{\rm obs}$ $(m/s^2)$'
+        
+        ylabel = r'ESD $\langle\Delta\Sigma\rangle$ [h$_{%g}$ M$_{\odot}$/pc$^2$]'%(h*100)
     else:
         if 'pc' in Runit:
             xlabel = r'Radius $R$ (%s/h$_{%g}$)'%(Runit, h*100)
@@ -380,10 +394,11 @@ def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output,
     
     if Rlog:
         plt.xscale('log')
-#        plt.yscale('log')
+        plt.yscale('log')
         
     #plt.axis([Rmin,Rmax,ymin,ymax])
-    #plt.ylim(ymin, ymax)
+    ymin, ymax = [np.amin(gamma_t)*0.4, np.amax(gamma_t)*2.]
+    plt.ylim(ymin, ymax)
     plt.tight_layout()
 
     # Save plot
@@ -397,6 +412,7 @@ def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output,
         plt.show()
 
     plt.clf
+
 
 def calc_chi2(data, model, covariance, nbins):
     
