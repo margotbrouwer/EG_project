@@ -108,31 +108,34 @@ def import_micecat(path_micecat, micecatname, h):
 
 
 # Import lens catalogue
-def import_lenscat(cat, h):
+def import_lenscat(cat, h, cosmo):
 
     path_lenscat = '/data2/brouwer/MergedCatalogues'
     
     if 'gama' in cat:
         fields = ['G9', 'G12', 'G15']
+
+        # Importing GAMA catalogue
         lenscatname = 'GAMACatalogue_2.0.fits'
         lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_gamacat(path_lenscat, lenscatname, h)
+        
+        # Calculating galaxy distances
+        lensDc = cosmo.comoving_distance(lensZ)
         
     if 'kids' in cat:
         fields = ['G9', 'G12', 'G15', 'G23', 'GS']
         lenscatname = 'kids_masses/catalog_DR2_DR3_5M_234params_FULL_2017-10-10.fits'
         lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_kidscat, lenscatname, h)
-
+    
     if 'mice' in cat:
         fields = ['M1']
-        #lenscatname = 'mice_gama_catalog.fits'
+
+        #Importing MICE catalogue
         lenscatname = 'mice2_gama_catalog_100deg2.fits'
         lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
-    
-    if 'mice' not in cat:
-        lensDc = np.zeros(len(lensZ))
     
     return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar
 
