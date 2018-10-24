@@ -190,17 +190,29 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
     return Rbins, Rcenters, Rmin, Rmax, xvalue
 
 
-def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
+def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname, h):
     
     paramlist = []
     
+    # Import lens parameters
+    lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
+    lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
+    
     for p in range(len(paramnames)):
-        
-        # Import lens parameters
-        lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
-        lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
-        
-        paramlist.append(lenscat[paramnames[p]])
+        paramname = paramnames[p]
+        paramvals = lenscat[paramname]
+
+        if (paramname == 'logmstar') or (paramname == 'absmag_r'):
+            # Fluxscale, needed for absolute magnitude and stellar mass correction
+            fluxscale = lenscat['fluxscale']
+            
+            if paramname == 'logmstar':
+                paramvals = paramvals + np.log10(fluxscale) - 2.*np.log10(h/0.7)
+            
+            elif paramname == 'absmag_r':
+                paramvals = paramvals - 2.5*np.log10(fluxscale) + 5*np.log10(h/0.7)
+            
+        paramlist.append(paramvals)
         
     # Selecting the lenses
     masklist = np.ones(len(paramlist[0]))
@@ -221,12 +233,11 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname):
     filename_var = filename_var.replace('~', '_')
     filename_var = filename_var.split('_', 1)[1]
     
-    print()
-
+    print
     print('Selection:', filename_var)
     print('Selected: %i of %i lenses (%g percent)'\
     %(np.sum(masklist), len(masklist), np.sum(masklist)/len(masklist)*100.))
-    print()
+    print
     
     return lensmask, filename_var
 
@@ -282,7 +293,7 @@ def write_catalog(filename, galIDlist, outputnames, output):
         print('Old catalog overwritten:', filename)
     else:
         print('New catalog written:', filename)
-    print()
+    print
 
     tbhdu.writeto(filename)
 

@@ -68,7 +68,7 @@ path_output = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18/%s'%
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
-utils.import_lenscat(cat, h)
+utils.import_lenscat(cat, h, cosmo)
 
 # Define radial bins
 Rbins, Rcenters, Rarcmin, Rarcmax, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog)
