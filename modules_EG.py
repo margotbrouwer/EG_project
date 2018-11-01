@@ -278,8 +278,11 @@ def write_catalog(filename, galIDlist, outputnames, output):
     fitscols = []
 
     # Adding the lens IDs
-    fitscols.append(pyfits.Column(name = 'ID', format='J', array = galIDlist))
-
+    if np.type(galIDlist) == 'str':
+        fitscols.append(pyfits.Column(name = 'ID', format='40A', array = galIDlist))
+    else:
+        fitscols.append(pyfits.Column(name = 'ID', format='J', array = galIDlist))
+    
     # Adding the output
     [fitscols.append(pyfits.Column(name = outputnames[c], format = '1D', array = output[c])) \
         for c in range(len(outputnames))]

@@ -50,18 +50,21 @@ def gobs_mcgaugh(gbar, g0=1.2e-10):
     gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
     return gobs
 
-gbar_mcgaugh = np.logspace(-12, -8, 50)
+gbar_mcgaugh = np.logspace(-12, -11, 50)
 gbar_ext = np.logspace(-15, -12, 30)
-gbar_uni = np.logspace(-14, -8, 50)
+gbar_uni = np.logspace(-14, -11, 50)
 
 ## Import shear and random profiles
 
 # Fiducial troughs:sizes
 
 Runit = 'pc'
-plotfilename = '/data2/brouwer/shearprofile/EG_results_Oct18/Plots/mice_rar_with_lcdm-kids_vs_mice'
-Nrows = 1
+plotfilename = '/data2/brouwer/shearprofile/EG_results_Oct18/Plots/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0'
+Nrows = 2
 
+#paramlims = [8.5, 9.8, 10.4, 10.9, 12.0]
+paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
+Nbins = len(paramlims)-1
 
 #path_sheardata = 'data2/brouwer/shearprofile/EG_results'
 path_sheardata = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18'
@@ -75,35 +78,44 @@ path_sheardata = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18'
 #path_lenssel = np.array([ ['re_r_kpc_2_0p0_4p0_inf/RankBCG_m999_2-isocen3_1-nQ_3_inf_lw-logmbar', 're_r_kpc_2_0p0_4p0_inf/RankBCG_m999_2-isocen3_1-nQ_3_inf_lw-logmbar'] ])
 #path_lenssel = np.array([ ['No_bins/lmstellar_8p5_11_lw-lmstellar'] ])
 #path_lenssel = np.array([ ['No_bins/logmstar_10p9_11p1_lw-logmstar'] ])
-path_lenssel = np.array(['No_bins/logmstar_8p5_11_lw-logmbar', 'No_bins/lmstellar_8p5_11_lw-lmstellar'])
+#path_lenssel = np.array(['No_bins/logmstar_8p5_11_lw-logmbar', 'No_bins/lmstellar_8p5_11_lw-lmstellar'])
 #path_lenssel = np.array(['No_bins/logmstar_8p5_11_lw-logmbar', 'No_bins/logmstar_8p5_11_lw-logmbar'])
-
+#path_lenssel = np.array(['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins)
+path_lenssel = np.array([['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins, \
+                            ['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins]).T
 
 #path_cosmo = 'ZB_0p1_0p9-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2_pc/shearcovariance'
 #path_cosmo = 'zcgal_0p1_0p9-Om_0p25-Ol_0p75-Ok_0-h_1/Rbins20_1em15_1em12_mps2/shearcovariance'
-path_cosmo = np.array(['%s_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2'%z for z in ['ZB', 'zcgal']])
-#path_cosmo = np.array(['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_%s'%z for z in ['mps2']])
+#path_cosmo = np.array(['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins)
 
+path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins, \
+                            ['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins]).T
 
-path_filename = np.array(['No_bins_%s'%(blind)]*2)
-#path_filename = np.array(['shearcovariance_bin_%i_A'%i for i in [1,2]]) 
-
+#path_filename = np.array(['No_bins_%s'%(blind)]*Nbins)
 #path_filename = np.array(['shearcovariance_bin_%i_%s.txt'%(i, blind) for i in np.arange(2)+1])
+#path_filename = np.array(['shearcovariance_bin_%i_A'%i for i in np.arange(Nbins)+1])
+path_filename = np.array([['shearcovariance_bin_%i_A'%i for i in np.arange(Nbins)+1], \
+                                ['shearcovariance_bin_%i_A'%j for j in np.arange(Nbins)+1]]).T
 
+datatitles = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(Nbins)]
 
-datatitles = []
 #datalabels = [r'KiDS+GAMA  (isolated centrals)', r'KiDS+GAMA (isolated centrals, $M_* \leq 10^{11} M_\odot$)']
 #datalabels = [r'KiDS+GAMA (isolated centrals, $M_* \leq 10^{11} M_\odot$)']
 #datalabels = [r'KiDS+GAMA (isolated centrals, $8.5 \leq$ log($M_*$) $\leq 10.8 M_\odot$)', r'KiDS+GAMA (isolated centrals, $10.8 \leq$ log($M_*$) $\leq 11 M_\odot$)']
 #datalabels = [r'KiDS+GAMA, isolated spirals ($n_r<2.5$)', r'KiDS+GAMA, isolated ellipticals ($n_r>2.5$)']
 #datalabels = [r'KiDS+GAMA, isolated (small: $r_e<4$kpc)', r'KiDS+GAMA, isolated (large: $r_e>4$kpc)']
-datalabels = [r'KiDS-GAMA ($M_*<10^{11} M_{\odot}$)', r'MICE ($M_*<10^{11} M_{\odot}$)']
+#datalabels = [r'KiDS-GAMA ($M_*<10^{11} M_{\odot}$)', r'MICE ($M_*<10^{11} M_{\odot}$)']
 #datalabels = [r'KiDS-GAMA (New)', r'KiDS-GAMA (Old)']
-
+#datalabels = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(Nbins)]
+datalabels = [r'KiDS+GAMA', r'MICE']
 
 #esdfiles = np.array(['%s/%s_%s.txt'%(path_sheardata, path_lenssel, path_cosmo[i]) for i in np.arange(len(path_cosmo))])
+#esdfiles = np.array([['%s/%s/%s/shearcovariance/%s.txt'%\
+#    (path_sheardata, path_lenssel[i], path_cosmo[i], path_filename[i]) for i in np.arange(len(path_lenssel))]])
 esdfiles = np.array([['%s/%s/%s/shearcovariance/%s.txt'%\
-(path_sheardata, path_lenssel[i], path_cosmo[i], path_filename[i]) for i in np.arange(len(path_lenssel))]])
+(path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
+for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
+
 
 
 path_randoms = np.array([ [''] ])
@@ -120,6 +132,7 @@ data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 data_y, error_h, error_l = 4. * G * 3.08567758e16 *\
     np.array([data_y, error_h, error_l]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
 print(data_x, data_y)
+print('Average S/N:', np.mean(data_y/error_h, 1))
 
 # Import Crescenzo's RAR from Early Type Galaxies
 cres = np.loadtxt('RAR_profiles/crescenzo_RAR.txt').T
@@ -197,7 +210,14 @@ for N1 in range(Nrows):
         
         for Nplot in range(Nbins[1]):
             
-            Ndata = N + Nplot*(Nbins[0])
+            Ndata = Nplot + N*(Nbins[1])
+            """
+            print('Ndata=',Ndata)
+            print('N=',N)
+            print('Nplot=',Nplot)
+            print('Nbins[0]=',Nbins[0])
+            print()
+            """
             
             if Nbins[1] > 2:
                 data_x_plot = data_x[Ndata] * (1.+0.3*Nplot)
@@ -270,8 +290,20 @@ for N1 in range(Nrows):
             else:
                 ax.xaxis.set_label_coords(0.5, -0.07)
                 ax.yaxis.set_label_coords(-0.15, 0.5)
-            
-            
+    
+        # Plot guiding lines
+        ax_sub.plot(gbar_mcgaugh, gobs_mcgaugh(gbar_mcgaugh), label = 'McGaugh+2016 (measurement)', ls='-', marker='', zorder=3)
+        ax_sub.plot(gbar_ext, gobs_mcgaugh(gbar_ext), label = 'McGaugh+2016 (extrapolation)', ls=':', marker='', zorder=2)
+        #ax_sub.plot(gbar_uni, gbar_uni, label = 'Unity (no dark matter)', ls=':', marker='', zorder=1)
+
+        # Plot Crescenzo's data
+        #ax_sub.errorbar(gbar_cres, gtot_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
+
+        # Plot Kyle's prediction
+        #ax_sub.plot(gbar_kyle[0], gtot_kyle[0], ls='-', marker='', label="Navarro+2017 ($M_*=10^{9} M_\odot$)", zorder=5)
+        #ax_sub.plot(gbar_kyle[1], gtot_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
+        #ax_sub.plot(gbar_kyle[2], gtot_kyle[2], ls='-', marker='', label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
+        
         plt.xscale('log')
         plt.yscale('log')
         #plt.gca().invert_xaxis()
@@ -279,19 +311,6 @@ for N1 in range(Nrows):
         
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.73, y = 0.86, fontsize=16)
-
-# Plot guiding lines
-ax_sub.plot(gbar_mcgaugh, gobs_mcgaugh(gbar_mcgaugh), label = 'McGaugh+2016 (measurement)', ls='-', marker='', zorder=3)
-ax_sub.plot(gbar_ext, gobs_mcgaugh(gbar_ext), label = 'McGaugh+2016 (extrapolation)', ls=':', marker='', zorder=2)
-ax_sub.plot(gbar_uni, gbar_uni, label = 'Unity (no dark matter)', ls=':', marker='', zorder=1)
-
-# Plot Crescenzo's data
-#ax_sub.errorbar(gbar_cres, gtot_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
-
-# Plot Kyle's prediction
-#ax_sub.plot(gbar_kyle[0], gtot_kyle[0], ls='-', marker='', label="Navarro+2017 ($M_*=10^{9} M_\odot$)", zorder=5)
-#ax_sub.plot(gbar_kyle[1], gtot_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
-#ax_sub.plot(gbar_kyle[2], gtot_kyle[2], ls='-', marker='', label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
 
 # Define the labels for the plot
 ax.set_xlabel(xlabel, fontsize=16)
