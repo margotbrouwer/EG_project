@@ -273,20 +273,14 @@ def calc_absmag(rmag, galZ, gmag, imag, h, O_matter, O_lambda):
 
 
 # Write the results to a fits catalogue
-def write_catalog(filename, galIDlist, outputnames, output):
-
+def write_catalog(filename, outputnames, formats, output):
+    
     fitscols = []
-
-    # Adding the lens IDs
-    if np.type(galIDlist) == 'str':
-        fitscols.append(pyfits.Column(name = 'ID', format='40A', array = galIDlist))
-    else:
-        fitscols.append(pyfits.Column(name = 'ID', format='J', array = galIDlist))
     
     # Adding the output
-    [fitscols.append(pyfits.Column(name = outputnames[c], format = '1D', array = output[c])) \
+    [fitscols.append(pyfits.Column(name = outputnames[c], format = formats[c], array = output[c])) \
         for c in range(len(outputnames))]
-
+    
     cols = pyfits.ColDefs(fitscols)
     tbhdu = pyfits.BinTableHDU.from_columns(cols)
 

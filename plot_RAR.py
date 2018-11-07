@@ -59,8 +59,8 @@ gbar_uni = np.logspace(-14, -11, 50)
 # Fiducial troughs:sizes
 
 Runit = 'pc'
-plotfilename = '/data2/brouwer/shearprofile/EG_results_Oct18/Plots/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0'
-Nrows = 2
+plotfilename = '/data2/brouwer/shearprofile/EG_results_Oct18/Plots/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0_transverse'
+Nrows = 1
 
 #paramlims = [8.5, 9.8, 10.4, 10.9, 12.0]
 paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
@@ -82,14 +82,14 @@ path_sheardata = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18'
 #path_lenssel = np.array(['No_bins/logmstar_8p5_11_lw-logmbar', 'No_bins/logmstar_8p5_11_lw-logmbar'])
 #path_lenssel = np.array(['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins)
 path_lenssel = np.array([['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins, \
-                            ['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']*Nbins]).T
+                            ['lmstellar_8p5_10p5_10p8_11p1_12p0/lmstellar_8p5_12_lw-lmstellar']*Nbins]).T
 
 #path_cosmo = 'ZB_0p1_0p9-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2_pc/shearcovariance'
 #path_cosmo = 'zcgal_0p1_0p9-Om_0p25-Ol_0p75-Ok_0-h_1/Rbins20_1em15_1em12_mps2/shearcovariance'
 #path_cosmo = np.array(['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins)
 
 path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins, \
-                            ['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins]).T
+                            ['zcgal_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5em12_mps2']*Nbins]).T
 
 #path_filename = np.array(['No_bins_%s'%(blind)]*Nbins)
 #path_filename = np.array(['shearcovariance_bin_%i_%s.txt'%(i, blind) for i in np.arange(2)+1])
@@ -97,7 +97,7 @@ path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_1em15_5
 path_filename = np.array([['shearcovariance_bin_%i_A'%i for i in np.arange(Nbins)+1], \
                                 ['shearcovariance_bin_%i_A'%j for j in np.arange(Nbins)+1]]).T
 
-datatitles = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(Nbins)]
+datalabels = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(Nbins)]
 
 #datalabels = [r'KiDS+GAMA  (isolated centrals)', r'KiDS+GAMA (isolated centrals, $M_* \leq 10^{11} M_\odot$)']
 #datalabels = [r'KiDS+GAMA (isolated centrals, $M_* \leq 10^{11} M_\odot$)']
@@ -107,14 +107,14 @@ datatitles = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i i
 #datalabels = [r'KiDS-GAMA ($M_*<10^{11} M_{\odot}$)', r'MICE ($M_*<10^{11} M_{\odot}$)']
 #datalabels = [r'KiDS-GAMA (New)', r'KiDS-GAMA (Old)']
 #datalabels = [r'($%g < M* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(Nbins)]
-datalabels = [r'KiDS+GAMA', r'MICE']
+datatitles = [r'KiDS+GAMA', r'MICE']
 
 #esdfiles = np.array(['%s/%s_%s.txt'%(path_sheardata, path_lenssel, path_cosmo[i]) for i in np.arange(len(path_cosmo))])
 #esdfiles = np.array([['%s/%s/%s/shearcovariance/%s.txt'%\
 #    (path_sheardata, path_lenssel[i], path_cosmo[i], path_filename[i]) for i in np.arange(len(path_lenssel))]])
 esdfiles = np.array([['%s/%s/%s/shearcovariance/%s.txt'%\
 (path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
-for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
+for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ]).T
 
 
 
@@ -191,7 +191,7 @@ Ncolumns = int(Nbins[0]/Nrows)
 
 # Plotting the ueber matrix
 if Nbins[0] > 1:
-    fig = plt.figure(figsize=(Ncolumns*4.,Nrows*3.5))
+    fig = plt.figure(figsize=(Ncolumns*6.,Nrows*4))
 else:
     fig = plt.figure(figsize=(8,6))
 canvas = FigureCanvas(fig)
@@ -313,20 +313,20 @@ for N1 in range(Nrows):
             plt.title(datatitles[N], x = 0.73, y = 0.86, fontsize=16)
 
 # Define the labels for the plot
-ax.set_xlabel(xlabel, fontsize=16)
-ax.set_ylabel(ylabel, fontsize=16)
+ax.set_xlabel(xlabel, fontsize=12)
+ax.set_ylabel(ylabel, fontsize=12)
 
 handles, labels = ax_sub.get_legend_handles_labels()
 
 # Plot the legend
-plt.legend()
-"""
+#plt.legend()
+
 if Nbins[1] > 1:
-    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.95*Ncolumns, 0.6*Nrows)) # side
+    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.5*Ncolumns, 0.7*Nrows)) # side
 else:
 #    plt.legend(handles[::-1], labels[::-1], loc='upper center')
     lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.85, 1.55)) # top
-"""
+
 
 
 plt.tight_layout()
