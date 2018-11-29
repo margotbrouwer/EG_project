@@ -5,3 +5,12 @@ Lens selections
 10.5    10.8    10.6538
 10.8    11.1    10.9391
 11.1    12    11.2914
+
+
+Selection: logmstar_8p5_12_dist0p5dex_3_inf
+Selected: 52116 of 180960 lenses (28.7997 percent)
+Bin name: logmstar
+Binning values (2): 8.5,11.1,12
+Binning values (4): 8.5,10.9,11.1,11.4,12
+S/N per bin: 3.14028
+

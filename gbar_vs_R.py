@@ -4,7 +4,6 @@
 import sys
 
 import numpy as np
-import pyfits
 import os
 
 from astropy import constants as const, units as u
@@ -26,7 +25,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 rc('text',usetex=True)
 
 # Change all fonts to 'Computer Modern'
-rc('font',**{'family':'serif','serif':['Computer Modern']})
+rc('font',**{'family':'serif','serif':['DejaVu Sans']})
 
 # Import constants
 G = const.G.to('m3/Msun s2').value

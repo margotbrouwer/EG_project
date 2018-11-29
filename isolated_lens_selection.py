@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
 import numpy as np
-import pyfits
 import os
 
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from astropy.cosmology import LambdaCDM
+from astropy.io import fits
 
 import modules_EG as utils
 
@@ -20,63 +20,67 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'gama' # Select the lens catalogue (kids/gama/mice)
+cat = 'mice' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
+# This list will contain all satellite distances
+logmstarlist = logmstar
+dist0p5dex = np.zeros(len(lensRA)) * u.Mpc
+
+# Remove all galaxies with logmstar=NAN
+nanmask = np.isfinite(logmstar)
+lensRA, lensDEC, lensDc, logmstar = [lensRA[nanmask], lensDEC[nanmask], lensDc[nanmask], logmstar[nanmask]]
+
 # Creating gama coordinates
-lenscoords = SkyCoord(ra=lensRA, dec=lensDEC, distance=lensDc)
+lenscoords = SkyCoord(ra=lensRA*u.deg, dec=lensDEC*u.deg, distance=lensDc)
 
-# Define Rmax, the maximum radius around each galaxy to which the signal is measured
-Rmax2 = 2. * u.Mpc
-Rmax3 = 3. * u.Mpc
-Rmax4 = 4. * u.Mpc
+# Define the galaxy mass bins
+logm_min = 7.
+logm_max = 13.
 
-# Define the lens redshift bins
-massmin = 8.5
-massmax = np.amax(logmstar)
-Nmassbins = 20
-masslims = np.linspace(massmin, massmax, Nmassbins+1)
-print('logmbins:', masslims, 'dm:', (np.amax(masslims)-np.amin(masslims))/Nmassbins)
+Nlogmbins = int(1e3)
+logmlims = np.linspace(logm_min, logm_max, Nlogmbins+1)
+dlogm = np.diff(logmlims)[0]
+logmbins = logmlims[0:-1] + dlogm
 
-distlist = np.zeros(len(gamacoords)) * u.Mpc
+cendistlist = np.zeros(len(lenscoords)) * u.Mpc
 
-for m in np.arange(Nlogmbins)
-    massmask_high = (masslims[m] < logmstar) & (logmstar <= masslims[m+1])
-    massmask_log = (masslims[m] < logmstar) & (logmstar <= masslims[m+1])
+# The nearby galaxies should not be heaver than X times the galaxy
+massratio = 1./10**0.5 # ... where X=0.5 dex
+
+for m in np.arange(Nlogmbins):
+
+    # Masking the centrals and satellites
+    massmask_cen = (logmlims[m] < logmstar) & (logmstar <= logmlims[m+1])
+    massmax_sat = np.log10(np.mean(10**logmstar[massmask_cen]) * massratio) # Satellites with X times the mean central mass
+    massmask_sat = (logmstar > massmax_sat) # ... are "too heavy" for these centrals
+    cencoords, satcoords = [lenscoords[massmask_cen], lenscoords[massmask_sat]]
     
-
-    # Calculate the distance to the nearest central
-    
-    
-    idx, sep2d, cendist3d = cencoords.match_to_catalog_3d(lenscoords[massmask], nthneighbor=2)
-
-    cendistlist[massmask] = cendist3d
+    print('%g < logmstar < %g: %i galaxies'%(logmlims[m], logmlims[m+1], len(cencoords)))
+    print('Max(logm) satellite: %g'%massmax_sat)
 
 
+    if (len(cencoords)>0) & (len(satcoords)>0):
+        
+        # Calculate the distance to the nearest satellite that is too heavy
+        idx, sep2d, cendist3d = cencoords.match_to_catalog_3d(satcoords, nthneighbor=2)
+        cendistlist[massmask_cen] = cendist3d
+        #print(cendist3d)
+        
+print('logmbins:', logmlims)
+print('dlogm:', dlogm)
 
-"""
-
-iso2 = np.ones(len(galIDlist))
-iso3 = np.ones(len(galIDlist))
-iso4 = np.ones(len(galIDlist))
-
-iso2[distlist < Rmax2] = 0
-iso3[distlist < Rmax3] = 0
-iso4[distlist < Rmax4] = 0
-
-
-iso = np.array([iso2, iso3, iso4])
-
-Niso = [ float(np.sum(iso[i])) / float(len(galIDlist)) * 100. for i in xrange(len(iso)) ]
-print Niso, 'percent'
+dist0p5dex[nanmask] = cendistlist
 
 # Plot the results to a fits table
-filename = 'gama_isolated_galaxies_h%i'%(h*100.)
+filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_h%i'%(cat, h*100.)
 
-outputnames = ['logmstar', 'RankBCG', 'BCGdist', 'cendist', 'isoBCG2', 'isocen2', 'isoBCG3', 'isocen3', 'isoBCG4', 'isocen4']
-output = [logmstarlist, ranklist, BCGdistlist, cendistlist, isoBCG2, isocen2, isoBCG3, isocen3, isoBCG4, isocen4]
+outputnames = ['logmstar', 'dist0p5dex']
+formats = ['D', 'D']
+output = [logmstarlist, dist0p5dex]
 
-utils.write_catalog('%s.fits'%filename, galIDlist, outputnames, output)
+utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
+

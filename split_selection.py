@@ -42,16 +42,17 @@ utils.import_lenscat(cat, h, cosmo)
 # Binning parameter
 binname = 'logmstar'
 binvals = logmstar
-Nbins = 4
+Nbins = 2
 
 # Lens selection
-paramnames = np.array(['logmstar'])
-maskvals = np.array([ [8.5,12.] ])
+paramnames = np.array(['logmstar', 'dist0p5dex'])
+maskvals = np.array([ [8.5,12.], [3, inf] ])
+lenscatnames = np.array([lenscatname, 'gama_isolated_galaxies_h70.fits'])
 
 # Path to shear catalog
-path_sheardata = '/data2/brouwer/shearprofile/Lensing_results/EG_results_Oct18'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'
 path_catalog = 'catalogs/results_shearcatalog'
-path_cosmo = 'shearcatalog_ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins20_30_3000_kpc'
+path_cosmo = 'shearcatalog_ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_30_3000_kpc'
 path_filename = 'shearcatalog'
 
 shearcatname = '%s/%s/%s/%s.fits'%(path_sheardata, path_catalog, path_cosmo, path_filename)
@@ -70,7 +71,7 @@ srcm = shearcat['bias_m_A']
 variance = (shearcat['variance(e[A,B,C,D])'])[0,0]
 
 # Creating the lens mask
-lensmask, filename_var = utils.define_lensmask(paramnames, maskvals, path_lenscat, lenscatname, h)
+lensmask, filename_var = utils.define_lensmask(paramnames, maskvals, path_lenscat, lenscatnames, h)
 
 # Masking the binning values and shear catalog
 binvals, gammat, wk2, w2k2, srcm = binvals[lensmask], gammat[lensmask], wk2[lensmask], w2k2[lensmask], srcm[lensmask]
@@ -96,7 +97,6 @@ SN_ratio, binvals_sorted = [SN_ratio[np.isfinite(SN_ratio)], binvals_sorted[np.i
 
 
 SN_min, SN_max = [np.amin(SN_ratio), np.amax(SN_ratio)]
-print(SN_min, SN_max)
 SN_bins = np.linspace(SN_min, SN_max, Nbins+1)
 idx = [(np.abs(SN_ratio - value)).argmin() for value in SN_bins]
 binning_values = binvals_sorted[idx]
@@ -113,16 +113,10 @@ print('S/N per bin: %g'%np.sqrt(SN_bins[1]))
 plt.plot(binvals_sorted, SN_ratio, color='black')
 plt.xlabel('Binning parameter (%s)'%binname)
 plt.ylabel('Cumulative $|S/N|^2$ of the ESD profile')
-[plt.axvline(x=binning_values[i]) for i in xrange(Nbins+1)]
-[plt.axhline(y=SN_bins[i]) for i in xrange(Nbins+1)]
+[plt.axvline(x=binning_values[i]) for i in range(Nbins+1)]
+[plt.axhline(y=SN_bins[i]) for i in range(Nbins+1)]
 
 
 #plt.xscale('log')
 #plt.yscale('log')
 plt.show()
-
-
-
-
-
-

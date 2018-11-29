@@ -39,7 +39,6 @@ def import_kidscat(path_kidscat, kidscatname, h):
     
     rmag = kidscat['MAG_ISO_r_CALIB']
     
-   
     return galRA, galDEC, galZB, galZ, rmag
 
 
@@ -85,7 +84,7 @@ def import_micecat(path_micecat, micecatname, h):
     galDEC = micecat['dec_gal']
     
     galZ = micecat['z_cgal']
-    galDc = micecat['cgal']*1.e6/h # Convert source distances from Mpc to pc/h
+    galDc = micecat['cgal']*(h/0.7) * u.Mpc # Convert source distances from Mpc to pc/h
     
     rmag = micecat['sdss_r_true']
     rmag_abs = micecat['sdss_r_abs_mag']
@@ -110,7 +109,7 @@ def import_micecat(path_micecat, micecatname, h):
 # Import lens catalogue
 def import_lenscat(cat, h, cosmo):
 
-    path_lenscat = '/data2/brouwer/MergedCatalogues'
+    path_lenscat = '/data/users/brouwer/LensCatalogues'
     
     if 'gama' in cat:
         fields = ['G9', 'G12', 'G15']
@@ -190,15 +189,17 @@ def define_Rbins(Runit, Rmin, Rmax, Nbins, Rlog):
     return Rbins, Rcenters, Rmin, Rmax, xvalue
 
 
-def define_lensmask(paramnames, maskvals, path_lenscat, lenscatname, h):
+def define_lensmask(paramnames, maskvals, path_lenscat, lenscatnames, h):
     
     paramlist = []
     
-    # Import lens parameters
-    lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
-    lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
-    
     for p in range(len(paramnames)):
+        
+        print(lenscatnames)
+        
+        # Import lens parameters
+        lenscatfile = '%s/%s'%(path_lenscat, lenscatnames[p])
+        lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
         paramname = paramnames[p]
         paramvals = lenscat[paramname]
 
@@ -284,7 +285,7 @@ def write_catalog(filename, outputnames, formats, output):
     cols = pyfits.ColDefs(fitscols)
     tbhdu = pyfits.BinTableHDU.from_columns(cols)
 
-    #	print
+    #   print
     if os.path.isfile(filename):
         os.remove(filename)
         print('Old catalog overwritten:', filename)
