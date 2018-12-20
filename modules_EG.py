@@ -34,12 +34,14 @@ def import_kidscat(path_kidscat, kidscatname, h):
     # List of the observables of all sources in the KiDS catalogue
     galRA = kidscat['RA']
     galDEC = kidscat['DEC']
+    galID =  np.arange(len(galRA), dtype=int)
+    
     galZB = kidscat['Z_B_BPZ']
     galZ = kidscat['Z_MLPQNA']
     
     rmag = kidscat['MAG_ISO_r_CALIB']
     
-    return galRA, galDEC, galZB, galZ, rmag
+    return galID, galRA, galDEC, galZB, galZ, rmag
 
 
 def import_gamacat(path_gamacat, gamacatname, h):
@@ -48,7 +50,8 @@ def import_gamacat(path_gamacat, gamacatname, h):
     gamacatfile = '%s/%s'%(path_gamacat, gamacatname)
     gamacat = pyfits.open(gamacatfile, memmap=True)[1].data
     
-    # List of the observables of all sources in the KiDS catalogue
+    # List of the observables of all lenses in the GAMA catalogue
+    galID = gamacat['ID']
     galRA = gamacat['RA']
     galDEC = gamacat['DEC']
     galZ = gamacat['Z']
@@ -70,7 +73,7 @@ def import_gamacat(path_gamacat, gamacatname, h):
     galRA[gamamask], galDEC[gamamask], galZ[gamamask], rmag[gamamask], rmag_abs[gamamask], logmstar[gamamask]
     """
     
-    return galRA, galDEC, galZ, rmag, rmag_abs, logmstar
+    return galID, galRA, galDEC, galZ, rmag, rmag_abs, logmstar
 
 
 def import_micecat(path_micecat, micecatname, h):
@@ -80,11 +83,12 @@ def import_micecat(path_micecat, micecatname, h):
     micecat = pyfits.open(micecatfile, memmap=True)[1].data
     
     # List of the observables of all galaxies in the mice catalogue
+    galID =  micecat['unique_gal_id']
     galRA = micecat['ra_gal']
     galDEC = micecat['dec_gal']
     
     galZ = micecat['z_cgal']
-    galDc = micecat['cgal']*(h/0.7) * u.Mpc # Convert source distances from Mpc to pc/h
+    galDc = micecat['cgal']*(h/0.7)*u.Mpc # Convert source distances from Mpc to pc/h
     
     rmag = micecat['sdss_r_true']
     rmag_abs = micecat['sdss_r_abs_mag']
@@ -103,8 +107,27 @@ def import_micecat(path_micecat, micecatname, h):
         e1 = np.zeros(len(galZ))
         e2 = np.zeros(len(galZ))
     
-    return galRA, galDEC, galZ, galDc, rmag, rmag_abs, e1, e2, logmstar
+    return galID, galRA, galDEC, galZ, galDc, rmag, rmag_abs, e1, e2, logmstar
 
+
+def import_lepharecat(path_lepharecat, lepharecatname, h):
+    
+    # Full directory & name of the corresponding KiDS catalogue
+    lepharecatfile = '%s/%s'%(path_lepharecat, lepharecatname)
+    lepharecat = pyfits.open(lepharecatfile, memmap=True)[1].data
+    
+    # List of the observables of all galaxies in the mice catalogue
+    galID =  lepharecat['ID']
+    galRA = lepharecat['ALPHA_J2000']
+    galDEC = lepharecat['DELTA_J2000']
+    
+    galZ = lepharecat['Z_B']
+    
+    rmag = lepharecat['MAG_AUTO']
+    rmag_abs = lepharecat['MAG_ABS_r']
+    logmstar = lepharecat['MASS_MED']
+    
+    return galID, galRA, galDEC, galZ, rmag, rmag_abs, logmstar
 
 # Import lens catalogue
 def import_lenscat(cat, h, cosmo):
@@ -114,29 +137,34 @@ def import_lenscat(cat, h, cosmo):
     if 'gama' in cat:
         fields = ['G9', 'G12', 'G15']
 
-        # Importing GAMA catalogue
         lenscatname = 'GAMACatalogue_2.0.fits'
-        lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
+        lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_gamacat(path_lenscat, lenscatname, h)
-        
-        # Calculating galaxy distances
-        lensDc = cosmo.comoving_distance(lensZ)
         
     if 'kids' in cat:
         fields = ['G9', 'G12', 'G15', 'G23', 'GS']
         lenscatname = 'kids_masses/catalog_DR2_DR3_5M_234params_FULL_2017-10-10.fits'
-        lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
-        import_kidscat(path_kidscat, lenscatname, h)
-    
+        lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
+        import_kidscat(path_lenscat, lenscatname, h)
+        
+    if 'lephare' in cat:
+        fields = ['G9', 'G12', 'G15', 'G23', 'GS']
+        lenscatname = 'KIDS_allcats.LPoutput.gamalike.fits'
+        lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
+        import_lepharecat(path_lenscat, lenscatname, h)
+        
     if 'mice' in cat:
         fields = ['M1']
-
-        #Importing MICE catalogue
         lenscatname = 'mice2_gama_catalog_100deg2.fits'
-        lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
+        lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
+
+    # Calculating galaxy distances (in Mpc)
+    if 'mice' not in cat:
+        lensDc = calc_Dc(lensZ, cosmo)
+        #print(lensDc)
     
-    return fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar
+    return fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar
 
 # Import source catalogue
 def import_srccat(path_srccat, srccatname):
@@ -272,6 +300,19 @@ def calc_absmag(rmag, galZ, gmag, imag, h, O_matter, O_lambda):
     
     return rmag_abs
 
+# Compute distances for a list of redshifts
+def calc_Dc(Z, cosmo):
+    
+    # Find and sort the unique redshift values
+    Zbins = np.sort(np.unique(Z))
+    
+    # Calculate the corresponding distances
+    Dcbins = cosmo.comoving_distance(Zbins)
+    
+    # Assign the appropriate distances to all lens redshifts
+    Dc = Dcbins[np.digitize(Z, Zbins)-1]
+    
+    return Dc
 
 # Write the results to a fits catalogue
 def write_catalog(filename, outputnames, formats, output):

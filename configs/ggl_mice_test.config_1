@@ -40,15 +40,15 @@ lensID_file        None                                                         
  lens_weights       lmstellar      self                        # Weight name and path to fits file with lens weights (optional). (Not yet working)
 
 # Lens parameter for binning, path to fits file (choose "self" for same as lens catalog), and in edges (at least 3 edges, bin[i-1] <= x < bin[i]), or the number of bins.
- lens_binning       None                                                                                 
+#lens_binning       None                                                                                 
 #lens_binning       lmstellar       self               8.5,10.5,10.8,10.9,11.0    # EV paper
 #lens_binning       lmstellar       self               8.5,10.3,10.6,10.8,11.0    # Equal S/N (log(M)<11)
-#lens_binning       lmstellar       self               8.5,10.5,10.8,11.1,12.0    # Equal S/N
+ lens_binning       lmstellar       self               8.5,10.5,10.8,11.1,12.0    # Equal S/N
 
-#lens_limits1       lmstellar           self                                                     8.5,12.0
+ lens_limits1       lmstellar           self                                                     8.5,12.0
 #lens_limits2       flag_central        self                                                  1        # Lens parameter for limits, path to fits file (choose "self" for same as lens catalog), and 
 #lens_limits1       Nfof                self                                                      5,inf       #      (one value) or (two comma separated limits) between -inf and inf.
- lens_limits2       dist0p1perc     /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits   4.5,inf
+ lens_limits2       dist0p2perc     /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits   4,inf
 
 # Source selection
 src_limits1           z_cgal        0.1,0.9             # Source parameter for limits and one value, or

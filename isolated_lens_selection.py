@@ -20,15 +20,12 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'mice' # Select the lens catalogue (kids/gama/mice)
+cat = 'lephare' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
-fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
+fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
-
-# This list will contain all satellite distances
 logmstarlist = logmstar
-dist0p5dex = np.zeros(len(lensRA)) * u.Mpc
 
 # Remove all galaxies with logmstar=NAN
 nanmask = np.isfinite(logmstar)
@@ -46,41 +43,60 @@ logmlims = np.linspace(logm_min, logm_max, Nlogmbins+1)
 dlogm = np.diff(logmlims)[0]
 logmbins = logmlims[0:-1] + dlogm
 
-cendistlist = np.zeros(len(lenscoords)) * u.Mpc
 
 # The nearby galaxies should not be heaver than X times the galaxy
-massratio = 1./10**0.5 # ... where X=0.5 dex
+"""
+rationame = 'dex'
+dexvalues = [0.5, 0.6, 0.7, 0.8]
+rationames = [('%s'%d).replace('.', 'p') for d in dexvalues]
+massratios = [1./10**d for d in dexvalues] # ... where X=0.5 dex
+"""
+rationame = 'perc'
+#massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
+massratios = [0.2, 0.1]
+rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 
-for m in np.arange(Nlogmbins):
+# This list will contain all satellite distances
+distmdex = np.zeros([len(massratios), len(logmstarlist)]) * u.Mpc
 
-    # Masking the centrals and satellites
-    massmask_cen = (logmlims[m] < logmstar) & (logmstar <= logmlims[m+1])
-    massmax_sat = np.log10(np.mean(10**logmstar[massmask_cen]) * massratio) # Satellites with X times the mean central mass
-    massmask_sat = (logmstar > massmax_sat) # ... are "too heavy" for these centrals
-    cencoords, satcoords = [lenscoords[massmask_cen], lenscoords[massmask_sat]]
+for d in range(len(massratios)):
+    print('Satellites lighter then: %g %s * Mcen'%(massratios[d], rationame))
+
+    cendistlist = np.zeros(len(lenscoords)) * u.Mpc
+    for m in np.arange(Nlogmbins):
     
-    print('%g < logmstar < %g: %i galaxies'%(logmlims[m], logmlims[m+1], len(cencoords)))
-    print('Max(logm) satellite: %g'%massmax_sat)
-
-
-    if (len(cencoords)>0) & (len(satcoords)>0):
+        #print(d, m)
+    
+        # Masking the centrals and satellites
+        massmask_cen = (logmlims[m] < logmstar) & (logmstar <= logmlims[m+1])
+        massmax_sat = np.log10(np.mean(10**logmstar[massmask_cen]) * massratios[d]) # Satellites with X times the mean central mass
+        massmask_sat = (logmstar > massmax_sat) # ... are "too heavy" for these centrals
+        cencoords, satcoords = [lenscoords[massmask_cen], lenscoords[massmask_sat]]
         
-        # Calculate the distance to the nearest satellite that is too heavy
-        idx, sep2d, cendist3d = cencoords.match_to_catalog_3d(satcoords, nthneighbor=2)
-        cendistlist[massmask_cen] = cendist3d
-        #print(cendist3d)
+        #print('%g < logmstar < %g: %i galaxies'%(logmlims[m], logmlims[m+1], len(cencoords)))
+        #print('Max(logm) satellite: %g'%massmax_sat)
+        #print('%g percent of satellites selected'%(np.sum(massmask_sat)/float(len(massmask_sat))*100.))
+        #print(len(cencoords), len(satcoords))
         
+        if (len(cencoords)>0) & (len(satcoords)>0):
+            
+            # Calculate the distance to the nearest satellite that is too heavy
+            idx, sep2d, cendist3d = cencoords.match_to_catalog_3d(satcoords, nthneighbor=2)
+            cendistlist[massmask_cen] = cendist3d
+            #print(cendist3d)
+    
+    (distmdex[d])[nanmask] = cendistlist
+
 print('logmbins:', logmlims)
 print('dlogm:', dlogm)
 
-dist0p5dex[nanmask] = cendistlist
-
 # Plot the results to a fits table
-filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_h%i'%(cat, h*100.)
+filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_perc_h%i'%(cat, h*100.)
 
-outputnames = ['logmstar', 'dist0p5dex']
-formats = ['D', 'D']
-output = [logmstarlist, dist0p5dex]
+outputnames = np.append(['logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])
+formats = np.append(['D'], ['D']*len(massratios))
+output = np.append([logmstarlist], distmdex, axis=0)
+print(outputnames, formats, output)
 
 utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
 

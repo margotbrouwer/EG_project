@@ -1,16 +1,25 @@
-Lens selections
-
-# Equal S/N
-8.5    10.5    9.93974
-10.5    10.8    10.6538
-10.8    11.1    10.9391
-11.1    12    11.2914
-
+# Lens bins with Equal S/N
 
 Selection: logmstar_8p5_12_dist0p5dex_3_inf
 Selected: 52116 of 180960 lenses (28.7997 percent)
 Bin name: logmstar
-Binning values (2): 8.5,11.1,12
-Binning values (4): 8.5,10.9,11.1,11.4,12
+Binning values (2 bins): 8.5,11.1,12
+Binning values (4 bins): 8.5,10.9,11.1,11.4,12
 S/N per bin: 3.14028
 
+Selection: logmstar_8p5_12_nQ_3_inf_dist0p2perc_4_inf
+Selected: 29620 of 180960 lenses (16.3683 percent)
+Bin name: logmstar
+Binning values: 8.5,10.8,11.1,11.4,12
+S/N per bin: 2.18523
+
+Selection: logmstar_8p5_12_nQ_3_inf
+Selected: 177658 of 180960 lenses (98.1753 percent)
+Bin name: logmstar
+Binning values (4 bins): 8.5,10.5,10.8,11.1,12
+S/N per bin: 6.83305
+
+8.5    10.5    9.93974
+10.5    10.8    10.6538
+10.8    11.1    10.9391
+11.1    12    11.2914

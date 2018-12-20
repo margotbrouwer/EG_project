@@ -36,18 +36,20 @@ cosmo = LambdaCDM(H0=h*100, Om0=O_matter, Ode0=O_lambda)
 cat = 'gama' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
-fields, path_lenscat, lenscatname, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
+fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
 # Binning parameter
 binname = 'logmstar'
 binvals = logmstar
-Nbins = 2
+Nbins = 4
 
 # Lens selection
-paramnames = np.array(['logmstar', 'dist0p5dex'])
-maskvals = np.array([ [8.5,12.], [3, inf] ])
-lenscatnames = np.array([lenscatname, 'gama_isolated_galaxies_h70.fits'])
+isocatname = 'gama_isolated_galaxies_perc_h70.fits'
+
+paramnames = np.array(['logmstar', 'nQ', 'dist0p2perc'])
+maskvals = np.array([ [8.5,12.], [3, inf], [4, inf] ])
+lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
 # Path to shear catalog
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'

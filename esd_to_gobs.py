@@ -44,11 +44,11 @@ def calc_sis(sigma_v, r, R):
     return gobs_sis, Mobs_sis, rho_sis, sigma_sis, avsigma_sis, esd_sis
 
 # Define the projected (R) and spherical (r) distance bins
-Nbins_R = 20
-Nbins_r = 20
+Nbins_R = int(1e2)
+Nbins_r = int(1e2)
 Runit = 'kpc'
 Rlog = True
-Rmin, Rmax = np.array([30., 3000.]) # in pc
+Rmin, Rmax = np.array([10., 9000.]) # in pc
 rmin, rmax = np.array([30., 3000.]) # in pc
 
 Rbins, Rcenters, Rmin, Rmax, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins_R, Rlog)
@@ -125,9 +125,9 @@ labels_an = [r'Sigma (analytical)', r'avSigma (analytical)', r'ESD (analytical)'
 labels_num = [r'Sigma (numerical)', r'avSigma (numerical)', r'ESD (numerical)']
 results_an = [sigma_sis, avsigma_sis, esd_sis]
 results_num = [sigma_m, avsigma_m, esd_m]
-#"""
 
 """
+
 print(C_mn)
 # Invert matrices
 Cmn_inv = np.linalg.inv(C_mn)
@@ -150,21 +150,21 @@ rho_n2 = np.dot(Cmn_inv, sigma_sis)
 labels_an = [r'rho1 (analytical)', r'rho2 (analytical)']
 labels_num = [r'rho1 (numerical)', r'rho2 (numerical)']
 results_an = [rho_sis, rho_sis]
-results_num = [rho_n1, rho_n2]
+results_num = [rho_n1, -rho_n2]
 """
 
 # Plot the results
 
 for r in range(len(results_num)):
-    plt.plot((Rcenters*(1+r/20.))/xvalue, results_an[r], marker='o', ls='', color=colors[r], label=labels_an[r])
+    plt.plot((Rcenters*(1+r/20.))/xvalue, results_an[r], ls='--', color=colors[r], label=labels_an[r])
     plt.plot((Rcenters*(1+r/20.))/xvalue, results_num[r], color=colors[r], label=labels_num[r])
     
     print()
     print('Difference:', labels_an[r], labels_num[r])
     print(np.mean(1.-results_num[r]/results_an[r]))
 
-#plt.axvline(x=rmin/xvalue)
-#plt.axvline(x=rmax/xvalue)
+plt.axvline(x=rmin/xvalue, ls=':', color='black')
+plt.axvline(x=rmax/xvalue, ls=':', color='black')
 
 plt.legend()
 plt.xscale('log')
