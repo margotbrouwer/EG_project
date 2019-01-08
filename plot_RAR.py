@@ -55,16 +55,17 @@ H0 = 2.269e-18 # 70 km/s/Mpc in 1/s
 h=0.7
 
 def gobs_mond(gbar, g0=1.2e-10):
-    gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
+    gobs = np.log10(10.**gbar / (1 - np.exp( -np.sqrt(10.**gbar/g0) )))
     return gobs
 
 def gobs_verlinde(gbar):
     gobs = gbar + np.sqrt((c*H0)/6) * np.sqrt(gbar)
     return gobs
 
-gbar_mond = np.logspace(-12, -8, 50)
-gbar_ext = np.logspace(-15, -12, 30)
-gbar_uni = np.logspace(-15, -8, 50)
+gbar_mond = np.linspace(-12, -8, 50)
+gbar_ext = np.linspace(-15, -12, 30)
+gbar_uni = np.linspace(-15, -8, 50)
+
 
 ## Import shear and random profiles
 
@@ -148,7 +149,7 @@ path_filename = np.array([['No_bins_A']])
 
 datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)']# $({\rm log}_{10}({\rm \bar{M}}_*)=11.1 {\rm M}_\odot)$']
 
-plotfilename = '%s/Plots/RAR_GAMA_isolated'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_isolated_McGaugh_binned_meanerror'%path_sheardata
 
 """
 # GAMA+MICE (isolated)
@@ -182,6 +183,12 @@ print('Plots, profiles:', Nbins)
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 data_y, error_h, error_l = 4. * G * 3.08567758e16 *\
     np.array([data_y, error_h, error_l]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+
+error_h = 1./np.log(10.) * error_h/data_y
+error_l = 1./np.log(10.) * error_l/data_y
+data_x, data_y = np.log10(np.array([data_x, data_y]))
+
+print(error_h)
 
 # Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
@@ -223,8 +230,51 @@ gobs_navarro = [data_navarro[m][1] + data_navarro[m][0] for m in range(len(masse
 
 # Import McGaugh data
 data_mcgaugh = np.loadtxt('RAR_profiles/mcgaugh2016_RAR.txt').T
-gbar_mcgaugh, gbar_mcgaugh_error = [data_navarro[0], data_navarro[1]]
-gobs_mcgaugh, gobs_mcgaugh_error = [data_navarro[2], data_navarro[3]]
+loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error = np.array([data_mcgaugh[d] for d in range(4)])
+
+gbar_mcgaugh, gbar_mcgaugh_error, gobs_mcgaugh, gobs_mcgaugh_error = \
+loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error
+#gbar_mcgaugh = 10.**loggbar_mcgaugh
+#gobs_mcgaugh = 10.**loggobs_mcgaugh
+"""
+gbar_mcgaugh_error_low = gbar_mcgaugh - 10.**(loggbar_mcgaugh-loggbar_mcgaugh_error)
+gbar_mcgaugh_error_high = 10.**(loggbar_mcgaugh+loggbar_mcgaugh_error) - gbar_mcgaugh
+gobs_mcgaugh_error_low = gobs_mcgaugh - 10.**(loggobs_mcgaugh-loggobs_mcgaugh_error)
+gobs_mcgaugh_error_high = 10.**(loggobs_mcgaugh+loggobs_mcgaugh_error) - gobs_mcgaugh
+"""
+#gbar_mcgaugh_error = np.log(10.) * gbar_mcgaugh * loggbar_mcgaugh_error
+#gobs_mcgaugh_error = np.log(10.) * gobs_mcgaugh * loggobs_mcgaugh_error
+#"""
+
+# Bin the McGaugh data
+Nbins_gbar = 10
+gbar_lims = np.linspace(-12, -8, Nbins_gbar)
+inds = np.digitize(gbar_mcgaugh, gbar_lims)
+
+gbar_mcgaugh_mean = np.array([np.mean(gbar_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
+gobs_mcgaugh_mean = np.array([np.mean(gobs_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
+gbar_mcgaugh_number = np.array([len(gbar_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
+
+gbar_mcgaugh_std = np.array([np.std(gbar_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
+gobs_mcgaugh_std = np.array([np.std(gobs_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
+
+gbar_mcgaugh_meanerror = np.sqrt(np.array([np.sum((gbar_mcgaugh_error[inds==b])**2.) for b in range(Nbins_gbar)]))/gbar_mcgaugh_number
+gobs_mcgaugh_meanerror = np.sqrt(np.array([np.sum((gobs_mcgaugh_error[inds==b])**2.) for b in range(Nbins_gbar)]))/gbar_mcgaugh_number
+
+"""
+gobs_mcgaugh_meanerror_low = np.sqrt(np.array([np.sum((gobs_mcgaugh_error_low[inds==b])**2.) for b in range(Nbins_gbar)]))
+gobs_mcgaugh_meanerror_high = np.sqrt(np.array([np.sum((gobs_mcgaugh_error_high[inds==b])**2.) for b in range(Nbins_gbar)]))
+gobs_mcgaugh_meanerror_low, gobs_mcgaugh_meanerror_high = \
+[gobs_mcgaugh_meanerror_low, gobs_mcgaugh_meanerror_high]/gbar_mcgaugh_number
+
+gbar_mcgaugh_meanerror_low = np.sqrt(np.array([np.sum((gbar_mcgaugh_error_low[inds==b])**2.) for b in range(Nbins_gbar)]))
+gbar_mcgaugh_meanerror_high = np.sqrt(np.array([np.sum((gbar_mcgaugh_error_high[inds==b])**2.) for b in range(Nbins_gbar)]))
+gbar_mcgaugh_meanerror_low, gbar_mcgaugh_meanerror_high = \
+[gbar_mcgaugh_meanerror_low, gbar_mcgaugh_meanerror_high]/gbar_mcgaugh_number
+
+gobs_mcgaugh_stderror = gobs_mcgaugh_std#/np.sqrt(gbar_mcgaugh_number)
+gbar_mcgaugh_stderror = gbar_mcgaugh_std#/np.sqrt(gbar_mcgaugh_number)
+"""
 
 ## Mocks
 print()
@@ -306,7 +356,7 @@ print(Nbins)
 if Nbins[0] > 1:
     fig = plt.figure(figsize=(Ncolumns*5.,Nrows*4))
 else:
-    fig = plt.figure(figsize=(6,5))
+    fig = plt.figure(figsize=(8,6))
 
 gs_full = gridspec.GridSpec(1,1)
 gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subplot_spec=gs_full[0,0])
@@ -315,6 +365,8 @@ ax = fig.add_subplot(gs_full[0,0])
 
 print(Nrows)
 print(Ncolumns)
+print(gbar_mond)
+print(gobs_mond(gbar_mond))
 
 for N1 in range(Nrows):
     for N2 in range(Ncolumns):
@@ -351,20 +403,28 @@ for N1 in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', zorder=4)
+                color=colors[2], ls='', marker='.', zorder=4)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', label=datalabels[Nplot], zorder=4)
+                color=colors[2], ls='', marker='.', label=datalabels[Nplot], zorder=4)
             
             """
             # Plot Navarro predictions
             ax_sub.plot(gbar_navarro[Ndata], gobs_navarro[Ndata], ls='--', marker='', color=colors[Ndata], \
             label='Navarro+2017 ($M_*=%g M_\odot$)'%float(masses_navarro[Ndata]), zorder=5)
             """
+            #"""
+            ## Plot McGaugh observations
+            # Binned
+            ax_sub.errorbar(gbar_mcgaugh_mean, gobs_mcgaugh_mean, yerr=gobs_mcgaugh_meanerror, \
+            marker='.', ls='', label='McGaugh+2016 observations (mean + mean error)', zorder=5)
             
-            # Plot McGaugh observations
-            ax_sub.plot(gbar_mcgaugh, gobs_mcgaugh, ls='--', marker='', color=colors[Ndata], \
-            label='Navarro+2017 ($M_*=%g M_\odot$)'%float(masses_navarro[Ndata]), zorder=5)
+            """
+            # Not binned
+            ax_sub.errorbar(gbar_mcgaugh, gobs_mcgaugh, xerr=gbar_mcgaugh_error, \
+            yerr=gobs_mcgaugh_error, ls='', marker='.', color=colors[0], alpha=0.04, \
+            label='McGaugh+2016 observations', zorder=2)
+            """
             
         try:
             # Plot mock shearprofiles
@@ -415,18 +475,17 @@ for N1 in range(Nrows):
         #ax_sub.plot(gbar_kyle[1], gobs_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
         #ax_sub.plot(gbar_kyle[2], gobs_kyle[2], ls='--', marker='', color=colors[3], label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
         
-        plt.xscale('log')
-        plt.yscale('log')
+        #plt.xscale('log')
+        #plt.yscale('log')
         
         # Zoomed in
         #plt.xlim([1e-15, 1e-11])
         #plt.ylim([0.5e-13, 1e-10])
 
         # Zoomed out
-        plt.xlim([1e-15, 1e-8])
-        plt.ylim([0.5e-13, 1e-8])
+        plt.xlim([-15, -8])
+        plt.ylim([-13.2, -8])
         
-                
         #plt.gca().invert_xaxis()
         #plt.gca().invert_yaxis()
         
@@ -434,8 +493,8 @@ for N1 in range(Nrows):
             plt.title(datatitles[N], x = 0.26, y = 0.88, fontsize=16)
 
 # Define the labels for the plot
-xlabel = r'Baryonic radial acceleration $g_{\rm bar}$ [${\rm h_{%g} \, m/s^2}$]'%(h*100)
-ylabel = r'Total radial acceleration $g_{\rm tot}$ [${\rm h_{%g} \, m/s^2}$]'%(h*100)
+xlabel = r'Baryonic radial acceleration log($g_{\rm bar}$ [${\rm h_{%g} \, m/s^2}$])'%(h*100)
+ylabel = r'Total radial acceleration log($g_{\rm tot}$ [${\rm h_{%g} \, m/s^2}$])'%(h*100)
 ax.set_xlabel(xlabel, fontsize=12)
 ax.set_ylabel(ylabel, fontsize=12)
 
