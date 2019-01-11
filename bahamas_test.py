@@ -24,7 +24,7 @@ from matplotlib import gridspec
 catnum = 1039
 path_cat = '/data/users/brouwer/Simulations/Bahamas'
 catname = np.array(['BAHAMAS_nu0_L400N1024_WMAP9/z_0.250/MAPS/cluster_%i.fits'%i \
-    for i in np.arange(catnum)+1])
+    for i in range(catnum)])
 
 # Bahamas simulation variables
 Zlens = 0.25
@@ -36,7 +36,7 @@ Lpix = Npix * dpix
 ## Define projected distance bins R
 
 # Creating the Rbins
-Runit, Rmin, Rmax, Nbins = ['Mpc', 0.03, 3., 10]
+Runit, Rmin, Rmax, Nbins = ['Mpc', 0.03, 3., 20]
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
 print('Rbins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 
@@ -71,7 +71,7 @@ print('Computing the ESD profile of:')
 for c in range(catnum):
 #for c in range(10):
     
-    print('Cluster %i/%i'%(c+1, catnum))
+    print('Cluster %i (%i/%i)'%(c, c+1, catnum))
     
     # Full directory & name of the Bahamas catalogue
     catfile = '%s/%s'%(path_cat, catname[c])
@@ -122,6 +122,6 @@ plt.show()
 filename = '%s/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
 outputnames = ['cluster', 'ESD']
 formats = ['I', '%iD'%Nbins]
-output = [np.arange(catnum)+1, ESD_list]
+output = [range(catnum), ESD_list]
 
 utils.write_catalog(filename, outputnames, formats, output)
