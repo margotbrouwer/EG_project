@@ -86,7 +86,7 @@ path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'
 ## Input lens selections
 
 """
-
+"""
 # Mass bins (4) with equal S/N (GAMA vs MICE)
 paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
 N = len(paramlims)-1
@@ -104,8 +104,8 @@ path_mocksel = np.array([['lmstellar_8p5_10p5_10p8_11p1_12p0/dist0p1perc_4p5_inf
 path_mockcosmo = np.array([['zcgal_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']]*N)
 path_mockfilename = np.array([['shearcovariance_bin_%i_A'%i] for i in np.arange(N)+1])
 
-plotfilename = '%s/Plots/RAR_GAMA+MICE+Navarro_4-massbins_isolated_strong'%path_sheardata
-
+plotfilename = '%s/Plots/RAR_GAMA+Navarro_4-massbins_isolated_strong'%path_sheardata
+"""
 
 # Mass bins (4) with equal S/N (KiDS-only vs MICE)
 paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
@@ -140,7 +140,7 @@ datalabels = ['Weaker (%sperc/%sMpc)'%(percvalues[0],distvalues[0]), 'Fiducial (
     'Stronger (%sperc/%sMpc)'%(percvalues[2],distvalues[2])]
 datatitles = [r'Maximum satellite mass (Rmin=4Mpc)', r'Minimum satellite distance (Mmax=0p2perc)']
 
-"""
+
 
 # GAMA (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])
@@ -149,9 +149,9 @@ path_filename = np.array([['No_bins_A']])
 
 datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)']# $({\rm log}_{10}({\rm \bar{M}}_*)=11.1 {\rm M}_\odot)$']
 
-plotfilename = '%s/Plots/RAR_GAMA_isolated_McGaugh_binned_meanerror'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_isolated_McGaugh_binned_hist2d'%path_sheardata
 
-"""
+
 # GAMA+MICE (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])#, 'No_bins/dist0p2perc_4_inf_lw-lmstellar']])
 path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']])#, 'zcgal_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']])
@@ -183,12 +183,19 @@ print('Plots, profiles:', Nbins)
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 data_y, error_h, error_l = 4. * G * 3.08567758e16 *\
     np.array([data_y, error_h, error_l]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+print('data_y:', data_y)
 
-error_h = 1./np.log(10.) * error_h/data_y
-error_l = 1./np.log(10.) * error_l/data_y
-data_x, data_y = np.log10(np.array([data_x, data_y]))
+error_h = 1./np.log(10.) * error_h/abs(data_y)
+error_l = 1./np.log(10.) * error_l/abs(data_y)
+data_x = np.log10(data_x)
 
-print(error_h)
+print('error_h:', error_h)
+
+floor = 1e-15
+error_h[data_y<0.] = data_y[data_y<0.] + error_h[data_y<0.] - floor
+data_y[data_y<0.] = floor
+data_y[data_y>0.] = np.log10(data_y[data_y>0.])
+
 
 # Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
@@ -221,16 +228,21 @@ errorh_cres = 10**(cres[1]+cres[3]) - 10**cres[1]
 # Import Kyle's RAR (based on Navarro et al. 2017)
 #masses_navarro = ['1.0E9', '2.1E10', '1.0E11'] # (in Msun)
 masses_navarro = ['1.5E10', '4.6E10', '8.9E10', '1.8E11'] # Median bin mass (in Msun)
+#masses_navarro = ['6.3E10'] # Median of all isolated galaxies
 
 data_navarro = [np.loadtxt('RAR_profiles/RAR_Mstar%s.txt'%m).T for m in masses_navarro]
 
-gbar_navarro = [data_navarro[m][1] for m in range(len(masses_navarro))]
-gobs_navarro = [data_navarro[m][1] + data_navarro[m][0] for m in range(len(masses_navarro))]
+gbar_navarro = np.array([data_navarro[m][1] for m in range(len(masses_navarro))])
+gobs_navarro = np.array([data_navarro[m][1] + data_navarro[m][0] for m in range(len(masses_navarro))])
 #gobs_kyle = np.array([kyle9[1]+kyle9[0], kyle10[1]+kyle10[0], kyle11[1]+kyle11[0]])
+gbar_navarro, gobs_navarro = [np.log10(gbar_navarro), np.log10(gobs_navarro)]
 
 # Import McGaugh data
 data_mcgaugh = np.loadtxt('RAR_profiles/mcgaugh2016_RAR.txt').T
 loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error = np.array([data_mcgaugh[d] for d in range(4)])
+
+data_mcgaugh_binned = np.loadtxt('RAR_profiles/mcgaugh2016_RAR_binned.txt').T
+loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, sd_mcgaugh, N_mcgaugh = np.array([data_mcgaugh_binned[d] for d in range(4)])
 
 gbar_mcgaugh, gbar_mcgaugh_error, gobs_mcgaugh, gobs_mcgaugh_error = \
 loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error
@@ -247,8 +259,8 @@ gobs_mcgaugh_error_high = 10.**(loggobs_mcgaugh+loggobs_mcgaugh_error) - gobs_mc
 #"""
 
 # Bin the McGaugh data
-Nbins_gbar = 10
-gbar_lims = np.linspace(-12, -8, Nbins_gbar)
+Nbins_gbar = 14
+gbar_lims = np.linspace(-11.5, -8.8, Nbins_gbar)
 inds = np.digitize(gbar_mcgaugh, gbar_lims)
 
 gbar_mcgaugh_mean = np.array([np.mean(gbar_mcgaugh[inds==b]) for b in range(Nbins_gbar)])
@@ -298,7 +310,11 @@ try:
     data_x_mock, data_y_mock, error_h_mock, error_l_mock = utils.read_esdfiles(esdfiles_mock)
     data_y_mock, error_h_mock, error_l_mock = 4. * G * 3.08567758e16 *\
         np.array([data_y_mock, error_h_mock, error_l_mock]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
-
+    
+    error_h_mock = 1./np.log(10.) * error_h_mock/data_y_mock
+    error_l_mock = 1./np.log(10.) * error_l_mock/data_y_mock
+    data_x_mock, data_y_mock = np.log10(np.array([data_x_mock, data_y_mock]))
+    
     IDfiles_mock = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles_mock])
     lensIDs_selected_mock = np.array([np.loadtxt(m) for m in IDfiles_mock])
 
@@ -315,7 +331,7 @@ try:
             
         pixelsize = 0.43 / 60. * pi/180. # arcmin to radian
         min_R = pixelsize * Dc_max
-        max_gbar[m] = (G*3.08567758e16 * mstar_mean)/min_R**2.
+        max_gbar[m] = np.log10((G*3.08567758e16 * mstar_mean)/min_R**2.)
 
     #    print('Dc_max:', Dc_max)
     #    print('mstar_mean:', mstar_mean)
@@ -352,7 +368,6 @@ except:
 Ncolumns = int(Nbins[0]/Nrows)
 
 # Plotting the ueber matrix
-print(Nbins)
 if Nbins[0] > 1:
     fig = plt.figure(figsize=(Ncolumns*5.,Nrows*4))
 else:
@@ -363,10 +378,6 @@ gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subpl
 
 ax = fig.add_subplot(gs_full[0,0])
 
-print(Nrows)
-print(Ncolumns)
-print(gbar_mond)
-print(gobs_mond(gbar_mond))
 
 for N1 in range(Nrows):
     for N2 in range(Ncolumns):
@@ -376,9 +387,9 @@ for N1 in range(Nrows):
         N = np.int(N1*Ncolumns + N2)
         
         # Plot guiding lines
-        ax_sub.plot(gbar_mond, gobs_mond(gbar_mond), label = r'McGaugh et al. 2016 relation (extrapolated)',\
-            color='black', ls='-', marker='', zorder=3)
-        ax_sub.plot(gbar_ext, gobs_mond(gbar_ext), color='black', ls='--', marker='', zorder=2)
+        ax_sub.plot(gbar_mond, gobs_mond(gbar_mond), label = r'McGaugh+2016 fitting function (extrapolated)',\
+            color='grey', ls='-', marker='', zorder=3)
+        ax_sub.plot(gbar_ext, gobs_mond(gbar_ext), color='grey', ls='--', marker='', zorder=2)
         #ax_sub.plot(gbar_uni, gobs_verlinde(gbar_uni), label = 'Verlinde+2016',\
         #    color='red', ls=':', marker='', zorder=4)
         ax_sub.plot(gbar_uni, gbar_uni, label = r'Unity (No dark matter: $g_{\rm tot} = g_{\rm bar}$)', \
@@ -403,35 +414,38 @@ for N1 in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[2], ls='', marker='.', zorder=4)
+                color=colors[Ndata], ls='', marker='.', zorder=4)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[2], ls='', marker='.', label=datalabels[Nplot], zorder=4)
+                color=colors[Ndata], ls='', marker='.', label=datalabels[Nplot], zorder=4)
             
             """
             # Plot Navarro predictions
             ax_sub.plot(gbar_navarro[Ndata], gobs_navarro[Ndata], ls='--', marker='', color=colors[Ndata], \
-            label='Navarro+2017 ($M_*=%g M_\odot$)'%float(masses_navarro[Ndata]), zorder=5)
-            """
-            #"""
+            label='Navarro+2017 ($M_*=%s} M_\odot$)'%masses_navarro[Ndata].replace('E','\cdot10^{'), zorder=5)
+            
             ## Plot McGaugh observations
             # Binned
             ax_sub.errorbar(gbar_mcgaugh_mean, gobs_mcgaugh_mean, yerr=gobs_mcgaugh_meanerror, \
-            marker='.', ls='', label='McGaugh+2016 observations (mean + mean error)', zorder=5)
+            marker='s', color='red', ls='', label='McGaugh+2016 observations (mean + mean error)', zorder=5)
             
-            """
+            
             # Not binned
             ax_sub.errorbar(gbar_mcgaugh, gobs_mcgaugh, xerr=gbar_mcgaugh_error, \
             yerr=gobs_mcgaugh_error, ls='', marker='.', color=colors[0], alpha=0.04, \
             label='McGaugh+2016 observations', zorder=2)
-            """
             
+            ax_sub.plot(loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, label='McGaugh+2016 observations (mean)', \
+                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=3)
+            #ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=50, cmin=1, cmap='Blues')
+            """
+
         try:
             # Plot mock shearprofiles
             for Nmock in range(Nmocks[1]):
 
                 Ndata = Nplot + N*(Nmocks[1])
-                gbar_mask = data_x[Ndata]<np.inf #max_gbar[Ndata]
+                gbar_mask = data_x[Ndata]<max_gbar[Ndata] # np.inf 
                 
                 if Ndata==0:
                     ax_sub.plot(data_x_plot[gbar_mask], (data_y_mock[Ndata])[gbar_mask], \
@@ -464,8 +478,8 @@ for N1 in range(Nrows):
         
         #plt.autoscale(enable=False, axis='both', tight=None)
         
-        ax.xaxis.set_label_coords(0.5, -0.12)
-        ax.yaxis.set_label_coords(-0.12/Ncolumns, 0.5)
+        ax.xaxis.set_label_coords(0.5, -0.1)
+        ax.yaxis.set_label_coords(-0.15/Ncolumns, 0.5)
             
         # Plot Crescenzo's data
         #ax_sub.errorbar(gbar_cres, gobs_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
@@ -483,8 +497,8 @@ for N1 in range(Nrows):
         #plt.ylim([0.5e-13, 1e-10])
 
         # Zoomed out
-        plt.xlim([-15, -8])
-        plt.ylim([-13.2, -8])
+        plt.xlim([-15, -11])
+        plt.ylim([-13, -10])
         
         #plt.gca().invert_xaxis()
         #plt.gca().invert_yaxis()
@@ -495,8 +509,8 @@ for N1 in range(Nrows):
 # Define the labels for the plot
 xlabel = r'Baryonic radial acceleration log($g_{\rm bar}$ [${\rm h_{%g} \, m/s^2}$])'%(h*100)
 ylabel = r'Total radial acceleration log($g_{\rm tot}$ [${\rm h_{%g} \, m/s^2}$])'%(h*100)
-ax.set_xlabel(xlabel, fontsize=12)
-ax.set_ylabel(ylabel, fontsize=12)
+ax.set_xlabel(xlabel, fontsize=16)
+ax.set_ylabel(ylabel, fontsize=16)
 
 handles, labels = ax_sub.get_legend_handles_labels()
 
