@@ -27,13 +27,15 @@ h=0.7
 
 ## Import Bahamas file
 
-catnum = 10#39
+catnum = 10 #1039
 path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 mapname = np.array(['MAPS/cluster_%i.fits'%i \
     for i in range(catnum)])
 
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T
+M200list = 10.**catalog[3] # M200 of each galaxy
+r200list = catalog[4] # r200 of each galaxy
 logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 
 #lenslist = np.arange(catnum)[logmstarlist<11.]
@@ -42,14 +44,16 @@ logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 # Bahamas simulation variables
 Zlens = 0.25
 Npix = 2000
-dpix = 1.5e4 * (1+Zlens) # pc
+dpix = 1.5e4 / (1.+Zlens)/h # physical pc/h70
 Lpix = Npix * dpix
 
 ## Define projected distance bins R
 
 # Creating the Rbins
-#Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # R-bins
-Runit, Nbins, Rmin, Rmax = ['mps2', 10, 1e-15, 5e-12] # gbar-bins
+#Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
+Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
+#Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
+
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
 print('Rbins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 
@@ -75,15 +79,28 @@ for c in range(catnum):
         mstar = 10.**logmstarlist[c]
         print('    log10[Mstar/Msun]: %g'%np.log10(mstar))
         
-        Rdist_c = (G.value * mstar)/(pixdist*xvalue*3.08567758e16)**2  # in m/s^2
-        Rmask = (Rdist_c>Rmin) # Defining the Rmax mask
+        Rdist_c = (G.value * mstar)/(pixdist*xvalue*3.08567758e16)**2  # the distance to the pixels (in m/s^2)
+        Rmask = (Rdist_c>Rmin) # Defining the Rmax mask for the pixels
         Rbins_list[c] = np.sqrt((G.value * mstar)/Rbins) / 3.08567758e16 # in pc
         
     else:
-        Rdist_c = pixdist
-        Rmask = (Rdist_c<Rmax) # Defining the Rmax mask
-    #print('Rdist_c:', np.sort(np.unique(Rdist_c)))
-
+        if Rmax == 999:
+            # Import the BAHAMAS profiles
+            profname = '%s/PROFILES/cluster_%i_Menclosed_profile.dat'%(path_cat, c)
+            profile = np.loadtxt(profname).T
+            profiles_centers = profile[0] * r200list[c] # in Mpc
+            profiles_diff = np.diff(profiles_centers)/2.
+            profiles_radius = profiles_centers+
+            
+            Rdist_c = pixdist # The distance to the pixels (in Mpc)
+            Rbins = np.append([0.], profiles_radius[0:Nbins])
+        else:
+            pass
+    
+    Rbins_list[c] = Rbins
+    Rmask = (Rdist_c<np.amax(Rbins)) # Defining the Rmax mask for the pixels
+    print('Rbins:', Rbins)
+    
     # Remove pixel distances outside Rmax
     Rdist_c, pixdist_c = [Rdist_c[Rmask], pixdist[Rmask]]
     
@@ -100,7 +117,7 @@ for c in range(catnum):
     mapfile = '%s/%s'%(path_cat, mapname[c])
     
     # Import the surface density Sigma
-    cat = pyfits.open(mapfile, memmap=True)[0].data * h**2. / (1+Zlens)**2. / (1.e6)**2. # in Msun/(pc/h70)^2
+    cat = pyfits.open(mapfile, memmap=True)[0].data * (1.+Zlens)**2.*h**2. / (1.e6)**2. # in Msun/(pc/h70)^2
     Sigmalist = np.ndarray.flatten(cat)[Rmask] # Remove pixels outside Rmax
 
     # Dividing the pixels into distbins
@@ -142,7 +159,6 @@ plt.show()
 """
 
 # Writing the result to a Fits file
-#filename = '%s/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
 filename = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
 outputnames = ['cluster', 'ESD', 'Rbins_pc']
 formats = ['I', '%iD'%Nbins, '%iD'%(Nbins+1)]
