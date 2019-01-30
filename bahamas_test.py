@@ -27,10 +27,9 @@ h=0.7
 
 ## Import Bahamas file
 
-catnum = 10 #1039
+catnum = 1039
 path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
-mapname = np.array(['MAPS/cluster_%i.fits'%i \
-    for i in range(catnum)])
+mapname = np.array(['MAPS/cluster_%i.fits'%i for i in range(catnum)])
 
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T
@@ -38,8 +37,9 @@ M200list = 10.**catalog[3] # M200 of each galaxy
 r200list = catalog[4] # r200 of each galaxy
 logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 
-#lenslist = np.arange(catnum)[logmstarlist<11.]
-#catnum = len(lenslist)
+lenslist = np.arange(catnum)
+lenslist = np.delete(lenslist, [322,326,648,758,867])
+catnum = len(lenslist)
 
 # Bahamas simulation variables
 Zlens = 0.25
@@ -51,7 +51,7 @@ Lpix = Npix * dpix
 
 # Creating the Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 15, -999, 999] # Same R-bins as PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
@@ -69,8 +69,8 @@ ESD_list = np.zeros([catnum, Nbins]) # This list wil contain the ESD profile for
 Rbins_list = np.zeros([catnum, Nbins+1]) # This list wil contain the radial profile for ever lens
 
 print('Computing the ESD profile of:')
-for c in range(catnum):
-#for c in lenslist:
+#for c in range(catnum):
+for c in lenslist:
     
     print('Cluster %i (%i/%i)'%(c, c+1, catnum))
     
@@ -88,18 +88,24 @@ for c in range(catnum):
             # Import the BAHAMAS profiles
             profname = '%s/PROFILES/cluster_%i_Menclosed_profile.dat'%(path_cat, c)
             profile = np.loadtxt(profname).T
-            profiles_centers = profile[0] * r200list[c] # in Mpc
-            profiles_diff = np.diff(profiles_centers)/2.
-            profiles_radius = profiles_centers+
+            profiles_centers = profile[0]
+            
+            # Calculate bin radii from logarithmic bin centers
+            logprofiles_centers = np.log10(profiles_centers)
+            logprofiles_diff = np.diff(logprofiles_centers)/2.
+            logprofiles_radius = np.append([logprofiles_centers[0] - logprofiles_diff[0]], \
+                                            logprofiles_centers[0:19] + logprofiles_diff)
+            logprofiles_radius = np.append(logprofiles_radius, [logprofiles_centers[19] + logprofiles_diff[18]])
+            profiles_radius = 10.**logprofiles_radius * r200list[c] # in Mpc
             
             Rdist_c = pixdist # The distance to the pixels (in Mpc)
-            Rbins = np.append([0.], profiles_radius[0:Nbins])
+            Rbins = profiles_radius[0:Nbins+1]
+            print(Rbins)
         else:
             pass
     
     Rbins_list[c] = Rbins
     Rmask = (Rdist_c<np.amax(Rbins)) # Defining the Rmax mask for the pixels
-    print('Rbins:', Rbins)
     
     # Remove pixel distances outside Rmax
     Rdist_c, pixdist_c = [Rdist_c[Rmask], pixdist[Rmask]]
@@ -140,7 +146,9 @@ for c in range(catnum):
     DeltaSigma_bin = Sigmatot_bin/N_bin # The average density in each Rbin
     
     ESD_list[c] = DeltaSigma_bin
-    
+
+plt.show()
+            
 """    
 ## Ploting the result
 
@@ -162,6 +170,6 @@ plt.show()
 filename = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
 outputnames = ['cluster', 'ESD', 'Rbins_pc']
 formats = ['I', '%iD'%Nbins, '%iD'%(Nbins+1)]
-output = [range(catnum), ESD_list, Rbins_list]
+output = [lenslist, ESD_list, Rbins_list]
 
 utils.write_catalog(filename, outputnames, formats, output)

@@ -9,6 +9,7 @@ import os
 from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 import scipy.optimize as optimization
+import scipy.stats as stats
 import modules_EG as utils
 
 from matplotlib import pyplot as plt
@@ -41,7 +42,7 @@ h=0.7
 
 # Creating the Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 15, -999, 999] # Same R-bins as PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
@@ -64,32 +65,31 @@ print('Imported:', catfile)
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T
 M200list = 10.**catalog[3] # M200 of each galaxy
-r200list = catalog[4] # r200 of each galaxy
+r200list = catalog[4] * 1e6/xvalue # r200 of each galaxy (in Xpc)
 logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 
 
 # Import density profiles
-catnum = 3 #1039
-profiles_radius = np.zeros([catnum, 20])
-profiles_Menclosed = np.zeros([catnum, 20])
+catnum = 10 #1039
+profiles_radius = np.zeros([catnum, Nbins])
+profiles_Menclosed = np.zeros([catnum, Nbins])
 for c in range(catnum):
 #for c in lenslist:
     profname = '%s/PROFILES/cluster_%i_Menclosed_profile.dat'%(path_cat, c)
     profile_c = np.loadtxt(profname).T
-    profiles_radius[c] = profile_c[0] * r200list[c] * 1e6 # in pc
-    profiles_Menclosed[c] = profile_c[1] * M200list[c] # in Msun
+    profiles_radius[c] = profile_c[0,0:Nbins] * r200list[c] # in Xpc
+    profiles_Menclosed[c] = profile_c[1,0:Nbins] * M200list[c] # in Msun
 
 mstarlist = np.reshape(10.**logmstarlist[0:catnum], [catnum,1])
-profiles_gbar = (G * mstarlist) / profiles_radius**2. * 3.08567758e16 # in m/s^2
-profiles_gobs = (G * profiles_Menclosed) / profiles_radius**2. * 3.08567758e16 # in m/s^2
+profiles_gbar = (G * mstarlist) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
+profiles_gobs = (G * profiles_Menclosed) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
 
 # Import the ESD
 cat = pyfits.open(catfile, memmap=True)[1].data
 ESD_list = cat['ESD'][0:catnum]
-print(ESD_list)
 Rbins_list = cat['Rbins_pc'][0:catnum]
-print(Rbins_list)
-gbar_list = (G * mstarlist) / Rbins_list**2. * 3.08567758e16 # in m/s^2
+gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * 3.08567758e16 # in m/s^2
+gbar_centers = np.array([(gbar_list[c])[0:-1] + np.diff(gbar_list[c])/2. for c in range(catnum)])
 
 print('ESD_list:', ESD_list)
 
@@ -101,31 +101,28 @@ gobs_list = ESD_list * 4.*G*3.08567758e16 # Convert ESD (Msun/pc^2) to accelerat
 # Define the labels for the plot
 if 'pc' in plotunit:
     for i in range(catnum):
-        #Rbins_centers = (Rbins_list[i])[0:-1] + np.diff(Rbins_list[i])/2.
-        #rho = ESD_list[i] * 4. * Rbins_centers^2.
-        Rbins_centers = (Rbins_list[i])[1:Nbins]
-        plt.plot(ESD_list[i])
-        #plt.plot(Rbins_centers/1e6, ESD_list[i])
+        Rbins_centers = (Rbins_list[i])[0:-1] + np.diff(Rbins_list[i])/2.
+        plt.plot(Rbins_centers, ESD_list[i])
         
     xlabel = r'Radius R [%s]'%Runit
     ylabel = r'Excess Surface Density [$M_\odot/pc^2$]'
 
 else:
-    for i in range(catnum):
-        
-        plt.plot(gbar_list[i], gobs_list[i], color='blue')
-        plt.plot(profiles_gbar[i], profiles_gobs[i], color='red')
+    #for i in range(catnum):
+
+        #plt.plot(gbar_centers[i], gobs_list[i], color='blue', marker='.')
+        #plt.plot(profiles_gbar[i], profiles_gobs[i], color='red', marker='.')
     
-    """
+    #"""
     gbar_profiles_mean = np.mean(profiles_gbar, 0)
     gobs_profiles_mean = np.mean(profiles_gobs, 0)
     
-    gbar_maps_mean = Rcenters
+    gbar_maps_mean = np.mean(gbar_centers, 0)
     gobs_maps_mean = np.mean(gobs_list, 0)
     
-    plt.plot(gbar_maps_mean, gobs_maps_mean)
-    plt.plot(gbar_profiles_mean, gobs_profiles_mean)
-    """
+    plt.plot(gbar_maps_mean, gobs_maps_mean, color='blue', marker='.')
+    plt.plot(gbar_profiles_mean, gobs_profiles_mean, color='red', marker='.')
+    #"""
     
     plt.plot(gbar_mond, gobs_mond(gbar_mond), ls='--')
     plt.plot(gbar_mond, gbar_mond, ls=':')
@@ -133,6 +130,12 @@ else:
     xlabel = r'Expected baryonic acceleration [$m/s^2$]'
     ylabel = r'Observed radial acceleration [$m/s^2$]'
     
+    #chi2 = np.sum((gobs_list - profiles_gobs)**2. / profiles_gobs)
+    mean_diff = np.mean(np.abs((gobs_maps_mean - gobs_profiles_mean) / gobs_profiles_mean))
+    chi2 = stats.chisquare(gobs_list, f_exp=profiles_gobs, axis=None)
+    
+    print('chi^2:', chi2)
+    print('mean difference:', mean_diff)
 
 plt.xlabel(xlabel, fontsize=12)
 plt.ylabel(ylabel, fontsize=12)
