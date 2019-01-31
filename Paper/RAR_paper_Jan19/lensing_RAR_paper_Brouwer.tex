@@ -87,7 +87,7 @@
 
 % Title of the paper, and the short title which is used in the headers.
 % Keep the title short and informative.
-\title[Trough and Ridge Lensing with KiDS]{Studying galaxy troughs and ridges using Weak Gravitational Lensing with the Kilo-Degree Survey}
+\title[Extending the RAR with KiDS weak lensing]{Extending the Radial Acceleration Relation using Weak Gravitational Lensing with the Kilo-Degree Survey}
 % The list of authors, and the short list which is used in the headers.
 % If you need two or more lines of authors, add an extra line using \newauthor
 \author[M. M. Brouwer et al.]{Margot M. Brouwer$^{1,2}$\thanks{E-mail:brouwer@astro.rug.nl},
@@ -138,6 +138,8 @@ gravitational lensing: weak -- Surveys -- methods: statistical -- galaxies: halo
 \label{sec:introduction}
 Write the beginning
 
+
+
 \section{Data}
 \label{sec:data}
 
@@ -151,7 +153,7 @@ Need to know:
 
 \subsection{GAMA foreground galaxies}
 \label{sec:gama}
-Write the whole.
+Write everything.
 
 \subsection{KiDS foreground selection}
 \label{sec:gamalike_kids}
@@ -163,7 +165,7 @@ Still need to know:
 
 \subsection{MICE mock galaxies}
 \label{sec:mice_mocks}
-Write the whole.
+Write everything.
 
 \subsection{Bahamas mock galaxies}
 \label{sec:bahamas_mocks}
@@ -188,49 +190,27 @@ Still need to know:
 	\item How (if?) the GGL-pipeline changes with K1000.
 \end{itemize}
 
-\begin{comment}
-In order to measure the projected mass density of the selected troughs and ridges, we use weak gravitational lensing \cite[see][for a general introduction]{bartelmann2001,schneider2006}. This method measures systematic tidal distortions of the light from many background galaxies (sources) by foreground mass distributions (lenses). This gravitational deflection causes a distortion in the observed shapes of the source images of $\sim 1\%$, which can only be measured statistically. This is done by averaging, from many background sources, the projected ellipticity component $\epsilon_{\rm t}$ tangential to the direction towards the centre of the lens, which is an estimator of the `tangential shear' $\gamma_{\rm t}$. This quantity is averaged within circular annuli around the center of the lens, to create a shear profile $\gamma_{\rm t}(\theta)$ as a function of the separation angle $\theta$ to the lens centre. For each annulus, $\gamma_{\rm t}(\theta)$ is a measure of the density contrast of the foreground mass distribution. In order to obtain a reasonable signal-to-noise ratio ($S/N$), the shear measurement around many lenses is `stacked' to create the average shear profile of a specified lens sample. In this work, the centres of the lenses are the grid points that define our circular troughs and ridges (as defined in Sect. \ref{sec:trough_selection}).
-
-The background sources used to measure the lensing effect are the KiDS galaxies described in Sect. \ref{sec:kids}. Following \cite{hildebrandt2017}, we only use sources with a best-fit photometric redshift $0.1<z_{\rm B}<0.9$. For troughs defined at a specific redshift we only select sources situated beyond the troughs, including a redshift buffer of $\Delta z=0.2$ (see Sect. \ref{sec:esd_measurements}). This cut is not applied when troughs are selected over the full redshift range. This can allow sources that reside at similar redshifts as the lenses to be used in the measurement, which would result in a contamination of the lensing signal by sources that are not lensed (`boost factor') and/or by sources that are intrinsically aligned with the troughs. However, even without a redshift cut $80\%$ of the KiDS source galaxies have a best-fit photometric redshift $z_{\rm B}$ above the mean redshift ($\mean{z_{\rm G}} = 0.24$) of our GAMA sample. Also, the intrinsic alignment effect has proven to be very small and difficult to detect, and primarily plays a role in very high-density regions on small ($\lesssim 1 \hsMpc$) scales. On the large scales probed by the troughs, the contamination of the lensing signal from intrinsic alignment is expected to be at most a few percent \cite[]{heymans2006,blazek2012}. Regarding the boost factor, this effect is also reproduced in the results obtained from the mock catalogues to which we compare our observations.
-
-The ellipticities of the source galaxies are measured using the self-calibrating \emph{lens}fit pipeline \cite[]{miller2007,miller2013,fenechconti2017}. For each galaxy this model fitting method also produces the \emph{lens}fit weight $w$, which is a measure of the precision of the shear estimate it provides. We incorporate the \emph{lens}fit weight of each source into the average tangential shear in each angular bin as follows:
-\begin{equation}
-\mean{\gamma} = \frac{1}{1+\mu} \frac{\sum_{ls} w_{s} \, \epsilon_{{\rm t},ls} }{ \sum_{ls}{w_{s}} }  \, .
-\label{eq:shear_measured}
-\end{equation}
-Here the sum goes over each lens $l$ in the lens sample (e.g. all apertures with a specified size and galaxy number density) and over each source $s$ inside the considered bin in angular separation from the centre of the lens. The factor $1+\mu$ is used to correct for `multiplicative bias'. Based on extensive image simulations \cite{fenechconti2017} showed that, on average, shears are biased at the $1-2\%$ level, and how this can be corrected using a multiplicative bias correction $m$ for every ellipticity measurement. Following \cite{dvornik2017}, the value of $\mu$ is calculated from the $m$-corrections in $8$ redshift bins (with a width of $0.1$) between $0.1 < z_{\rm B} < 0.9$. The average correction in each bin is defined as follows:
-\begin{equation}
-\mu=\frac{\sum_{s} w_{s} m_{s}}{\sum_{ls} w_{s}} \, .
-\label{eq:biascorr}
-\end{equation}
-The required correction is small ($\mu\approx0.014$) independent of angular separation, and reduces the residual multiplicative bias to $\lesssim1\%$. The errors on our shear measurement are estimated by the square-root of the diagonal of the analytical covariance matrix (see Sect. \ref{sec:covariance}). The analytical covariance is based on the contribution of each individual source to the lensing signal, and takes into account the covariance between sources that contribute to the shear profile of multiple lenses. Its calculation is described in Sect. 3.4 of \cite{viola2015}.
-
-In addition to measuring the lensing profile around troughs and ridges, we stack the shear around \emph{all} grid points ($262\,507$ in the case of KiDS, $112\,500$ in the case of GAMA). In accordance with the real trough measurements, the apertures with an effective area less than $80\%$ of the total circle area are removed (see Sect. \ref{sec:trough_selection}). This `random' tangential shear signal, that we henceforth denote as $\gamma_0$, does not contain a coherent shear profile, but only systematic effects resulting from the imperfect correction of any low-level PSF anisotropy in combination with the survey edges and masks. Subtracting $\gamma_0$ from our shear profiles will both remove these systematic effects and reduce the noise in the measured signals \cite[]{gruen2017,singh2017}. The random signals for KiDS and GAMA are shown in Fig. \ref{fig:kids_vs_gama_randoms}. When using the GAMA survey area and mask, $\gamma_0$ is consistent with zero (within $1\sigma$ error bars) up to $\theta = 70 \am$, where it rises to $\gamma_0 \sim 3\E{-3}$ for all values of $\theta_{\rm A}$, while the KiDS random signal already starts to deviate from zero at $\theta \approx 20 \am$. This difference does not significantly depend on the choice of area completeness threshold, and also occurs when we apply no completeness mask at all. However, when we perform the $\gamma_0$ measurement using the KiDS mask on the GAMA area only, the systematic effect is significantly reduced. This shows that the difference between the random signals is primarily caused by the patchy surface coverage of the KiDS-450 dataset beyond the GAMA area \cite[see e.g. Fig. 1 of][]{hildebrandt2017}. The same effect can be seen in Fig. 15 of \cite{uitert2016b}, who conclude that it originates from the boundaries of the survey tiles.
-
-To correct for this effect at larger scales, we subtract the appropriate $\gamma_0$ from all lensing measurements in this work. Based on the radius where the random signal becomes significant ($\theta\sim70 \am$), and on our grid spacing of $0.04 \deg = 2.4 \am$ (see Sect. \ref{sec:trough_selection}), we compute our lensing profiles within the angular separation: $2 < \theta < 100 \am$. We split this range into 20 logarithmically spaced bins.
-\end{comment}
-
 \subsection{Conversion to radial acceleration}
 \label{sec:conversion}
 Still need to know: whether we will use the SIS assumption or linear interpolation.
 \begin{itemize}
-	\item Test the SIS assumption using the Bahamas simulation.
+	\item Test both methods using the Bahamas simulation.
 \end{itemize}
 	
-\subsection{Theoretical predictions}
+\section{Theoretical predictions}
 \label{sec:predictions}
 
-\subsubsection{Analytical CDM model}
+\subsection{Analytical CDM model}
 \label{sec:analytical}
 Written by Kyle?
 
-\subsubsection{Modified Newtonian Gravity}
+\subsection{Modified Newtonian Dynamics}
 \label{sec:MOND}
-Write the whole.
+Write everything.
 
-\subsubsection{Emergent Gravity}
+\subsection{Emergent Gravity}
 \label{sec:EG}
-Write the whole.
+Write everything.
 
 \section{Results}
 \label{sec:results}

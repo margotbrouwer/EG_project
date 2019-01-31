@@ -24,4 +24,5 @@ for c in range(catnum):
         profile = np.loadtxt(profname).T
     except:
         print(c)
+        print(profname)
 

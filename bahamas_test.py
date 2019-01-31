@@ -2,7 +2,6 @@
 
 # Import the necessary libraries
 import sys
-
 import numpy as np
 import pyfits
 import os
@@ -26,20 +25,18 @@ inf = np.inf
 h=0.7
 
 ## Import Bahamas file
-
-catnum = 1039
-path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
-mapname = np.array(['MAPS/cluster_%i.fits'%i for i in range(catnum)])
-
-catname = '%s/catalog.dat'%path_cat
-catalog = np.loadtxt(catname).T
-M200list = 10.**catalog[3] # M200 of each galaxy
-r200list = catalog[4] # r200 of each galaxy
-logmstarlist = catalog[5] # Stellar mass of each lens galaxy
-
+catnum = 402 #1039
 lenslist = np.arange(catnum)
 lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
+
+path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+
+catname = '%s/catalog.dat'%path_cat
+catalog = np.loadtxt(catname).T[:,lenslist]
+M200list = 10.**catalog[3] # M200 of each galaxy
+r200list = catalog[4] # r200 of each galaxy
+logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 
 # Bahamas simulation variables
 Zlens = 0.25
@@ -51,7 +48,7 @@ Lpix = Npix * dpix
 
 # Creating the Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 15, -999, 999] # Same R-bins as PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
@@ -69,24 +66,24 @@ ESD_list = np.zeros([catnum, Nbins]) # This list wil contain the ESD profile for
 Rbins_list = np.zeros([catnum, Nbins+1]) # This list wil contain the radial profile for ever lens
 
 print('Computing the ESD profile of:')
-#for c in range(catnum):
-for c in lenslist:
-    
-    print('Cluster %i (%i/%i)'%(c, c+1, catnum))
+for c in range(catnum):
+
+    print('Cluster %i (%i/%i)'%(lenslist[c], c+1, catnum))
     
     # Translate pixel distances to gbar
     if Runit == 'mps2':
         mstar = 10.**logmstarlist[c]
         print('    log10[Mstar/Msun]: %g'%np.log10(mstar))
         
-        Rdist_c = (G.value * mstar)/(pixdist*xvalue*3.08567758e16)**2  # the distance to the pixels (in m/s^2)
+        Rdist_c = (G.value * mstar)/(pixdist*xvalue*3.08567758e16)**2 # the distance to the pixels (in m/s^2)
         Rmask = (Rdist_c>Rmin) # Defining the Rmax mask for the pixels
         Rbins_list[c] = np.sqrt((G.value * mstar)/Rbins) / 3.08567758e16 # in pc
         
     else:
         if Rmax == 999:
+            
             # Import the BAHAMAS profiles
-            profname = '%s/PROFILES/cluster_%i_Menclosed_profile.dat'%(path_cat, c)
+            profname = '%s/PROFILES/cluster_%i_Menclosed_profile.dat'%(path_cat, lenslist[c])
             profile = np.loadtxt(profname).T
             profiles_centers = profile[0]
             
@@ -120,7 +117,7 @@ for c in lenslist:
     ## Calculate the ESD (SigmaCrit) for each pixel
     
     # Full directory & name of the Bahamas catalogue
-    mapfile = '%s/%s'%(path_cat, mapname[c])
+    mapfile = '%s/MAPS/cluster_%i.fits'%(path_cat, lenslist[c])
     
     # Import the surface density Sigma
     cat = pyfits.open(mapfile, memmap=True)[0].data * (1.+Zlens)**2.*h**2. / (1.e6)**2. # in Msun/(pc/h70)^2
