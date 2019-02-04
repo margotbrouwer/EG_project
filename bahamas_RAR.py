@@ -154,10 +154,10 @@ plt.xlim([1e-15, 1e-10])
 
 plt.tight_layout()
 
-plotfilename = 'bahamas_SIS_test'
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Jan19/Plots/bahamas_SIS_test'
 
 # Save plot
-for ext in ['pdf']:
+for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     
