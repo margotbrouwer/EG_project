@@ -18,6 +18,12 @@
   {mn@eprint@\@tempb}{\@tempb:\@tempc}{\expandafter \expandafter \csname
   mn@eprint@\@tempb\endcsname \expandafter{\@tempc}}}
 
+\bibitem[\protect\citeauthoryear{{Abazajian} et~al.,}{{Abazajian}
+  et~al.}{2009}]{abazajian2009}
+{Abazajian} K.~N.,  et~al., 2009, \mn@doi [\apjs]
+  {10.1088/0067-0049/182/2/543}, \href
+  {http://adsabs.harvard.edu/abs/2009ApJS..182..543A} {182, 543}
+
 \bibitem[\protect\citeauthoryear{{Bernstein}, {Guhathakurta}, {Raychaudhury},
   {Giovanelli}, {Haynes}, {Herter}  \& {Vogt}}{{Bernstein}
   et~al.}{1994}]{bernstein1994}
@@ -47,14 +53,77 @@
 {Bosma} A.,  1981, \mn@doi [\aj] {10.1086/113062}, \href
   {http://adsabs.harvard.edu/abs/1981AJ.....86.1791B} {86, 1791}
 
+\bibitem[\protect\citeauthoryear{{Carretero}, {Castander}, {Gazta{\~n}aga},
+  {Crocce}  \& {Fosalba}}{{Carretero} et~al.}{2015}]{carretero2015}
+{Carretero} J.,  {Castander} F.~J.,  {Gazta{\~n}aga} E.,  {Crocce} M.,
+  {Fosalba} P.,  2015, \mn@doi [\mnras] {10.1093/mnras/stu2402}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.447..646C} {447, 646}
+
+\bibitem[\protect\citeauthoryear{{Crocce}, {Castander}, {Gazta{\~n}aga},
+  {Fosalba}  \& {Carretero}}{{Crocce} et~al.}{2015}]{crocce2015}
+{Crocce} M.,  {Castander} F.~J.,  {Gazta{\~n}aga} E.,  {Fosalba} P.,
+  {Carretero} J.,  2015, \mn@doi [\mnras] {10.1093/mnras/stv1708}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.453.1513C} {453, 1513}
+
+\bibitem[\protect\citeauthoryear{{Desmond}}{{Desmond}}{2017}]{desmond2017}
+{Desmond} H.,  2017, \mn@doi [\mnras] {10.1093/mnras/stw2571}, \href
+  {https://ui.adsabs.harvard.edu/\#abs/2017MNRAS.464.4160D} {464, 4160}
+
+\bibitem[\protect\citeauthoryear{{Edge}, {Sutherland}, {Kuijken}, {Driver},
+  {McMahon}, {Eales}  \& {Emerson}}{{Edge} et~al.}{2013}]{edge2013}
+{Edge} A.,  {Sutherland} W.,  {Kuijken} K.,  {Driver} S.,  {McMahon} R.,
+  {Eales} S.,   {Emerson} J.~P.,  2013, The Messenger, \href
+  {http://adsabs.harvard.edu/abs/2013Msngr.154...32E} {154, 32}
+
 \bibitem[\protect\citeauthoryear{{Eisenstein} et~al.,}{{Eisenstein}
   et~al.}{2005}]{eisenstein2005}
 {Eisenstein} D.~J.,  et~al., 2005, \mn@doi [\apj] {10.1086/466512}, \href
   {http://adsabs.harvard.edu/abs/2005ApJ...633..560E} {633, 560}
 
+\bibitem[\protect\citeauthoryear{{Fischer} et~al.,}{{Fischer}
+  et~al.}{2000}]{fischer2000ggl}
+{Fischer} P.,  et~al., 2000, \mn@doi [\aj] {10.1086/301540}, \href
+  {http://adsabs.harvard.edu/abs/2000AJ....120.1198F} {120, 1198}
+
+\bibitem[\protect\citeauthoryear{{Fosalba}, {Gazta{\~n}aga}, {Castander}  \&
+  {Crocce}}{{Fosalba} et~al.}{2015a}]{fosalba2015a}
+{Fosalba} P.,  {Gazta{\~n}aga} E.,  {Castander} F.~J.,   {Crocce} M.,  2015a,
+  \mn@doi [\mnras] {10.1093/mnras/stu2464}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.447.1319F} {447, 1319}
+
+\bibitem[\protect\citeauthoryear{{Fosalba}, {Crocce}, {Gazta{\~n}aga}  \&
+  {Castander}}{{Fosalba} et~al.}{2015b}]{fosalba2015b}
+{Fosalba} P.,  {Crocce} M.,  {Gazta{\~n}aga} E.,   {Castander} F.~J.,  2015b,
+  \mn@doi [\mnras] {10.1093/mnras/stv138}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.448.2987F} {448, 2987}
+
 \bibitem[\protect\citeauthoryear{{Hoekstra}, {Yee}  \& {Gladders}}{{Hoekstra}
   et~al.}{2004}]{hoekstra2004}
 {Hoekstra} H.,  {Yee} H.~K.~C.,   {Gladders} M.~D.,  2004, \apj, 606, 67
+
+\bibitem[\protect\citeauthoryear{{Hoffmann}, {Bel}, {Gazta{\~n}aga}, {Crocce},
+  {Fosalba}  \& {Castander}}{{Hoffmann} et~al.}{2015}]{hoffmann2015}
+{Hoffmann} K.,  {Bel} J.,  {Gazta{\~n}aga} E.,  {Crocce} M.,  {Fosalba} P.,
+  {Castander} F.~J.,  2015, \mn@doi [\mnras] {10.1093/mnras/stu2492}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.447.1724H} {447, 1724}
+
+\bibitem[\protect\citeauthoryear{{\SortNoop{Jong}}de~Jong
+  et~al.,}{{\SortNoop{Jong}}de~Jong et~al.}{2017}]{dejong2017}
+{\SortNoop{Jong}}de~Jong J.~T.~A.,  et~al., 2017, \mn@doi [\aap]
+  {10.1051/0004-6361/201730747}, \href
+  {http://adsabs.harvard.edu/abs/2017A%26A...604A.134D} {604, A134}
+
+\bibitem[\protect\citeauthoryear{{Keller} \& {Wadsley}}{{Keller} \&
+  {Wadsley}}{2017}]{keller2017}
+{Keller} B.~W.,  {Wadsley} J.~W.,  2017, \mn@doi [\apj]
+  {10.3847/2041-8213/835/1/L17}, \href
+  {https://ui.adsabs.harvard.edu/\#abs/2017ApJ...835L..17K} {835, L17}
+
+\bibitem[\protect\citeauthoryear{{Lelli}, {McGaugh}  \& {Schombert}}{{Lelli}
+  et~al.}{2016}]{lelli2016b}
+{Lelli} F.,  {McGaugh} S.~S.,   {Schombert} J.~M.,  2016, \mn@doi [\aj]
+  {10.3847/0004-6256/152/6/157}, \href
+  {http://adsabs.harvard.edu/abs/2016AJ....152..157L} {152, 157}
 
 \bibitem[\protect\citeauthoryear{{\swap{Linden}{von der }}
   et~al.,}{{\swap{Linden}{von der }} et~al.}{2014}]{linden2014}
@@ -62,10 +131,20 @@
   {10.1093/mnras/stt1945}, \href
   {http://adsabs.harvard.edu/abs/2014MNRAS.439....2V} {439, 2}
 
+\bibitem[\protect\citeauthoryear{{Ludlow} et~al.,}{{Ludlow}
+  et~al.}{2017}]{ludlow2017}
+{Ludlow} A.~D.,  et~al., 2017, \mn@doi [\prl] {10.1103/PhysRevLett.118.161103},
+  \href {https://ui.adsabs.harvard.edu/\#abs/2017PhRvL.118p1103L} {118, 161103}
+
 \bibitem[\protect\citeauthoryear{{Mandelbaum}}{{Mandelbaum}}{2015}]{mandelbaum2015}
 {Mandelbaum} R.,  2015, in {Cappellari} M.,  {Courteau} S.,  eds,  IAU
   Symposium Vol. 311, Galaxy Masses as Constraints of Formation Models. pp
   86--95 (\mn@eprint {arXiv} {1410.0734})
+
+\bibitem[\protect\citeauthoryear{Mandelbaum, Seljak, Kauffmann, Hirata  \&
+  Brinkmann}{Mandelbaum et~al.}{2006}]{mandelbaum2006}
+Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
+  \mnras, 368, 715
 
 \bibitem[\protect\citeauthoryear{{McGaugh}}{{McGaugh}}{2004}]{mcgaugh2004}
 {McGaugh} S.~S.,  2004, \mn@doi [\apj] {10.1086/421338}, \href
@@ -90,6 +169,14 @@
 \bibitem[\protect\citeauthoryear{{Milgrom}}{{Milgrom}}{1983}]{milgrom1983}
 {Milgrom} M.,  1983, \mn@doi [\apj] {10.1086/161130}, \href
   {http://adsabs.harvard.edu/abs/1983ApJ...270..365M} {270, 365}
+
+\bibitem[\protect\citeauthoryear{{Navarro}, {Ben{\'{\i}}tez-Llambay},
+  {Fattahi}, {Frenk}, {Ludlow}, {Oman}, {Schaller}  \& {Theuns}}{{Navarro}
+  et~al.}{2017}]{navarro2017}
+{Navarro} J.~F.,  {Ben{\'{\i}}tez-Llambay} A.,  {Fattahi} A.,  {Frenk} C.~S.,
+  {Ludlow} A.~D.,  {Oman} K.~A.,  {Schaller} M.,   {Theuns} T.,  2017, \mn@doi
+  [\mnras] {10.1093/mnras/stx1705}, \href
+  {http://adsabs.harvard.edu/abs/2017MNRAS.471.1841N} {471, 1841}
 
 \bibitem[\protect\citeauthoryear{{Pierce} \& {Tully}}{{Pierce} \&
   {Tully}}{1988}]{pierce1988}
@@ -131,6 +218,12 @@ Planck~XVI x.,  2014, \aap, 571, A16
   {Fisher}}{1977}]{tully1977}
 {Tully} R.~B.,  {Fisher} J.~R.,  1977, \aap, \href
   {http://adsabs.harvard.edu/abs/1977A%26A....54..661T} {54, 661}
+
+\bibitem[\protect\citeauthoryear{{\SortNoop{Uitert}}van~Uitert
+  et~al.,}{{\SortNoop{Uitert}}van~Uitert et~al.}{2016}]{uitert2016}
+{\SortNoop{Uitert}}van~Uitert E.,  et~al., 2016, \mn@doi [\mnras]
+  {10.1093/mnras/stw747}, \href
+  {http://adsabs.harvard.edu/abs/2016MNRAS.459.3251V} {459, 3251}
 
 \bibitem[\protect\citeauthoryear{{Verlinde}}{{Verlinde}}{2016}]{verlinde2016}
 {Verlinde} E.~P.,  2016, preprint, \href
