@@ -97,6 +97,12 @@
   \mn@doi [\mnras] {10.1093/mnras/stv138}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.448.2987F} {448, 2987}
 
+\bibitem[\protect\citeauthoryear{{Hinshaw} et~al.,}{{Hinshaw}
+  et~al.}{2013}]{hinshaw2013}
+{Hinshaw} G.,  et~al., 2013, \mn@doi [The Astrophysical Journal Supplement
+  Series] {10.1088/0067-0049/208/2/19}, \href
+  {https://ui.adsabs.harvard.edu/\#abs/2013ApJS..208...19H} {208, 19}
+
 \bibitem[\protect\citeauthoryear{{Hoekstra}, {Yee}  \& {Gladders}}{{Hoekstra}
   et~al.}{2004}]{hoekstra2004}
 {Hoekstra} H.,  {Yee} H.~K.~C.,   {Gladders} M.~D.,  2004, \apj, 606, 67
@@ -145,6 +151,12 @@
   Brinkmann}{Mandelbaum et~al.}{2006}]{mandelbaum2006}
 Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
   \mnras, 368, 715
+
+\bibitem[\protect\citeauthoryear{{McCarthy}, {Schaye}, {Bird}  \& {Le
+  Brun}}{{McCarthy} et~al.}{2017}]{mccarthy2017}
+{McCarthy} I.~G.,  {Schaye} J.,  {Bird} S.,   {Le Brun} A.~M.~C.,  2017,
+  \mn@doi [\mnras] {10.1093/mnras/stw2792}, \href
+  {http://cdsads.u-strasbg.fr/abs/2017MNRAS.465.2936M} {465, 2936}
 
 \bibitem[\protect\citeauthoryear{{McGaugh}}{{McGaugh}}{2004}]{mcgaugh2004}
 {McGaugh} S.~S.,  2004, \mn@doi [\apj] {10.1086/421338}, \href

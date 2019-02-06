@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2018.12.4)  5 FEB 2019 17:04
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2018.12.4)  6 FEB 2019 15:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -483,117 +483,54 @@ Underfull \hbox (badness 2318) in paragraph at lines 147--148
 [2
 
 ]
-<Figures/RAR_GAMA+MICE_isolated_strong.pdf, id=246, 426.7036pt x 354.21896pt>
-File: Figures/RAR_GAMA+MICE_isolated_strong.pdf Graphic file (type pdf)
+Underfull \hbox (badness 2707) in paragraph at lines 165--168
+[]\T1/aer/m/n/9 Throughout this work we adopt the WMAP 9-
+ []
 
-<use Figures/RAR_GAMA+MICE_isolated_strong.pdf>
-Package pdftex.def Info: Figures/RAR_GAMA+MICE_isolated_strong.pdf used on inpu
-t line 255.
-(pdftex.def)             Requested size: 240.0pt x 199.23686pt.
 
-<Figures/RAR_GAMA+MICE_4-massbins.pdf, id=247, 719.68501pt x 574.60889pt>
-File: Figures/RAR_GAMA+MICE_4-massbins.pdf Graphic file (type pdf)
+Underfull \hbox (badness 1448) in paragraph at lines 165--168
+\T1/aer/m/n/9 year ([][]Hin-shaw et al.[][] [][]2013[][]) cos-mo-log-i-cal pa-r
+am-e-ters :
+ []
 
-<use Figures/RAR_GAMA+MICE_4-massbins.pdf>
-Package pdftex.def Info: Figures/RAR_GAMA+MICE_4-massbins.pdf used on input lin
-e 263.
-(pdftex.def)             Requested size: 504.0pt x 402.41635pt.
 
-<Figures/RAR_GAMA+MICE_4-massbins_isolated_strong.pdf, id=248, 719.68501pt x 57
-4.60889pt>
-File: Figures/RAR_GAMA+MICE_4-massbins_isolated_strong.pdf Graphic file (type p
-df)
- <use Figures/RAR_GAMA+MICE_4-massbins_isolated_strong.pdf>
-Package pdftex.def Info: Figures/RAR_GAMA+MICE_4-massbins_isolated_strong.pdf u
-sed on input line 269.
-(pdftex.def)             Requested size: 504.0pt x 402.41635pt.
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-<Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0_transverse.pdf, id=249,
- 850.74013pt x 283.03937pt>
-File: Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0_transverse.pdf Gra
-phic file (type pdf)
-
-<use Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0_transverse.pdf>
-Package pdftex.def Info: Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0
-_transverse.pdf used on input line 275.
-(pdftex.def)             Requested size: 504.0pt x 167.68279pt.
-
-(./lensing_RAR_paper_Brouwer.bbl [3pdfTeX warning (ext4): destination with the 
-same identifier (name{figure.1}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.29   et~al.}{1994}]{bernstein1994}
-                                     <./Figures/RAR_GAMA+MICE_isolated_strong.p
-df>]
-Underfull \vbox (badness 4634) has occurred while \output is active []
-
-LaTeX Font Info:    Try loading font information for T1+aett on input line 142.
+ [3]
+(./lensing_RAR_paper_Brouwer.bbl
+LaTeX Font Info:    Try loading font information for T1+aett on input line 148.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aett.fd
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
-Underfull \hbox (badness 1389) in paragraph at lines 146--148
+Underfull \hbox (badness 1389) in paragraph at lines 152--154
 []\T1/aer/m/n/8 Mandelbaum R., Sel-jak U., Kauff-mann G., Hi-rata C. M.,
  []
 
-[4pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) 
-has been already used, duplicate ignored
 
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.190 ...lanck~XVI}{Planck~XVI}{2014}]{planck2014}
-                                                   <./Figures/RAR_GAMA+MICE_4-m
-assbins.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
- has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.190 ...lanck~XVI}{Planck~XVI}{2014}]{planck2014}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{figure.4}) has been already used, duplicat
-e ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.190 ...lanck~XVI}{Planck~XVI}{2014}]{planck2014}
-                                                   <./Figures/RAR_GAMA+MICE_4-m
-assbins_isolated_strong.pdf> <./Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11
-p1_12p0_transverse.pdf
-
-pdfTeX warning: /usr/bin/pdflatex (file ./Figures/RAR_KiDS+MICE_massbins-8p5_10
-p5_10p8_11p1_12p0_transverse.pdf): PDF inclusion: multiple pdfs with page group
- included in a single page
->]
-
-Package hyperref Warning: Suppressing empty link on input line 230.
+Package hyperref Warning: Suppressing empty link on input line 242.
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 322.
- [6
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 322.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 336.
+ [4]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 336.
  (./lensing_RAR_paper_Brouwer.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 322.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 322.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 336.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 336.
 Package rerunfilecheck Info: File `lensing_RAR_paper_Brouwer.out' has not chang
 ed.
-(rerunfilecheck)             Checksum: 9BFBD273E4D7B249DD6E7C3B915EF99E;1223.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 322.
+(rerunfilecheck)             Checksum: 7107609229200842DA7220438CD6982B;1156.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 336.
  ) 
 Here is how much of TeX's memory you used:
- 8389 strings out of 494820
- 116990 string characters out of 3178049
- 227559 words of memory out of 3000000
- 11324 multiletter control sequences out of 15000+200000
+ 8366 strings out of 494820
+ 116007 string characters out of 3178049
+ 230280 words of memory out of 3000000
+ 11311 multiletter control sequences out of 15000+200000
  50577 words of font info for 111 fonts, out of 3000000 for 9000
  198 hyphenation exceptions out of 8191
- 41i,16n,35p,1367b,540s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,16n,35p,1367b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
 pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -602,27 +539,24 @@ share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
-2.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti
-8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on lensing_RAR_paper_Brouwer.pdf (6 pages, 525786 bytes).
+onts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmti9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmtt8.pfb>
+Output written on lensing_RAR_paper_Brouwer.pdf (4 pages, 253468 bytes).
 PDF statistics:
- 595 PDF objects out of 1000 (max. 8388607)
- 536 compressed objects within 6 object streams
- 76 named destinations out of 1000 (max. 500000)
- 173 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 438 PDF objects out of 1000 (max. 8388607)
+ 407 compressed objects within 5 object streams
+ 71 named destinations out of 1000 (max. 500000)
+ 145 words of extra memory for PDF output out of 10000 (max. 10000000)
 
