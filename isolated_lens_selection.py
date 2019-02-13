@@ -6,7 +6,7 @@ import os
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 from astropy.cosmology import LambdaCDM
-from astropy.io import fits
+import astropy.io.fits as pyfits
 
 import modules_EG as utils
 
@@ -20,7 +20,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'lephare' # Select the lens catalogue (kids/gama/mice)
+cat = 'gama' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -44,7 +44,7 @@ dlogm = np.diff(logmlims)[0]
 logmbins = logmlims[0:-1] + dlogm
 
 
-# The nearby galaxies should not be heaver than X times the galaxy
+# The nearby galaxies should not be heavier than X times the galaxy
 """
 rationame = 'dex'
 dexvalues = [0.5, 0.6, 0.7, 0.8]

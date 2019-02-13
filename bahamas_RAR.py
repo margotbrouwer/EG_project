@@ -128,10 +128,7 @@ else:
     
     plt.plot(gbar_uni, gbar_uni, ls=':', color='grey')
     plt.plot(gbar_mond, gobs_mond(gbar_mond), ls='--', color='black')
-    
-    xlabel = r'Expected baryonic acceleration [$m/s^2$]'
-    ylabel = r'Observed radial acceleration [$m/s^2$]'
-    
+        
     #chi2 = np.sum((gobs_list - profiles_gobs)**2. / profiles_gobs)
     difference = (gobs_maps_mean - gobs_profiles_mean) / gobs_profiles_mean
     mean_diff = np.mean(np.abs((gobs_maps_mean - gobs_profiles_mean) / gobs_profiles_mean))
@@ -141,6 +138,9 @@ else:
     print('difference:', difference)
     print('mean difference:', mean_diff)
 
+
+xlabel = r'Expected baryonic acceleration [$m/s^2$]'
+ylabel = r'Observed radial acceleration [$m/s^2$]'
 
 plt.xlabel(xlabel, fontsize=12)
 plt.ylabel(ylabel, fontsize=12)

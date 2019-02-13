@@ -31,6 +31,7 @@ inf = np.inf
 pc_to_meter = 3.086e16 # meters
 h, O_matter, O_lambda = [0.7, 0.325, 0.685]
 
+# Define the Singular Isothermal Sphere profile
 def calc_sis(sigma_v, r, R):
     
     gobs_sis = (2.*sigma_v**2.) / r
@@ -42,6 +43,7 @@ def calc_sis(sigma_v, r, R):
     esd_sis = sigma_v**2. / (2.*G*R)
     
     return gobs_sis, Mobs_sis, rho_sis, sigma_sis, avsigma_sis, esd_sis
+
 
 # Define the projected (R) and spherical (r) distance bins
 Nbins_R = int(1e2)
@@ -57,11 +59,13 @@ rbins, rcenters, rmin, rmax, xvalue = utils.define_Rbins(Runit, rmin, rmax, Nbin
 Rbins, Rcenters = np.array([Rbins, Rcenters])*xvalue
 rbins, rcenters = np.array([rbins, rcenters])*xvalue
 
+
 # Create a mock Singular Isothermal Sphere profile
 sigma_v = 200.e3 / pc_to_meter # to km/s to pc/s
 gobs_sis, Mobs_sis, rho_sis, sigma_sis, avsigma_sis, esd_sis = calc_sis(sigma_v, rcenters, Rcenters)
 
 
+# Define matrix Cmn, which calculates the projected density (sigma) from the spherical density (rho)
 def calc_Cmn(R, r, m, n):
   
     if r[n+1] < R[m]: # If outer r < inner R: ))||
@@ -82,7 +86,7 @@ def calc_Cmn(R, r, m, n):
         integ = (r[n+1]**2.-R[m+1]**2.)**(3./2.) - (r[n+1]**2.-R[m]**2.)**(3./2.) \
         - (r[n]**2.-R[m+1]**2.)**(3./2.) + (r[n]**2.-R[m]**2.)**(3./2.)
 
-    fact = -((4.*pi)/3.) / (R[m+1]**2. - R[m]**2.)
+    fact = -((4.*pi)/3.) / (R[m+1]**2. - R[m]**2.) # Common factor of all the terms
     C_mn = fact * integ
     
     #print('r[n+1]<R[m]:', r[n+1]<R[m])
@@ -94,40 +98,38 @@ def calc_Cmn(R, r, m, n):
     return C_mn
 
 
-# Matrix Bmn that calculates the average surface density avgsigma(<R)
+# Matrix Bmn calculates the average surface density avgSigma(<R) from rho(r)
 B_mn = np.zeros([Nbins_R, Nbins_r])
 for m in range(Nbins_R):
     for n in range(Nbins_r):
         for p in range(m-1):
-            A_p = pi * (Rbins[p+1]**2. - Rbins[p]**2.)
-            A_m = pi * Rbins[m]**2.
+            A_p = pi * (Rbins[p+1]**2. - Rbins[p]**2.) # Area of the ring at radius R
+            A_m = pi * Rbins[m]**2. # Area of the circle within R
             B_mn[m,n] = B_mn[m,n] + \
                 (A_p * calc_Cmn(Rbins, rbins, p, n) / A_m)
 
-# Matrix Cmn that calculates the surface density Sigma(R) from rho(r)
+# Matrix Cmn that calculates Sigma(R) from rho(r)
 C_mn = np.zeros([Nbins_R, Nbins_r])
 for m in range(Nbins_R):
     for n in range(Nbins_r):
         C_mn[m,n] = calc_Cmn(Rbins, rbins, m, n)
 
-# Matrix Kmn calculates the ESD(R) = avsigma(<R) - sigma(R)
+# Matrix Kmn calculates the Excess Surface Density ESD(R) = avSigma(<R) - Sigma(R)
 K_mn = B_mn - C_mn
 
-# Calculate test quantities from rho(r)
-sigma_m = np.dot(C_mn, rho_sis) # OK
-avsigma_m = np.dot(B_mn, rho_sis) # OK
-esd_m = np.dot(K_mn, rho_sis)
+# Calculate several quantities from rho(r)
+sigma_m = np.dot(C_mn, rho_sis) # The projected density Sigma(R)
+avsigma_m = np.dot(B_mn, rho_sis) # The average projected density Sigma(<R)
+esd_m = np.dot(K_mn, rho_sis) # The Excess Surface Density ESD(R)
 
 
 #"""
-# Plot the mock ESD profiles
-labels_an = [r'Sigma (analytical)', r'avSigma (analytical)', r'ESD (analytical)']
-labels_num = [r'Sigma (numerical)', r'avSigma (numerical)', r'ESD (numerical)']
+# Plot the mock sigma(R) and ESD(R) profiles: analytical vs. numerical results
+labels_an = [r'Sigma(R) (analytical)', r'avgSigma(<R) (analytical)', r'ESD(R) (analytical)']
+labels_num = [r'Sigma(R) (numerical)', r'avgSigma(<R) (numerical)', r'ESD(R) (numerical)']
 results_an = [sigma_sis, avsigma_sis, esd_sis]
 results_num = [sigma_m, avsigma_m, esd_m]
-
 """
-
 print(C_mn)
 # Invert matrices
 Cmn_inv = np.linalg.inv(C_mn)
@@ -154,10 +156,9 @@ results_num = [rho_n1, -rho_n2]
 """
 
 # Plot the results
-
 for r in range(len(results_num)):
-    plt.plot((Rcenters*(1+r/20.))/xvalue, results_an[r], ls='--', color=colors[r], label=labels_an[r])
-    plt.plot((Rcenters*(1+r/20.))/xvalue, results_num[r], color=colors[r], label=labels_num[r])
+    plt.plot(Rcenters/xvalue, results_an[r], ls='--', color=colors[r], label=labels_an[r])
+    plt.plot(Rcenters/xvalue, results_num[r], color=colors[r], label=labels_num[r])
     
     print()
     print('Difference:', labels_an[r], labels_num[r])
