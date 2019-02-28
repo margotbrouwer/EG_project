@@ -11,6 +11,7 @@ from astropy.cosmology import LambdaCDM
 import scipy.optimize as optimization
 import scipy.stats as stats
 import modules_EG as utils
+from deproject.piecewise_powerlaw import esd_to_rho
 
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
@@ -27,52 +28,68 @@ G = const.G.to('pc3/Msun s2').value # in pc3/Msun s2
 c = const.c.to('pc/s').value # in pc/s
 inf = np.inf
 pi = np.pi
+pc_to_meter = 3.086e16 # meters
 
+# Bahamas simulation parameters
 Zlens = 0.25
 O_matter = 0.2793
 O_lambda =  0.7207
 sigma8 = 0.821
 h=0.7
-#H0 = h * 100 * 3.08567758e19 # in (km/s)/Mpc
-#H = H0 * np.sqrt(O_matter**-3. + O_lambda)
-#rho_crit = (3*H**2.)/(8*pi*G)
+
 
 ## Define projected distance bins R
 
 # Creating the Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 14, -999, 999] # Same R-bins as PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 14, -999, 999] # Same R-bins as r from PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
 print('R-bins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 
 plotunit = 'mps2'
+method = 'numerical' # SIS or numerical
 
 gbar_mond = np.logspace(-16, -8, 40)
 gbar_ext = np.logspace(-16, -12, 30)
 gbar_uni = np.logspace(-16, -8, 50)
 
-## Import Bahamas ESD catalog
 
-path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
-catfile = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
-print('Imported:', catfile)
+## Import galaxy observables from Bahamas catalog
 
+# Define the list of 'used' galaxies
 catnum = 402 #1039
 lenslist = np.arange(catnum)
 lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
 
-# Import galaxy observables
+# Path to the Bahamas catalog
+path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T[:,lenslist]
-print(np.shape(catalog))
+
+# Import galaxy observables (M200, r200, logmstar)
 M200list = 10.**catalog[3] # M200 of each galaxy
 r200list = catalog[4] * 1e6/xvalue # r200 of each galaxy (in Xpc)
 logmstarlist = catalog[5] # Stellar mass of each lens galaxy
+mstarlist = np.reshape(10.**logmstarlist[0:catnum], [catnum,1])
 
-# Import density profiles
+
+## Import measured Bahamas ESD profiles
+
+# Path to the ESD catalog
+catfile = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
+cat = pyfits.open(catfile, memmap=True)[1].data
+print('Imported:', catfile)
+
+# Import the ESD profiles
+ESD_list = cat['ESD'][0:catnum]
+Rbins_list = cat['Rbins_pc'][0:catnum]
+
+
+## Import true enclosed mass profiles
+
 profiles_radius = np.zeros([catnum, Nbins])
 profiles_Menclosed = np.zeros([catnum, Nbins])
 for c in range(catnum):
@@ -82,21 +99,76 @@ for c in range(catnum):
     profiles_radius[c] = profile_c[0,0:Nbins] * r200list[c] # in Xpc
     profiles_Menclosed[c] = profile_c[1,0:Nbins] * M200list[c] # in Msun
 
-mstarlist = np.reshape(10.**logmstarlist[0:catnum], [catnum,1])
+# Calculate true gbar and gobs from enclosed mass profiles
 profiles_gbar = (G * mstarlist) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
 profiles_gobs = (G * profiles_Menclosed) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
 
-# Import the ESD
-cat = pyfits.open(catfile, memmap=True)[1].data
-ESD_list = cat['ESD'][0:catnum]
-Rbins_list = cat['Rbins_pc'][0:catnum]
+gbar_profiles_mean = np.mean(profiles_gbar, 0)
+gobs_profiles_mean = np.mean(profiles_gobs, 0)
+
+
+## Calculate gbar and gobs from the ESD profiles
+
+# Calculate gbar from R
 gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * 3.08567758e16 # in m/s^2
 gbar_centers = np.array([(gbar_list[i])[0:-1] + np.diff(gbar_list[i])/2. for i in range(catnum)])
+gbar_maps_mean = np.mean(gbar_centers, 0)
 
-#data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
-gobs_list = ESD_list * 4.*G*3.08567758e16 # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+# Calculate gobs using the SIS assumption
+if method == 'SIS':
+    gobs_list = ESD_list * 4.*G*3.08567758e16 # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+    gobs_maps_mean = np.mean(gobs_list, 0)
 
-## Ploting the result
+# Calculate gobs using Kyle's numerical integration method
+if method == 'numerical':
+    
+    print('Performing analitical method')
+    ## density profile, not shallower than -1 in outer part!
+    
+    # Create a SIS for the 'guess' ESD(gbar)
+    sigma_v = 300.e4 / pc_to_meter # velocity dispersion in pc/s
+    
+    plt.plot()
+    
+    # Fitting setup
+    extrapolate_outer = False
+    extrapolate_inner = False
+    inner_extrapolation_type = 'extrapolate'  # or 'flat'
+    
+    for c in [1]:
+    
+        ESD = ESD_list[c]
+        R = Rbins_list[c] * xvalue # 'real' values, not log
+        r = profiles_radius[c] * xvalue # 'real' values, not log
+        
+        print(ESD, len(ESD))
+        print(R, len(R))
+        print(r, len(r))
+        print()
+        
+        guess = sigma_v**2. / (2.*G*pi*r**2.)
+        startstep = np.min(-np.diff(np.log(guess))) / 3.  # probably reasonable
+        minstep = .001  # sets tolerance in fit in terms of Delta log(DeltaSigma)
+        
+        print(ESD/guess)
+        
+        rho = esd_to_rho(ESD, guess, r, R,
+            extrapolate_inner=extrapolate_inner,
+            extrapolate_outer=extrapolate_outer,
+            inner_extrapolation_type=inner_extrapolation_type,
+            startstep=startstep, minstep=minstep, verbose=True)
+        
+        plt.xscale('log')
+        plt.yscale('log')
+        
+        plt.plot(r, ESD)
+        plt.plot(r, guess)
+        plt.plot(r, rho)
+        plt.show()
+
+quit()
+"""
+## Plotting the result
 
 # Define the labels for the plot
 if 'pc' in plotunit:
@@ -116,12 +188,7 @@ else:
     #plt.hist2d(np.ndarray.flatten(profiles_gbar), np.ndarray.flatten(profiles_gobs), [gbar_mond, gbar_mond])
     #plt.hist2d(gbar_centers, gobs_list, [gbar_mond, gbar_mond])
     
-    
-    gbar_profiles_mean = np.mean(profiles_gbar, 0)
-    gobs_profiles_mean = np.mean(profiles_gobs, 0)
-    
-    gbar_maps_mean = np.mean(gbar_centers, 0)
-    gobs_maps_mean = np.mean(gobs_list, 0)
+
     
     plt.plot(gbar_maps_mean, gobs_maps_mean, color='blue', marker='.', label='From density maps (SIS assumption)')
     plt.plot(gbar_profiles_mean, gobs_profiles_mean, color='red', marker='.', label='Calculated from mass profiles')
@@ -137,8 +204,9 @@ else:
     print('chi^2:', chi2)
     print('difference:', difference)
     print('mean difference:', mean_diff)
+"""
 
-
+# Define axis labels and legend
 xlabel = r'Expected baryonic acceleration [$m/s^2$]'
 ylabel = r'Observed radial acceleration [$m/s^2$]'
 

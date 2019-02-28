@@ -50,7 +50,7 @@ Nbins_R = int(1e2)
 Nbins_r = int(1e2)
 Runit = 'kpc'
 Rlog = True
-Rmin, Rmax = np.array([10., 9000.]) # in pc
+Rmin, Rmax = np.array([30., 3000.]) # in pc
 rmin, rmax = np.array([30., 3000.]) # in pc
 
 Rbins, Rcenters, Rmin, Rmax, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins_R, Rlog)
@@ -61,9 +61,20 @@ rbins, rcenters = np.array([rbins, rcenters])*xvalue
 
 
 # Create a mock Singular Isothermal Sphere profile
-sigma_v = 200.e3 / pc_to_meter # to km/s to pc/s
+sigma_v = 200.e3 / pc_to_meter # to m/s to pc/s
 gobs_sis, Mobs_sis, rho_sis, sigma_sis, avsigma_sis, esd_sis = calc_sis(sigma_v, rcenters, Rcenters)
 
+print(esd_sis/rho_sis)
+
+plt.xscale('log')
+plt.yscale('log')
+
+plt.plot(Rcenters, esd_sis, label='ESD')
+plt.plot(rcenters, rho_sis, label='rho')
+plt.legend()
+
+plt.show()
+quit()
 
 # Define matrix Cmn, which calculates the projected density (sigma) from the spherical density (rho)
 def calc_Cmn(R, r, m, n):
