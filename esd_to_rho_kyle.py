@@ -94,7 +94,8 @@ rho = esd_to_rho(
     inner_extrapolation_type=inner_extrapolation_type,
     startstep=startstep,
     minstep=minstep,
-    verbose=True
+    verbose=True,
+    testwith_rho=rho_sis
 )
 
 # Plot the results

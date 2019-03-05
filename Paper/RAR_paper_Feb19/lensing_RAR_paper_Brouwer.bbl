@@ -24,6 +24,11 @@
   {10.1088/0067-0049/182/2/543}, \href
   {http://adsabs.harvard.edu/abs/2009ApJS..182..543A} {182, 543}
 
+\bibitem[\protect\citeauthoryear{{Bell} \& {de Jong}}{{Bell} \& {de
+  Jong}}{2001}]{bell2001}
+{Bell} E.~F.,  {de Jong} R.~S.,  2001, \mn@doi [\apj] {10.1086/319728}, \href
+  {http://adsabs.harvard.edu/abs/2001ApJ...550..212B} {550, 212}
+
 \bibitem[\protect\citeauthoryear{{Bernstein}, {Guhathakurta}, {Raychaudhury},
   {Giovanelli}, {Haynes}, {Herter}  \& {Vogt}}{{Bernstein}
   et~al.}{1994}]{bernstein1994}
@@ -53,6 +58,11 @@
 {Bosma} A.,  1981, \mn@doi [\aj] {10.1086/113062}, \href
   {http://adsabs.harvard.edu/abs/1981AJ.....86.1791B} {86, 1791}
 
+\bibitem[\protect\citeauthoryear{{Brouwer} et~al.,}{{Brouwer}
+  et~al.}{2018}]{brouwer2018}
+{Brouwer} M.~M.,  et~al., 2018, \mn@doi [\mnras] {10.1093/mnras/sty2589}, \href
+  {https://ui.adsabs.harvard.edu/\#abs/2018MNRAS.481.5189B} {481, 5189}
+
 \bibitem[\protect\citeauthoryear{{Carretero}, {Castander}, {Gazta{\~n}aga},
   {Crocce}  \& {Fosalba}}{{Carretero} et~al.}{2015}]{carretero2015}
 {Carretero} J.,  {Castander} F.~J.,  {Gazta{\~n}aga} E.,  {Crocce} M.,
@@ -68,6 +78,12 @@
 \bibitem[\protect\citeauthoryear{{Desmond}}{{Desmond}}{2017}]{desmond2017}
 {Desmond} H.,  2017, \mn@doi [\mnras] {10.1093/mnras/stw2571}, \href
   {https://ui.adsabs.harvard.edu/\#abs/2017MNRAS.464.4160D} {464, 4160}
+
+\bibitem[\protect\citeauthoryear{{Driver} et~al.,}{{Driver}
+  et~al.}{2011}]{driver2011}
+{Driver} S.~P.,  et~al., 2011, \mn@doi [\mnras]
+  {10.1111/j.1365-2966.2010.18188.x}, \href
+  {http://adsabs.harvard.edu/abs/2011MNRAS.413..971D} {413, 971}
 
 \bibitem[\protect\citeauthoryear{{Edge}, {Sutherland}, {Kuijken}, {Driver},
   {McMahon}, {Eales}  \& {Emerson}}{{Edge} et~al.}{2013}]{edge2013}
@@ -86,6 +102,12 @@
   {http://adsabs.harvard.edu/abs/2000AJ....120.1198F} {120, 1198}
 
 \bibitem[\protect\citeauthoryear{{Fosalba}, {Gazta{\~n}aga}, {Castander}  \&
+  {Manera}}{{Fosalba} et~al.}{2008}]{fosalba2008}
+{Fosalba} P.,  {Gazta{\~n}aga} E.,  {Castander} F.~J.,   {Manera} M.,  2008,
+  \mn@doi [\mnras] {10.1111/j.1365-2966.2008.13910.x}, \href
+  {http://adsabs.harvard.edu/abs/2008MNRAS.391..435F} {391, 435}
+
+\bibitem[\protect\citeauthoryear{{Fosalba}, {Gazta{\~n}aga}, {Castander}  \&
   {Crocce}}{{Fosalba} et~al.}{2015a}]{fosalba2015a}
 {Fosalba} P.,  {Gazta{\~n}aga} E.,  {Castander} F.~J.,   {Crocce} M.,  2015a,
   \mn@doi [\mnras] {10.1093/mnras/stu2464}, \href
@@ -96,6 +118,11 @@
 {Fosalba} P.,  {Crocce} M.,  {Gazta{\~n}aga} E.,   {Castander} F.~J.,  2015b,
   \mn@doi [\mnras] {10.1093/mnras/stv138}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.448.2987F} {448, 2987}
+
+\bibitem[\protect\citeauthoryear{{Hildebrandt} et~al.,}{{Hildebrandt}
+  et~al.}{2017}]{hildebrandt2017}
+{Hildebrandt} H.,  et~al., 2017, \mn@doi [\mnras] {10.1093/mnras/stw2805},
+  \href {http://adsabs.harvard.edu/abs/2017MNRAS.465.1454H} {465, 1454}
 
 \bibitem[\protect\citeauthoryear{{Hinshaw} et~al.,}{{Hinshaw}
   et~al.}{2013}]{hinshaw2013}
@@ -112,6 +139,11 @@
 {Hoffmann} K.,  {Bel} J.,  {Gazta{\~n}aga} E.,  {Crocce} M.,  {Fosalba} P.,
   {Castander} F.~J.,  2015, \mn@doi [\mnras] {10.1093/mnras/stu2492}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.447.1724H} {447, 1724}
+
+\bibitem[\protect\citeauthoryear{{Ilbert} et~al.,}{{Ilbert}
+  et~al.}{2009}]{ilbert2009}
+{Ilbert} O.,  et~al., 2009, \mn@doi [\apj] {10.1088/0004-637X/690/2/1236},
+  \href {http://adsabs.harvard.edu/abs/2009ApJ...690.1236I} {690, 1236}
 
 \bibitem[\protect\citeauthoryear{{\SortNoop{Jong}}de~Jong
   et~al.,}{{\SortNoop{Jong}}de~Jong et~al.}{2017}]{dejong2017}
@@ -136,6 +168,11 @@
 {\swap{Linden}{von der }} A.,  et~al., 2014, \mn@doi [\mnras]
   {10.1093/mnras/stt1945}, \href
   {http://adsabs.harvard.edu/abs/2014MNRAS.439....2V} {439, 2}
+
+\bibitem[\protect\citeauthoryear{{Liske} et~al.,}{{Liske}
+  et~al.}{2015}]{liske2015}
+{Liske} J.,  et~al., 2015, \mn@doi [\mnras] {10.1093/mnras/stv1436}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.452.2087L} {452, 2087}
 
 \bibitem[\protect\citeauthoryear{{Ludlow} et~al.,}{{Ludlow}
   et~al.}{2017}]{ludlow2017}
@@ -252,6 +289,11 @@ Planck~XVI x.,  2014, \aap, 571, A16
   {Kroupa}}{2015}]{wu2015}
 {Wu} X.,  {Kroupa} P.,  2015, \mn@doi [\mnras] {10.1093/mnras/stu2099}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.446..330W} {446, 330}
+
+\bibitem[\protect\citeauthoryear{{Zehavi} et~al.,}{{Zehavi}
+  et~al.}{2011}]{zehavi2011}
+{Zehavi} I.,  et~al., 2011, \mn@doi [\apj] {10.1088/0004-637X/736/1/59}, \href
+  {http://adsabs.harvard.edu/abs/2011ApJ...736...59Z} {736, 59}
 
 \bibitem[\protect\citeauthoryear{{Zwicky}}{{Zwicky}}{1937}]{zwicky1937}
 {Zwicky} F.,  1937, \mn@doi [\apj] {10.1086/143864}, \href
