@@ -144,7 +144,7 @@ Following more recent observations using Weak gravitational Lensing \cite[WL,][]
 
 Although the $\lcdm$ model successfully describes the behavior of DM on a wide range of scales, no conclusive evidence for the existence of DM particles has been found so far \cite[despite years of enormous effort; for an overview, see][]{bertone2005,bertone2018}. This still leaves some room for alternative theories of gravity, such as Modified Newtonian Dynamics  \cite[MOND,][]{milgrom1983} and the more recent theory of Emergent Gravity \cite[EG,][]{verlinde2016}. In these theories DM does not exist, and all gravity is due to the baryonic matter (or, in the case of EG, the interaction between baryons and the entropy associated with DE). Hence, one of the main properties of these theories is that the mass discrepancy in galaxies correlates strongly with their baryonic mass distribution.
 
-Such a correlation has indeed been widely observed. First astronomers discovered the Tully-Fisher relation \cite[TFR,][]{tully1977} between the luminosity of a spiral galaxy and its asymptotic rotation velocity \cite[]{pierce1988,bernstein1994}. Since this corresponds to a relation between the baryonic and the total galaxy mass, this has later been named the `baryonic' TFR \cite[BTFR,][]{mcgaugh2000,mcgaugh2012}. As the radial resolution of observations increased, astronomers found a strong correlation between the observed rotation velocity $v\un{obs}(r)$ as a function of galaxy radius $r$, and the enclosed luminous mass \mbox{$m\un{bar}(<r)$} \cite[]{sanders1986,sanders1996,mcgaugh2004,sanders2007,wu2015}. Since $m\un{bar}(<r)$ corresponds to the \emph{expected} gravitational acceleration $g\un{bar}(r)$ from baryonic matter, and the observed gravitational acceleration can be calculated through $g\un{obs}(r)=v\un{obs}^2(r)/r$, this relation has been named the Radial Acceleration Relation (RAR)\footnote{Another well-established name for this same relation is the Mass-Discrepency Acceleration Relation (MDAR), which refers to the correspondance between the observed baryonic/total mass and the inferred mass discrepency commonly attributed to DM. Throughout this work we use the term RAR for brevity.}.
+Such a correlation has indeed been widely observed. First astronomers discovered the Tully-Fisher relation \cite[TFR,][]{tully1977} between the luminosity of a spiral galaxy and its asymptotic rotation velocity \cite[]{pierce1988,bernstein1994}. Since this corresponds to a relation between the baryonic and the total galaxy mass, this has later been named the `baryonic' TFR \cite[BTFR,][]{mcgaugh2000,mcgaugh2012}. As the radial resolution of observations increased, astronomers found a strong correlation between the observed rotation velocity $v\un{obs}(r)$ as a function of galaxy radius $r$, and the enclosed luminous mass \mbox{$M\un{b}(<r)$} \cite[]{sanders1986,sanders1996,mcgaugh2004,sanders2007,wu2015}. Since $M\un{b}(<r)$ corresponds to the \emph{expected} gravitational acceleration $g\un{b}(r)$ from baryonic matter, and the observed gravitational acceleration can be calculated through $g\un{obs}(r)=v\un{obs}^2(r)/r$, this relation has been named the Radial Acceleration Relation (RAR)\footnote{Another well-established name for this same relation is the Mass-Discrepency Acceleration Relation (MDAR), which refers to the correspondance between the observed baryonic/total mass and the inferred mass discrepency commonly attributed to DM. Throughout this work we use the term RAR for brevity.}.
 
 Particularly, the latest results from \cite{mcgaugh2016} (hereafter M16) have measured the RAR relation with unprecedented accuracy, using the Spitzer Photometry and Accurate Rotation Curves \cite[SPARC,][]{lelli2016b} data of 153 late-type galaxies. Their results showed a tight correlation between $g\un{obs}$ and $g\un{bar}$, which they could fit using a simple double power law (Eq. 4 in M16) depending only on $g\un{bar}$ and one free parameter: the acceleration scale $g\un{\dagger}$ where Newtonian gravity appears to break down. This sparked the interest of scientists working on alternative theories of gravity, but also of those in favor of a statistical explanation of the RAR within the $\lcdm$ framework \cite[]{keller2017,desmond2017,ludlow2017}.
 
@@ -190,7 +190,13 @@ Need to know:
 \subsection{GAMA foreground galaxies}
 \label{sec:gama}
 
-The set of foreground galaxies observed by the spectroscopic GAMA survey \cite[]{driver2011} will function both as a model and validation sample for the KiDS foreground galaxies. The survey was performed by the Anglo-Australian Telescope with the AAOmega spectrograph, and targeted more than $180 \, 000$ galaxies that were selected from SDSS. For this study we use the GAMA II data release \cite[]{liske2015} consisting of three equatorial regions (G09, G12 and G15) which span a total area of $180 \deg^2$ on the sky, completely overlapping with KiDS. GAMA has a redshift range of $z<0.5$. It is an extremely complete survey, with a redshift completeness of $98.5\%$ down to Petrosian r-band magnitude $m\un{r} = 19.8 \magn$. We limit our GAMA foreground sample to galaxies with redshift quality $n\un{Q}\geq3$.
+Although the final RAR measurements will be performed using exclusively the KiDS-1000 data, the set of foreground galaxies observed by the spectroscopic GAMA survey \cite[]{driver2011} function both as a model and validation sample for the KiDS foreground galaxies. The survey was performed by the Anglo-Australian Telescope with the AAOmega spectrograph, and targeted more than $180 \, 000$ galaxies that were selected from SDSS. For this study we use the GAMA II data release \cite[]{liske2015} consisting of three equatorial regions (G09, G12 and G15). These regions span a total area of $\sim180 \deg^2$ on the sky, completely overlapping with KiDS.
+
+GAMA has a redshift range of $0<z<0.5$, with a redshift completeness of $98.5\%$ down to Petrosian r-band magnitude $m\un{r} = 19.8 \magn$. We limit our GAMA foreground sample to galaxies with the recommended redshift quality: $n\un{Q}\geq3$. This smaller sample of spectroscopic redshifts are used to train the photometric machine-learning (ML) redshifts of our larger sample of KiDS foreground galaxies (see Sect. \ref{sec:gamalike_kids}). Despite being smaller, GAMA's accurate redshifts are highly advantageous when measuring the ESD profiles of galaxies (see Sect. \ref{sec:lensing}). Also, in combination with its high redshift completeness, GAMA allows for a better application of the isolation criterion. We therefore check that the results from the KiDS-only measurements are consistent with those from KiDS-GAMA at all times.
+
+To measure RAR with KiDS-GAMA, we need individual stellar masses $M\un{*}$ for each GAMA galaxy. These are measured from their $ugrizZYJHK$ spectral energy distributions\footnote{The spectral energy distributions are constrained to the rest frame wavelenght range $3000-110000$ \AA.} measured by SDSS and the VISTA Kilo-Degree Infrared Galaxy survey \cite[VIKING,][]{edge2013}, by fitting them with \cite{bruzual2003} stellar population synthesis models. Following the procedure described by \cite{taylor2011}, we account for flux falling outside the automatically selected aperture using the `flux-scale' correction.
+
+
 
 \subsection{KiDS foreground selection}
 \label{sec:gamalike_kids}
@@ -262,7 +268,33 @@ Write everything.
 
 \subsection{Emergent Gravity}
 \label{sec:EG}
-Write everything.
+
+Similar to MOND, \cite{verlinde2016} (V16 hereafter) postulates that the `missing mass problem' is not caused by an undiscovered fundamental particle, but that instead our current gravitational theory should be revised. Building on the ideas of \cite{jacobson1995,jacobson2016,padmanabhan2010,faulkner2015} and his previous work \cite[]{verlinde2011}, V16 abandons the notion of gravity as a fundamental force. Instead, it emerges from an underlying microscopic description of space-time, in which the notion of gravity has no a-priori meaning. A distinguishing feature of V16 is that, instead constructing EG in a static (`anti-de Sitter') Universe, it attempts to describe our expanding (`de Sitter') Universe. This results in a new volume law for gravitational entropy caused by DE, in addition to the area law normally used to retrieve Einsteinian gravity.
+
+According to V16, energy that is concentrated in the form of a baryonic mass distribution causes an elastic response in the entropy of the surrounding DE. This results in an additional gravitational component at scales set by the `Hubble acceleration scale' $a\un{0} = c H_0$. Here $c$ is the speed of light and $H_0$ is the current Hubble constant, which measures the Universe's expansion velocity. Because this component is predicted to explain the effects usually attributed to DM, it is often expressed as an \emph{apparent} dark matter (ADM) distribution:
+\begin{equation}
+M_{\rm D}^2 (r) = \frac{  cH_0 r^2}{6G} \frac{d\left( M_{\rm b}(r) r \right)}{dr} \, .
+\label{eq:veg_mdm}
+\end{equation}
+In this form, the ADM distribution is completely defined by the baryonic mass distribution $M\un{b}(r)$ (as a function of the spherical radius r) and a set of known physical constants.
+
+Note that this equation is only a macroscopic approximation of the underlying microscopic phenomena described above, and is only valid for static, spherically symmetric and isolated baryonic mass distributions. For this reason, we select only the most isolated galaxies from our sample (see Sect. \ref{sec:isolation}), such that our WL measurements are not influenced by neighboring galaxies. In addition, cosmological evolution of the $H_0$ parameter is not yet implemented in the theory, restricting its validity to galaxies with relatively low redshifts. However, we calculate that at our mean lens redshift ($\langle z \rangle \sim 0.2$) using an evolving $H(z)$ would result in only a $~5\%$ difference in our ESD measurement, based on the background cosmology used in this work.
+
+Since we measure the ESD profiles of galaxies at projected radial distances $R>30 \hsMpc$, we can assume that their baryonic component is enclosed within the minimal measurement radius \cite[see ][]{brouwer2017}. This is equivalent to describing the galaxy as a point mass $M\un{b}$, which allows us to simplify Eq. \ref{eq:veg_mdm} to:
+\begin{equation}
+M_{\rm D}(r)=\sqrt{\frac{cH_{0} \, M_{\rm b}}{6 \, G}} \, r \, .
+\end{equation}
+Now the total enclosed mass, $M\un{EG}(r) = M\un{b} + M\un{D}(r)$, can be used to calculate the predicted gravitational acceleration $g\un{EG}(r)$ as follows:
+\begin{equation}
+	g_{\rm EG}(r) = \frac{G M\un{EG}(r)}{r^2} = \frac{G M\un{b}}{r^2} + \sqrt{\frac{cH_{0}}{6}} \, \frac{\sqrt{G M_{\rm b}}}{r} \, .
+\end{equation}
+In terms of the expected baryonic acceleration $g\un{bar}(r) = G M\un{b}/r^2$, this simplifies even further to:
+\begin{equation}
+g_{\rm EG}(g\un{bar}) = g\un{bar} + \sqrt{\frac{cH_{0}}{6}} \, \sqrt{g\un{bar}} \, .
+\end{equation}
+
+Finally, in order to test V16 using the standard WL methodology, we need to assume that the deflection of photons by a gravitational potential in this alternative theory corresponds to that in GR. This assumption is justified because, in EG's original form, Einstein's laws are meant emerge from its underlying description of space-time. The additional gravitational force described by ADM does not affect this underlying theory, which is an effective description of GR. Therefore, we assume that the gravitational potential of an ADM distribution produces the same lensing shear as an equivalent distribution of actual matter.
+
 
 \subsection{Analytical CDM model}
 \label{sec:analytical}

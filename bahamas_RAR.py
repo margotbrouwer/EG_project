@@ -8,6 +8,7 @@ import os
 
 from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
+from scipy import integrate
 import scipy.optimize as optimization
 import scipy.stats as stats
 import modules_EG as utils
@@ -42,7 +43,7 @@ h=0.7
 
 # Creating the Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 14, -999, 999] # Same R-bins as r from PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as r from PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
@@ -111,17 +112,45 @@ gobs_profiles_mean = np.mean(profiles_gobs, 0)
 
 # Calculate gbar from R
 gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * 3.08567758e16 # in m/s^2
-gbar_centers = np.array([(gbar_list[i])[0:-1] + np.diff(gbar_list[i])/2. for i in range(catnum)])
-gbar_maps_mean = np.mean(gbar_centers, 0)
+#gbar_centers = np.array([(gbar_list[i])[0:-1] + np.diff(gbar_list[i])/2. for i in range(catnum)])
+#gbar_maps_mean = np.mean(gbar_centers, 0)
+
 
 # Calculate gobs using the SIS assumption
 if method == 'SIS':
     gobs_list = ESD_list * 4.*G*3.08567758e16 # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
-    gobs_maps_mean = np.mean(gobs_list, 0)
 
 # Calculate gobs using Kyle's numerical integration method
 if method == 'numerical':
     
+    # Import Kyle's rho(r) fits
+    
+    fitsfile = '%s/ESD/deproject_bahamas.npy'%(path_cat)
+    fitscat = np.load(fitsfile)
+    
+    # Remove rows with NaN
+    profiles_gbar = profiles_gbar[~np.isnan(fitscat).any(axis=1)]
+    profiles_gobs = profiles_gobs[~np.isnan(fitscat).any(axis=1)]
+    profiles_radius = profiles_radius[~np.isnan(fitscat).any(axis=1)]
+    Rbins_list = Rbins_list[~np.isnan(fitscat).any(axis=1)]
+    fitscat = fitscat[~np.isnan(fitscat).any(axis=1)]
+    catnum = len(fitscat) # Assign new number to catnum
+    
+    # Calculate the enclosed mass using numerical integration
+    #Mobs_list = 4.*pi * np.array([integrate.cumtrapz(fitscat[c]*profiles_radius[c]**2., \
+    #            profiles_radius[c], initial=0.) for c in range(catnum)])
+    
+    Mbins_list = np.array([fitscat[c] * 4.*pi*profiles_radius[c]**2.*np.diff(Rbins_list[c]) \
+                 for c in range(catnum)])
+                 
+    Mobs_list = np.cumsum(Mbins_list, 1)
+    gobs_list = (G * Mobs_list) / (profiles_radius)**2. * 3.08567758e16 # in m/s^2
+    
+    print(fitscat)
+    print()
+    print(Mobs_list)
+    
+    """
     print('Performing analitical method')
     ## density profile, not shallower than -1 in outer part!
     
@@ -165,9 +194,8 @@ if method == 'numerical':
         plt.plot(r, guess)
         plt.plot(r, rho)
         plt.show()
-
-quit()
-"""
+    """
+    
 ## Plotting the result
 
 # Define the labels for the plot
@@ -182,29 +210,27 @@ if 'pc' in plotunit:
 else:
     for i in range(catnum):
     
-        plt.plot(gbar_centers[i], gobs_list[i], color='blue', marker='.', alpha=0.03)
+        plt.plot(profiles_gbar[i], gobs_list[i], color='blue', marker='.', alpha=0.03)
         plt.plot(profiles_gbar[i], profiles_gobs[i], color='red', marker='.', alpha=0.03)
-        
-    #plt.hist2d(np.ndarray.flatten(profiles_gbar), np.ndarray.flatten(profiles_gobs), [gbar_mond, gbar_mond])
-    #plt.hist2d(gbar_centers, gobs_list, [gbar_mond, gbar_mond])
     
-
+    # Mean gobs from the density maps
+    gobs_maps_mean = np.mean(gobs_list, 0)    
     
-    plt.plot(gbar_maps_mean, gobs_maps_mean, color='blue', marker='.', label='From density maps (SIS assumption)')
+    plt.plot(gbar_profiles_mean, gobs_maps_mean, color='blue', marker='.', label='From density maps (%s)'%method)
     plt.plot(gbar_profiles_mean, gobs_profiles_mean, color='red', marker='.', label='Calculated from mass profiles')
     
     plt.plot(gbar_uni, gbar_uni, ls=':', color='grey')
     plt.plot(gbar_mond, gobs_mond(gbar_mond), ls='--', color='black')
         
     #chi2 = np.sum((gobs_list - profiles_gobs)**2. / profiles_gobs)
-    difference = (gobs_maps_mean - gobs_profiles_mean) / gobs_profiles_mean
-    mean_diff = np.mean(np.abs((gobs_maps_mean - gobs_profiles_mean) / gobs_profiles_mean))
+    difference = (gobs_list - profiles_gobs) / profiles_gobs
+    mean_diff = np.mean(np.abs(difference))
     chi2 = stats.chisquare(gobs_list, f_exp=profiles_gobs, axis=None)
     
     print('chi^2:', chi2)
     print('difference:', difference)
     print('mean difference:', mean_diff)
-"""
+
 
 # Define axis labels and legend
 xlabel = r'Expected baryonic acceleration [$m/s^2$]'
@@ -222,7 +248,7 @@ plt.xlim([1e-15, 1e-10])
 
 plt.tight_layout()
 
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Jan19/Plots/bahamas_SIS_test'
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Feb19/Plots/bahamas_RAR_test_%s'%method
 
 # Save plot
 for ext in ['pdf', 'png']:

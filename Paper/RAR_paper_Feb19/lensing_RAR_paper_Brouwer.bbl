@@ -59,9 +59,20 @@
   {http://adsabs.harvard.edu/abs/1981AJ.....86.1791B} {86, 1791}
 
 \bibitem[\protect\citeauthoryear{{Brouwer} et~al.,}{{Brouwer}
+  et~al.}{2017}]{brouwer2017}
+{Brouwer} M.~M.,  et~al., 2017, \mn@doi [\mnras] {10.1093/mnras/stw3192}, \href
+  {http://adsabs.harvard.edu/abs/2017MNRAS.466.2547B} {466, 2547}
+
+\bibitem[\protect\citeauthoryear{{Brouwer} et~al.,}{{Brouwer}
   et~al.}{2018}]{brouwer2018}
 {Brouwer} M.~M.,  et~al., 2018, \mn@doi [\mnras] {10.1093/mnras/sty2589}, \href
   {https://ui.adsabs.harvard.edu/\#abs/2018MNRAS.481.5189B} {481, 5189}
+
+\bibitem[\protect\citeauthoryear{{Bruzual} \& {Charlot}}{{Bruzual} \&
+  {Charlot}}{2003}]{bruzual2003}
+{Bruzual} G.,  {Charlot} S.,  2003, \mn@doi [\mnras]
+  {10.1046/j.1365-8711.2003.06897.x}, \href
+  {http://adsabs.harvard.edu/abs/2003MNRAS.344.1000B} {344, 1000}
 
 \bibitem[\protect\citeauthoryear{{Carretero}, {Castander}, {Gazta{\~n}aga},
   {Crocce}  \& {Fosalba}}{{Carretero} et~al.}{2015}]{carretero2015}
@@ -95,6 +106,13 @@
   et~al.}{2005}]{eisenstein2005}
 {Eisenstein} D.~J.,  et~al., 2005, \mn@doi [\apj] {10.1086/466512}, \href
   {http://adsabs.harvard.edu/abs/2005ApJ...633..560E} {633, 560}
+
+\bibitem[\protect\citeauthoryear{{Faulkner}, {Guica}, {Hartman}, {Myers}  \&
+  {Van Raamsdonk}}{{Faulkner} et~al.}{2014}]{faulkner2015}
+{Faulkner} T.,  {Guica} M.,  {Hartman} T.,  {Myers} R.~C.,   {Van Raamsdonk}
+  M.,  2014, \mn@doi [Journal of High Energy Physics]
+  {10.1007/JHEP03(2014)051}, \href
+  {http://adsabs.harvard.edu/abs/2014JHEP...03..051F} {3, 51}
 
 \bibitem[\protect\citeauthoryear{{Fischer} et~al.,}{{Fischer}
   et~al.}{2000}]{fischer2000ggl}
@@ -144,6 +162,16 @@
   et~al.}{2009}]{ilbert2009}
 {Ilbert} O.,  et~al., 2009, \mn@doi [\apj] {10.1088/0004-637X/690/2/1236},
   \href {http://adsabs.harvard.edu/abs/2009ApJ...690.1236I} {690, 1236}
+
+\bibitem[\protect\citeauthoryear{{Jacobson}}{{Jacobson}}{1995}]{jacobson1995}
+{Jacobson} T.,  1995, \mn@doi [Physical Review Letters]
+  {10.1103/PhysRevLett.75.1260}, \href
+  {http://adsabs.harvard.edu/abs/1995PhRvL..75.1260J} {75, 1260}
+
+\bibitem[\protect\citeauthoryear{{Jacobson}}{{Jacobson}}{2016}]{jacobson2016}
+{Jacobson} T.,  2016, \mn@doi [Physical Review Letters]
+  {10.1103/PhysRevLett.116.201101}, \href
+  {http://adsabs.harvard.edu/abs/2016PhRvL.116t1101J} {116, 201101}
 
 \bibitem[\protect\citeauthoryear{{\SortNoop{Jong}}de~Jong
   et~al.,}{{\SortNoop{Jong}}de~Jong et~al.}{2017}]{dejong2017}
@@ -227,6 +255,11 @@ Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
   [\mnras] {10.1093/mnras/stx1705}, \href
   {http://adsabs.harvard.edu/abs/2017MNRAS.471.1841N} {471, 1841}
 
+\bibitem[\protect\citeauthoryear{{Padmanabhan}}{{Padmanabhan}}{2010}]{padmanabhan2010}
+{Padmanabhan} T.,  2010, \mn@doi [Reports on Progress in Physics]
+  {10.1088/0034-4885/73/4/046901}, \href
+  {http://adsabs.harvard.edu/abs/2010RPPh...73d6901P} {73, 046901}
+
 \bibitem[\protect\citeauthoryear{{Pierce} \& {Tully}}{{Pierce} \&
   {Tully}}{1988}]{pierce1988}
 {Pierce} M.~J.,  {Tully} R.~B.,  1988, \mn@doi [\apj] {10.1086/166495}, \href
@@ -263,6 +296,12 @@ Planck~XVI x.,  2014, \aap, 571, A16
 {Spergel} D.~N.,  et~al., 2003, \mn@doi [\apjs] {10.1086/377226}, \href
   {http://adsabs.harvard.edu/abs/2003ApJS..148..175S} {148, 175}
 
+\bibitem[\protect\citeauthoryear{{Taylor} et~al.,}{{Taylor}
+  et~al.}{2011}]{taylor2011}
+{Taylor} E.~N.,  et~al., 2011, \mn@doi [\mnras]
+  {10.1111/j.1365-2966.2011.19536.x}, \href
+  {http://adsabs.harvard.edu/abs/2011MNRAS.418.1587T} {418, 1587}
+
 \bibitem[\protect\citeauthoryear{{Tully} \& {Fisher}}{{Tully} \&
   {Fisher}}{1977}]{tully1977}
 {Tully} R.~B.,  {Fisher} J.~R.,  1977, \aap, \href
@@ -273,6 +312,11 @@ Planck~XVI x.,  2014, \aap, 571, A16
 {\SortNoop{Uitert}}van~Uitert E.,  et~al., 2016, \mn@doi [\mnras]
   {10.1093/mnras/stw747}, \href
   {http://adsabs.harvard.edu/abs/2016MNRAS.459.3251V} {459, 3251}
+
+\bibitem[\protect\citeauthoryear{{Verlinde}}{{Verlinde}}{2011}]{verlinde2011}
+{Verlinde} E.,  2011, \mn@doi [Journal of High Energy Physics]
+  {10.1007/JHEP04(2011)029}, \href
+  {http://adsabs.harvard.edu/abs/2011JHEP...04..029V} {4, 29}
 
 \bibitem[\protect\citeauthoryear{{Verlinde}}{{Verlinde}}{2016}]{verlinde2016}
 {Verlinde} E.~P.,  2016, preprint, \href
