@@ -52,8 +52,8 @@ rationames = [('%s'%d).replace('.', 'p') for d in dexvalues]
 massratios = [1./10**d for d in dexvalues] # ... where X=0.5 dex
 """
 rationame = 'perc'
-#massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
-massratios = [0.2, 0.1]
+massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
+#massratios = [0.2, 0.1]
 rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 
 # This list will contain all satellite distances
@@ -90,7 +90,7 @@ for d in range(len(massratios)):
 print('logmbins:', logmlims)
 print('dlogm:', dlogm)
 
-# Plot the results to a fits table
+# Write the results to a fits table
 filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_perc_h%i'%(cat, h*100.)
 
 outputnames = np.append(['logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])

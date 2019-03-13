@@ -101,8 +101,8 @@ for c in range(catnum):
     profiles_Menclosed[c] = profile_c[1,0:Nbins] * M200list[c] # in Msun
 
 # Calculate true gbar and gobs from enclosed mass profiles
-profiles_gbar = (G * mstarlist) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
-profiles_gobs = (G * profiles_Menclosed) / (profiles_radius*xvalue)**2. * 3.08567758e16 # in m/s^2
+profiles_gbar = (G * mstarlist) / (profiles_radius*xvalue)**2. * pc_to_meter # in m/s^2
+profiles_gobs = (G * profiles_Menclosed) / (profiles_radius*xvalue)**2. * pc_to_meter # in m/s^2
 
 gbar_profiles_mean = np.mean(profiles_gbar, 0)
 gobs_profiles_mean = np.mean(profiles_gobs, 0)
@@ -111,44 +111,44 @@ gobs_profiles_mean = np.mean(profiles_gobs, 0)
 ## Calculate gbar and gobs from the ESD profiles
 
 # Calculate gbar from R
-gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * 3.08567758e16 # in m/s^2
+#gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * pc_to_meter # in m/s^2
 #gbar_centers = np.array([(gbar_list[i])[0:-1] + np.diff(gbar_list[i])/2. for i in range(catnum)])
 #gbar_maps_mean = np.mean(gbar_centers, 0)
 
 
 # Calculate gobs using the SIS assumption
 if method == 'SIS':
-    gobs_list = ESD_list * 4.*G*3.08567758e16 # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+    gobs_list = ESD_list * 4.*G * pc_to_meter # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
 
 # Calculate gobs using Kyle's numerical integration method
 if method == 'numerical':
     
-    # Import Kyle's rho(r) fits
+    # Import Kyle's M(<r) fits
     
-    fitsfile = '%s/ESD/deproject_bahamas.npy'%(path_cat)
+    fitsfile = '%s/ESD/mencl_bahamas.npy'%(path_cat)
     fitscat = np.load(fitsfile)
     
-    # Remove rows with NaN
-    profiles_gbar = profiles_gbar[~np.isnan(fitscat).any(axis=1)]
-    profiles_gobs = profiles_gobs[~np.isnan(fitscat).any(axis=1)]
-    profiles_radius = profiles_radius[~np.isnan(fitscat).any(axis=1)]
-    Rbins_list = Rbins_list[~np.isnan(fitscat).any(axis=1)]
-    fitscat = fitscat[~np.isnan(fitscat).any(axis=1)]
-    catnum = len(fitscat) # Assign new number to catnum
+    Menc_radii = fitscat[0,:,0:Nbins] # in pc?
+    Menc_values = fitscat[1,:,0:Nbins] # in Msun?
     
-    # Calculate the enclosed mass using numerical integration
-    #Mobs_list = 4.*pi * np.array([integrate.cumtrapz(fitscat[c]*profiles_radius[c]**2., \
-    #            profiles_radius[c], initial=0.) for c in range(catnum)])
+    # Remove rows with NaN and/or inf
+    profiles_gbar = profiles_gbar[np.isfinite(Menc_values).any(axis=1)]
+    profiles_gobs = profiles_gobs[np.isfinite(Menc_values).any(axis=1)]
+    profiles_radius = profiles_radius[np.isfinite(Menc_values).any(axis=1)]
+    Rbins_list = Rbins_list[np.isfinite(Menc_values).any(axis=1)]
+    Menc_radii = Menc_radii[np.isfinite(Menc_values).any(axis=1)]
+    mstarlist = mstarlist[np.isfinite(Menc_values).any(axis=1)]
+
+    Menc_values = Menc_values[np.isfinite(Menc_values).any(axis=1)]
+    catnum = len(Menc_values) # Assign new number to catnum
     
-    Mbins_list = np.array([fitscat[c] * 4.*pi*profiles_radius[c]**2.*np.diff(Rbins_list[c]) \
-                 for c in range(catnum)])
-                 
-    Mobs_list = np.cumsum(Mbins_list, 1)
-    gobs_list = (G * Mobs_list) / (profiles_radius)**2. * 3.08567758e16 # in m/s^2
-    
-    print(fitscat)
+    print('Menclosed:', Menc_values)
     print()
-    print(Mobs_list)
+    print('Radius:', profiles_radius)
+    print(Menc_radii)
+    
+    gbar_list = (G * mstarlist) / (Menc_radii*xvalue)**2. * pc_to_meter # in m/s^2
+    gobs_list = (G * Menc_values) / (Menc_radii)**2. * pc_to_meter
     
     """
     print('Performing analitical method')
@@ -210,13 +210,14 @@ if 'pc' in plotunit:
 else:
     for i in range(catnum):
     
-        plt.plot(profiles_gbar[i], gobs_list[i], color='blue', marker='.', alpha=0.03)
+        plt.plot(gbar_list[i], gobs_list[i], color='blue', marker='.', alpha=0.03)
         plt.plot(profiles_gbar[i], profiles_gobs[i], color='red', marker='.', alpha=0.03)
     
     # Mean gobs from the density maps
-    gobs_maps_mean = np.mean(gobs_list, 0)    
+    gobs_maps_mean = np.mean(gobs_list, 0)
+    gbar_maps_mean = np.mean(gbar_list, 0) 
     
-    plt.plot(gbar_profiles_mean, gobs_maps_mean, color='blue', marker='.', label='From density maps (%s)'%method)
+    plt.plot(gbar_maps_mean, gobs_maps_mean, color='blue', marker='.', label='From density maps (%s)'%method)
     plt.plot(gbar_profiles_mean, gobs_profiles_mean, color='red', marker='.', label='Calculated from mass profiles')
     
     plt.plot(gbar_uni, gbar_uni, ls=':', color='grey')
@@ -243,8 +244,8 @@ plt.legend()
 plt.xscale('log')
 plt.yscale('log')
 
-plt.ylim([1e-13, 1e-9])
-plt.xlim([1e-15, 1e-10])
+plt.ylim([1e-13, 1e-7])
+plt.xlim([1e-18, 1e-10])
 
 plt.tight_layout()
 

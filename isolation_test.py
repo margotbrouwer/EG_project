@@ -23,7 +23,10 @@ rationame = 'perc'
 massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
 massratio_names = [str(p).replace('.','p') for p in massratios]
 massratio_num = 4
-print(massratios[massratio_num])
+distval = 3. # in Mpc
+
+print()
+print('Testing isolation criterion: D(perc>%g)>%g Mpc'%(massratios[massratio_num],distval))
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -39,10 +42,15 @@ lensRA, lensDEC, lensDc, logmstar, rmag = \
 # Import isolation catalog
 isocatfile = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_%s_h%i.fits'%(cat, rationame, h*100.)
 isocat = pyfits.open(isocatfile, memmap=True)[1].data
+print('Imported:', isocatfile)
 
 #distcat = np.array([ isocat['dist%s%s'%(p, rationame)] for p in massratio_names])
 isodist = (isocat['dist%s%s'%(massratio_names[massratio_num], rationame)])[nanmask]
-isomask = isodist > 3e6 # There are no galaxies within X pc
+isomask = isodist > distval # There are no galaxies within X pc
+
+print('Isolated galaxies:', np.sum(isomask), np.sum(isomask)/len(isomask)*100., '%')
+
+
 
 # Define the galaxy mass bins
 rmag_min, rmag_max = [13., 20.]
@@ -55,7 +63,7 @@ rmaghist, foo = np.histogram(rmag, rmagbins)
 
 maglim = -2.5 * np.log10(massratios[massratio_num])
 
-print(maglim, 19.8-maglim)
+print('Maglim:', maglim, 19.8-maglim)
 
 plt.plot(rmagcenters, isohist/1e4, label='Isolated galaxies')
 plt.plot(rmagcenters, rmaghist/1e4, label='All galaxies')
