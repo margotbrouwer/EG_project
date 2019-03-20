@@ -29,7 +29,7 @@ G = const.G.to('pc3/Msun s2').value # in pc3/Msun s2
 c = const.c.to('pc/s').value # in pc/s
 inf = np.inf
 pi = np.pi
-pc_to_meter = 3.086e16 # meters
+pc_to_meter = 3.08567758e16 # meters
 
 # Bahamas simulation parameters
 Zlens = 0.25
@@ -50,7 +50,7 @@ Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax
 print('R-bins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 
 plotunit = 'mps2'
-method = 'numerical' # SIS or numerical
+method = 'SIS' # SIS or numerical
 
 gbar_mond = np.logspace(-16, -8, 40)
 gbar_ext = np.logspace(-16, -12, 30)
@@ -110,15 +110,13 @@ gobs_profiles_mean = np.mean(profiles_gobs, 0)
 
 ## Calculate gbar and gobs from the ESD profiles
 
-# Calculate gbar from R
-#gbar_list = (G * mstarlist) / (Rbins_list*xvalue)**2. * pc_to_meter # in m/s^2
-#gbar_centers = np.array([(gbar_list[i])[0:-1] + np.diff(gbar_list[i])/2. for i in range(catnum)])
-#gbar_maps_mean = np.mean(gbar_centers, 0)
-
-
 # Calculate gobs using the SIS assumption
 if method == 'SIS':
     gobs_list = ESD_list * 4.*G * pc_to_meter # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+
+    # Calculate gbar from R
+    gbar_bins = (G * mstarlist) / (Rbins_list*xvalue)**2. * pc_to_meter # in m/s^2
+    gbar_list = np.array([(gbar_bins[i])[0:-1] + np.diff(gbar_bins[i])/2. for i in range(catnum)])
 
 # Calculate gobs using Kyle's numerical integration method
 if method == 'numerical':
@@ -128,8 +126,8 @@ if method == 'numerical':
     fitsfile = '%s/ESD/mencl_bahamas.npy'%(path_cat)
     fitscat = np.load(fitsfile)
     
-    Menc_radii = fitscat[0,:,0:Nbins] # in pc?
-    Menc_values = fitscat[1,:,0:Nbins] # in Msun?
+    Menc_radii = fitscat[0,:,0:Nbins] # in pc
+    Menc_values = fitscat[1,:,0:Nbins] # in Msun
     
     # Remove rows with NaN and/or inf
     profiles_gbar = profiles_gbar[np.isfinite(Menc_values).any(axis=1)]
@@ -144,11 +142,10 @@ if method == 'numerical':
     
     print('Menclosed:', Menc_values)
     print()
-    print('Radius:', profiles_radius)
-    print(Menc_radii)
+    print('Radius:', Menc_radii)
     
     gbar_list = (G * mstarlist) / (Menc_radii*xvalue)**2. * pc_to_meter # in m/s^2
-    gobs_list = (G * Menc_values) / (Menc_radii)**2. * pc_to_meter
+    gobs_list = (G * Menc_values) / (Menc_radii*xvalue)**2. * pc_to_meter # in m/s^2
     
     """
     print('Performing analitical method')
@@ -244,20 +241,61 @@ plt.legend()
 plt.xscale('log')
 plt.yscale('log')
 
-plt.ylim([1e-13, 1e-7])
-plt.xlim([1e-18, 1e-10])
+plt.ylim([1e-12, 1e-7])
+plt.xlim([1e-15, 1e-10])
 
 plt.tight_layout()
 
 plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Feb19/Plots/bahamas_RAR_test_%s'%method
 
 # Save plot
-for ext in ['pdf', 'png']:
+for ext in ['pdf']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     
-print('Written: ESD profile plot:', plotname)
+print('Written plot:', plotname)
 
 plt.show()
 plt.clf
 
+"""
+## Plot enclosed radii
+
+for i in range(catnum):
+
+    plt.plot(Menc_radii[i], Menc_values[i], color='blue', marker='.', alpha=0.03)
+    plt.plot(profiles_radius[i], profiles_Menclosed[i], color='red', marker='.', alpha=0.03)
+
+# Define axis labels and legend
+xlabel = r'Radius [Mpc]'
+ylabel = r'Enclosed mass [$M_{\odot}$]'
+
+# Mean gobs from the density maps
+Menc_radii_mean = np.mean(Menc_radii, 0)
+Menc_values_mean = np.mean(Menc_values, 0) 
+
+profiles_radius_mean = np.mean(profiles_radius, 0)
+profiles_Menclosed_mean = np.mean(profiles_Menclosed, 0) 
+
+plt.plot(Menc_radii_mean, Menc_values_mean, color='blue', marker='.', label='From density maps (%s)'%method)
+plt.plot(profiles_radius_mean, profiles_Menclosed_mean, color='red', marker='.', label='Calculated from mass profiles')
+
+plt.xlabel(xlabel, fontsize=12)
+plt.ylabel(ylabel, fontsize=12)
+
+plt.xscale('log')
+plt.yscale('log')
+plt.legend()
+
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Feb19/Plots/bahamas_Menclosed_test_%s'%method
+
+# Save plot
+for ext in ['pdf']:
+    plotname = '%s.%s'%(plotfilename, ext)
+    plt.savefig(plotname, format=ext, bbox_inches='tight')
+    
+print('Written plot:', plotname)
+
+plt.show()
+plt.clf
+"""
