@@ -55,16 +55,29 @@ H0 = 2.269e-18 # 70 km/s/Mpc in 1/s
 h=0.7
 
 def gobs_mond(gbar, g0=1.2e-10):
-    gobs = np.log10(10.**gbar / (1 - np.exp( -np.sqrt(10.**gbar/g0) )))
+    gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
     return gobs
 
 def gobs_verlinde(gbar):
     gobs = gbar + np.sqrt((c*H0)/6) * np.sqrt(gbar)
     return gobs
 
+# rho = const
+def calc_gobs_0(gbar):
+    gD_0 = np.sqrt((c*H0)/6) * np.sqrt(4*gbar)
+    gobs_0 = gbar + gD_0
+    return gD_0, gobs_0
+
+# rho = r^{-2}?
+def calc_gobs_2(gbar):
+    gD_2 = np.sqrt((c*H0)/6) * np.sqrt(2*gbar)
+    gobs_2 = gbar + gD_2
+    return gD_2, gobs_2
+
 gbar_mond = np.linspace(-12, -8, 50)
 gbar_ext = np.linspace(-15, -12, 30)
 gbar_uni = np.linspace(-15, -8, 50)
+gbar_log = np.logspace(-15, -8, 50)
 
 
 ## Import shear and random profiles
@@ -86,7 +99,7 @@ path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'
 ## Input lens selections
 
 """
-"""
+
 # Mass bins (4) with equal S/N (GAMA vs MICE)
 paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
 N = len(paramlims)-1
@@ -105,7 +118,7 @@ path_mockcosmo = np.array([['zcgal_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_
 path_mockfilename = np.array([['shearcovariance_bin_%i_A'%i] for i in np.arange(N)+1])
 
 plotfilename = '%s/Plots/RAR_GAMA+Navarro_4-massbins_isolated_strong'%path_sheardata
-"""
+
 
 # Mass bins (4) with equal S/N (KiDS-only vs MICE)
 paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
@@ -140,7 +153,7 @@ datalabels = ['Weaker (%sperc/%sMpc)'%(percvalues[0],distvalues[0]), 'Fiducial (
     'Stronger (%sperc/%sMpc)'%(percvalues[2],distvalues[2])]
 datatitles = [r'Maximum satellite mass (Rmin=4Mpc)', r'Minimum satellite distance (Mmax=0p2perc)']
 
-
+"""
 
 # GAMA (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])
@@ -149,8 +162,9 @@ path_filename = np.array([['No_bins_A']])
 
 datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)']# $({\rm log}_{10}({\rm \bar{M}}_*)=11.1 {\rm M}_\odot)$']
 
-plotfilename = '%s/Plots/RAR_GAMA_isolated_McGaugh_binned_hist2d'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_isolated+McGaugh+Lelli_dSphs+Slopes'%path_sheardata
 
+"""
 
 # GAMA+MICE (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])#, 'No_bins/dist0p2perc_4_inf_lw-lmstellar']])
@@ -288,6 +302,15 @@ gobs_mcgaugh_stderror = gobs_mcgaugh_std#/np.sqrt(gbar_mcgaugh_number)
 gbar_mcgaugh_stderror = gbar_mcgaugh_std#/np.sqrt(gbar_mcgaugh_number)
 """
 
+# Import Lelli+2017 dSph data
+data_dsph = np.genfromtxt('RAR_profiles/Lelli2017_dSph_data.txt', delimiter=',').T
+loggbar_dsph, loggbar_dsph_ehigh, loggbar_dsph_elow, loggobs_dsph, loggobs_dsph_ehigh, loggobs_dsph_elow \
+    = np.array([data_dsph[d] for d in np.arange(15,21)])
+
+# Apply the High-Quality mask
+hqsample = data_dsph[1]
+hqmask = (hqsample==1)
+
 ## Mocks
 print()
 print('Import mock signal:')
@@ -387,11 +410,9 @@ for N1 in range(Nrows):
         N = np.int(N1*Ncolumns + N2)
         
         # Plot guiding lines
-        ax_sub.plot(gbar_mond, gobs_mond(gbar_mond), label = r'McGaugh+2016 fitting function (extrapolated)',\
-            color='grey', ls='-', marker='', zorder=3)
+        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_mond(gbar_log)), label = r'McGaugh+2016 fitting function (extrapolated)',\
+            color='grey', ls='-', marker='', zorder=6)
         ax_sub.plot(gbar_ext, gobs_mond(gbar_ext), color='grey', ls='--', marker='', zorder=2)
-        #ax_sub.plot(gbar_uni, gobs_verlinde(gbar_uni), label = 'Verlinde+2016',\
-        #    color='red', ls=':', marker='', zorder=4)
         ax_sub.plot(gbar_uni, gbar_uni, label = r'Unity (No dark matter: $g_{\rm tot} = g_{\rm bar}$)', \
         color='grey', ls=':', marker='', zorder=1)
                 
@@ -414,32 +435,43 @@ for N1 in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', zorder=4)
+                color='black', ls='', marker='.', zorder=4)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', label=datalabels[Nplot], zorder=4)
+                color='black', ls='', marker='.', label=datalabels[Nplot], zorder=4)
             
             """
             # Plot Navarro predictions
             ax_sub.plot(gbar_navarro[Ndata], gobs_navarro[Ndata], ls='--', marker='', color=colors[Ndata], \
             label='Navarro+2017 ($M_*=%s} M_\odot$)'%masses_navarro[Ndata].replace('E','\cdot10^{'), zorder=5)
-            
+
+                        
             ## Plot McGaugh observations
             # Binned
             ax_sub.errorbar(gbar_mcgaugh_mean, gobs_mcgaugh_mean, yerr=gobs_mcgaugh_meanerror, \
             marker='s', color='red', ls='', label='McGaugh+2016 observations (mean + mean error)', zorder=5)
-            
             
             # Not binned
             ax_sub.errorbar(gbar_mcgaugh, gobs_mcgaugh, xerr=gbar_mcgaugh_error, \
             yerr=gobs_mcgaugh_error, ls='', marker='.', color=colors[0], alpha=0.04, \
             label='McGaugh+2016 observations', zorder=2)
             
+            
+            # 2D histogram
             ax_sub.plot(loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, label='McGaugh+2016 observations (mean)', \
                 ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=3)
-            #ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=50, cmin=1, cmap='Blues')
+            ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=50, cmin=1, cmap='Blues')
             """
-
+            
+            # Plot Lelli+2017 dwarf Spheroidals
+            ax_sub.errorbar(loggbar_dsph, loggobs_dsph, xerr=[-loggbar_dsph_elow,loggbar_dsph_ehigh], \
+            yerr=[-loggobs_dsph_elow,loggobs_dsph_ehigh], marker='o', color='orange', ls='', zorder=3, alpha=0.1)
+            
+            ax_sub.errorbar(loggbar_dsph[hqmask], loggobs_dsph[hqmask], \
+            xerr=[-loggbar_dsph_elow[hqmask],loggbar_dsph_ehigh[hqmask]], yerr=[-loggobs_dsph_elow[hqmask],loggobs_dsph_ehigh[hqmask]], \
+            marker='o', color='orange', ls='', label='Lelli+2017 Dwarf Spheroidals (velocity dispersions at r$_{1/2}$)', zorder=4)
+            
+            
         try:
             # Plot mock shearprofiles
             for Nmock in range(Nmocks[1]):
@@ -479,7 +511,7 @@ for N1 in range(Nrows):
         #plt.autoscale(enable=False, axis='both', tight=None)
         
         ax.xaxis.set_label_coords(0.5, -0.1)
-        ax.yaxis.set_label_coords(-0.15/Ncolumns, 0.5)
+        ax.yaxis.set_label_coords(-0.1/Ncolumns, 0.5)
             
         # Plot Crescenzo's data
         #ax_sub.errorbar(gbar_cres, gobs_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
@@ -489,6 +521,13 @@ for N1 in range(Nrows):
         #ax_sub.plot(gbar_kyle[1], gobs_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
         #ax_sub.plot(gbar_kyle[2], gobs_kyle[2], ls='--', marker='', color=colors[3], label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
         
+        # Plot Verlinde slopes
+        gD_0, gobs_0 = calc_gobs_0(gbar_log)
+        gD_2, gobs_2 = calc_gobs_2(gbar_log)
+        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=6)
+        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
+        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde (Point mass: ${\rm M_b}(r)$=const.)', zorder=6)
+        
         #plt.xscale('log')
         #plt.yscale('log')
         
@@ -497,8 +536,8 @@ for N1 in range(Nrows):
         #plt.ylim([0.5e-13, 1e-10])
 
         # Zoomed out
-        plt.xlim([-15, -11])
-        plt.ylim([-13, -10])
+        plt.xlim([-15, -8])
+        plt.ylim([-13.2, -8])
         
         #plt.gca().invert_xaxis()
         #plt.gca().invert_yaxis()
@@ -531,7 +570,7 @@ else:
 plt.tight_layout()
 
 # Save plot
-for ext in ['pdf']:
+for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     

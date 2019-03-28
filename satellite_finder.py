@@ -21,7 +21,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Data selection
 cat = 'gama' # Select the lens catalogue (kids/gama/mice)
-Rmax = 0.5 # Maximum satellite finding radius (in Mpc)
+Rmax = 3 # Maximum satellite finding radius (in Mpc)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
