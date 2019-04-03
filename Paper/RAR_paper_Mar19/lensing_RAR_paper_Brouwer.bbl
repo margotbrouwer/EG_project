@@ -29,6 +29,10 @@
 {Bell} E.~F.,  {de Jong} R.~S.,  2001, \mn@doi [\apj] {10.1086/319728}, \href
   {http://adsabs.harvard.edu/abs/2001ApJ...550..212B} {550, 212}
 
+\bibitem[\protect\citeauthoryear{{Ben{\'{\i}}tez}}{{Ben{\'{\i}}tez}}{2000}]{benitez2000}
+{Ben{\'{\i}}tez} N.,  2000, \mn@doi [\apj] {10.1086/308947}, \href
+  {http://adsabs.harvard.edu/abs/2000ApJ...536..571B} {536, 571}
+
 \bibitem[\protect\citeauthoryear{{Bernstein}, {Guhathakurta}, {Raychaudhury},
   {Giovanelli}, {Haynes}, {Herter}  \& {Vogt}}{{Bernstein}
   et~al.}{1994}]{bernstein1994}
@@ -36,6 +40,11 @@
   {Haynes} M.~P.,  {Herter} T.,   {Vogt} N.~P.,  1994, \mn@doi [\aj]
   {10.1086/117008}, \href {http://adsabs.harvard.edu/abs/1994AJ....107.1962B}
   {107, 1962}
+
+\bibitem[\protect\citeauthoryear{{Bertin} \& {Arnouts}}{{Bertin} \&
+  {Arnouts}}{1996}]{bertin1996}
+{Bertin} E.,  {Arnouts} S.,  1996, \mn@doi [\aaps] {10.1051/aas:1996164}, \href
+  {http://adsabs.harvard.edu/abs/1996A%26AS..117..393B} {117, 393}
 
 \bibitem[\protect\citeauthoryear{{Bertone} \& {Tait}}{{Bertone} \&
   {Tait}}{2018}]{bertone2018}
@@ -112,12 +121,24 @@
 {Eisenstein} D.~J.,  et~al., 2005, \mn@doi [\apj] {10.1086/466512}, \href
   {http://adsabs.harvard.edu/abs/2005ApJ...633..560E} {633, 560}
 
+\bibitem[\protect\citeauthoryear{{Erben} et~al.,}{{Erben}
+  et~al.}{2013}]{erben2013}
+{Erben} T.,  et~al., 2013, \mn@doi [\mnras] {10.1093/mnras/stt928}, \href
+  {http://adsabs.harvard.edu/abs/2013MNRAS.433.2545E} {433, 2545}
+
 \bibitem[\protect\citeauthoryear{{Faulkner}, {Guica}, {Hartman}, {Myers}  \&
   {Van Raamsdonk}}{{Faulkner} et~al.}{2014}]{faulkner2015}
 {Faulkner} T.,  {Guica} M.,  {Hartman} T.,  {Myers} R.~C.,   {Van Raamsdonk}
   M.,  2014, \mn@doi [Journal of High Energy Physics]
   {10.1007/JHEP03(2014)051}, \href
   {http://adsabs.harvard.edu/abs/2014JHEP...03..051F} {3, 51}
+
+\bibitem[\protect\citeauthoryear{{Fenech Conti}, {Herbonnet}, {Hoekstra},
+  {Merten}, {Miller}  \& {Viola}}{{Fenech Conti}
+  et~al.}{2017}]{fenechconti2017}
+{Fenech Conti} I.,  {Herbonnet} R.,  {Hoekstra} H.,  {Merten} J.,  {Miller} L.,
+    {Viola} M.,  2017, \mn@doi [\mnras] {10.1093/mnras/stx200}, \href
+  {http://adsabs.harvard.edu/abs/2017MNRAS.467.1627F} {467, 1627}
 
 \bibitem[\protect\citeauthoryear{{Fischer} et~al.,}{{Fischer}
   et~al.}{2000}]{fischer2000ggl}
@@ -141,6 +162,12 @@
 {Fosalba} P.,  {Crocce} M.,  {Gazta{\~n}aga} E.,   {Castander} F.~J.,  2015b,
   \mn@doi [\mnras] {10.1093/mnras/stv138}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.448.2987F} {448, 2987}
+
+\bibitem[\protect\citeauthoryear{{Hildebrandt} et~al.,}{{Hildebrandt}
+  et~al.}{2012}]{hildebrandt2012}
+{Hildebrandt} H.,  et~al., 2012, \mn@doi [\mnras]
+  {10.1111/j.1365-2966.2012.20468.x}, \href
+  {http://adsabs.harvard.edu/abs/2012MNRAS.421.2355H} {421, 2355}
 
 \bibitem[\protect\citeauthoryear{{Hildebrandt} et~al.,}{{Hildebrandt}
   et~al.}{2017}]{hildebrandt2017}
@@ -198,9 +225,18 @@
   {10.3847/2041-8213/835/1/L17}, \href
   {https://ui.adsabs.harvard.edu/\#abs/2017ApJ...835L..17K} {835, L17}
 
+\bibitem[\protect\citeauthoryear{{Kuijken}}{{Kuijken}}{2008}]{kuijken2008}
+{Kuijken} K.,  2008, \mn@doi [\aap] {10.1051/0004-6361:20066601}, \href
+  {http://adsabs.harvard.edu/abs/2008A%26A...482.1053K} {482, 1053}
+
 \bibitem[\protect\citeauthoryear{{Kuijken}}{{Kuijken}}{2011}]{kuijken2011}
 {Kuijken} K.,  2011, The Messenger, \href
   {http://adsabs.harvard.edu/abs/2011Msngr.146....8K} {146, 8}
+
+\bibitem[\protect\citeauthoryear{{Kuijken} et~al.,}{{Kuijken}
+  et~al.}{2015}]{kuijken2015}
+{Kuijken} K.,  et~al., 2015, \mn@doi [\mnras] {10.1093/mnras/stv2140}, \href
+  {http://adsabs.harvard.edu/abs/2015MNRAS.454.3500K} {454, 3500}
 
 \bibitem[\protect\citeauthoryear{{Kuijken} et~al.,}{{Kuijken}
   et~al.}{2019}]{kuijken2019}
@@ -246,6 +282,14 @@ Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
   \mn@doi [\mnras] {10.1093/mnras/stw2792}, \href
   {http://cdsads.u-strasbg.fr/abs/2017MNRAS.465.2936M} {465, 2936}
 
+\bibitem[\protect\citeauthoryear{{McFarland}, {Verdoes-Kleijn}, {Sikkema},
+  {Helmich}, {Boxhoorn}  \& {Valentijn}}{{McFarland}
+  et~al.}{2013}]{mcfarland2013}
+{McFarland} J.~P.,  {Verdoes-Kleijn} G.,  {Sikkema} G.,  {Helmich} E.~M.,
+  {Boxhoorn} D.~R.,   {Valentijn} E.~A.,  2013, \mn@doi [Experimental
+  Astronomy] {10.1007/s10686-011-9266-x}, \href
+  {http://adsabs.harvard.edu/abs/2013ExA....35...45M} {35, 45}
+
 \bibitem[\protect\citeauthoryear{{McGaugh}}{{McGaugh}}{2004}]{mcgaugh2004}
 {McGaugh} S.~S.,  2004, \mn@doi [\apj] {10.1086/421338}, \href
   {http://adsabs.harvard.edu/abs/2004ApJ...609..652M} {609, 652}
@@ -270,6 +314,22 @@ Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
 {Milgrom} M.,  1983, \mn@doi [\apj] {10.1086/161130}, \href
   {http://adsabs.harvard.edu/abs/1983ApJ...270..365M} {270, 365}
 
+\bibitem[\protect\citeauthoryear{{Milgrom} \& {Sanders}}{{Milgrom} \&
+  {Sanders}}{2008}]{milgrom2008}
+{Milgrom} M.,  {Sanders} R.~H.,  2008, \mn@doi [\apj] {10.1086/529119}, \href
+  {http://adsabs.harvard.edu/abs/2008ApJ...678..131M} {678, 131}
+
+\bibitem[\protect\citeauthoryear{{Miller}, {Kitching}, {Heymans}, {Heavens}  \&
+  {van Waerbeke}}{{Miller} et~al.}{2007}]{miller2007}
+{Miller} L.,  {Kitching} T.~D.,  {Heymans} C.,  {Heavens} A.~F.,   {van
+  Waerbeke} L.,  2007, \mn@doi [\mnras] {10.1111/j.1365-2966.2007.12363.x},
+  \href {http://adsabs.harvard.edu/abs/2007MNRAS.382..315M} {382, 315}
+
+\bibitem[\protect\citeauthoryear{{Miller} et~al.,}{{Miller}
+  et~al.}{2013}]{miller2013}
+{Miller} L.,  et~al., 2013, \mn@doi [\mnras] {10.1093/mnras/sts454}, \href
+  {http://adsabs.harvard.edu/abs/2013MNRAS.429.2858M} {429, 2858}
+
 \bibitem[\protect\citeauthoryear{{Navarro}, {Ben{\'{\i}}tez-Llambay},
   {Fattahi}, {Frenk}, {Ludlow}, {Oman}, {Schaller}  \& {Theuns}}{{Navarro}
   et~al.}{2017}]{navarro2017}
@@ -288,9 +348,10 @@ Mandelbaum R.,  Seljak U.,  Kauffmann G.,  Hirata C.~M.,   Brinkmann J.,  2006,
 {Pierce} M.~J.,  {Tully} R.~B.,  1988, \mn@doi [\apj] {10.1086/166495}, \href
   {http://adsabs.harvard.edu/abs/1988ApJ...330..579P} {330, 579}
 
-\bibitem[\protect\citeauthoryear{Planck~XIII}{Planck~XIII}{2016}]{planck2015}
-Planck~XIII x.,  2016, \mn@doi [\aap] {10.1051/0004-6361/201525830}, \href
-  {http://adsabs.harvard.edu/abs/2016A%26A...594A..13P} {594, A13}
+\bibitem[\protect\citeauthoryear{Planck~VI}{Planck~VI}{2018}]{planck2018}
+Planck~VI x.,  2018, arXiv e-prints, \href
+  {https://ui.adsabs.harvard.edu/\#abs/2018arXiv180706209P} {p.
+  arXiv:1807.06209}
 
 \bibitem[\protect\citeauthoryear{Planck~XVI}{Planck~XVI}{2014}]{planck2014}
 Planck~XVI x.,  2014, \aap, 571, A16

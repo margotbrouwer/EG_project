@@ -53,21 +53,22 @@ findlist = ['@', '710']
 replacelist = np.array([np.arange(6)+1, np.array([1724, 2634, 2201, 1577, 3379, 710])])
 config_files = create_config(replacefile, findlist, replacelist)
 
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_replace.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 findlist = np.array(['distmin'])
 replacelist = np.array([[3,4,4.5]])
 config_files = create_config(replacefile, findlist, replacelist)
-
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_replace.config'
+"""
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 findlist = np.array(['percvalue'])
 replacelist = np.array([['0p3', '0p25', '0p2', '0p1']])
 config_files = create_config(replacefile, findlist, replacelist)
 """
-#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_replace.config'
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mice_test.config'
 findlist = np.array(['percvalue', 'distmin'])
 replacelist = np.array([['0p2', '0p1'], [4,4.5]])
 config_files = create_config(replacefile, findlist, replacelist)
+"""
+
 
 # Running the created config files (one by one)
 config_files = np.reshape(config_files, np.size(config_files))

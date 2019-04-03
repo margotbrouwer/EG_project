@@ -26,7 +26,7 @@ h=0.7
 pc_to_meter = 3.08567758e16 # meters
 
 ## Import Bahamas file
-catnum = 1 #402 #1039
+catnum = 402 #1039
 lenslist = np.arange(catnum)
 lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
@@ -48,8 +48,8 @@ Lpix = Npix * dpix # The length of the grid (in physical pc/h70)
 ## Define projected distance bins R
 
 # Creating the Rbins
-#Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 15, 0.03, 3.] # Fixed Rbins
+#Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
@@ -105,6 +105,8 @@ for c in range(catnum): # For every cluster/lens...
             Rbins_list[c] = Rbins # Save the radial bins to a list
             
         else: # Use the radial bins given
+            profiles_centers = Rcenters
+            Rbins_list[c] = Rbins # Save the radial bins to a list
             pass
 
     # Remove pixel distances outside Rmax
@@ -182,7 +184,7 @@ plt.yscale('log')
 
 plt.show()
 plt.clf
-"""
+
 
 # Writing the result to a Fits file
 filename = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s_with_Sigma.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
@@ -191,4 +193,4 @@ formats = ['I', '%iD'%(Nbins+1), '%iD'%Nbins, '%iD'%Nbins]
 output = [lenslist, Rbins_list, Sigma_list, ESD_list]
 
 utils.write_catalog(filename, outputnames, formats, output)
-"""
+
