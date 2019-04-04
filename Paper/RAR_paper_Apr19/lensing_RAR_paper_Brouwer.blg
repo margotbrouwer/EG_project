@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2013)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: lensing_RAR_paper_Brouwer.aux
+The style file: mnras.bst
+Database file #1: biblio.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 77 entries,
+            2881 wiz_defined-function locations,
+            1340 strings with 36324 characters,
+and the built_in function-call counts, 36175 in all, are:
+= -- 3208
+> -- 2357
+< -- 176
++ -- 1067
+- -- 302
+* -- 4560
+:= -- 5490
+add.period$ -- 0
+call.type$ -- 77
+change.case$ -- 154
+chr.to.int$ -- 76
+cite$ -- 77
+duplicate$ -- 1766
+empty$ -- 1760
+format.name$ -- 546
+if$ -- 6321
+int.to.chr$ -- 2
+int.to.str$ -- 0
+missing$ -- 77
+newline$ -- 245
+num.names$ -- 488
+pop$ -- 376
+preamble$ -- 2
+purify$ -- 308
+quote$ -- 0
+skip$ -- 1084
+stack$ -- 0
+substring$ -- 2381
+swap$ -- 914
+text.length$ -- 313
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 693
+warning$ -- 0
+while$ -- 570
+width$ -- 0
+write$ -- 785
