@@ -41,7 +41,7 @@ reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
 #colors = np.array([reds,blues])
 
 #colors = ['#0571b0', '#92c5de', '#d7191c']*2#, '#fdae61']
-colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']
+colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
 
 ## Define paths of ESD profiles
@@ -49,11 +49,11 @@ colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']
 # Fiducial plotting parameters
 Runit = 'pc'
 datatitles = []
-Nrows = 1
+Nrows = 2
 
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
 
-
+"""
 # KiDS vs. GAMA comparison
 params = ['Z', 'zANNz2ugri']
 N = len(params)
@@ -68,11 +68,32 @@ datatitles = [r'']
 
 plotfilename = '%s/Plots/ESD_GAMA_KiDS_all'%path_sheardata
 
+"""
+# Lens redshift comparison
+params1 = ['KiDS', 'GAMA']
+params2 = np.arange(4)+1
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['zANNz2ugri_0p1_0p2_0p3_0p4_0p5/zANNz2ugri_0_0p5',
+                            'Z_0p1_0p2_0p3_0p4_0p5_GAMA/Z_0_0p5']]*N2)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
+path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2]*N1 for p2 in params2])
+
+#"""
+
+datalabels = params1
+datatitles = [r'$0.1<Z<0.2$',r'$0.2<Z<0.3$',r'$0.3<Z<0.4$',r'$0.4<Z<0.5$']
+
+plotfilename = '%s/Plots/ESD_KiDS_GAMA_Zbins'%path_sheardata
+
 
 ## Import measured ESD
 esdfiles = np.array([['%s/%s/%s/%s.txt'%\
 	(path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
 	for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
+print(esdfiles)
 
 Nbins = np.shape(esdfiles)
 Nsize = np.size(esdfiles)
@@ -158,6 +179,9 @@ for N1 in range(Nrows):
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.26, y = 0.88, fontsize=16)
 
+        plt.xscale('log')
+        plt.yscale('log')
+
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / {\rm h_{%g}}$)'%(Runit, h*100)
 ylabel = r'Excess Surface Density $\Delta\Sigma$ (${\rm h_{%g} M_{\odot} / {\rm pc^2}}$)'%(h*100)
@@ -166,8 +190,6 @@ ax.set_ylabel(ylabel, fontsize=16)
 
 handles, labels = ax_sub.get_legend_handles_labels()
 
-plt.xscale('log')
-plt.yscale('log')
 
 # Zoomed in
 #plt.xlim([1e-15, 1e-11])
