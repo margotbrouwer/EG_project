@@ -30,6 +30,13 @@
   {10.1093/mnras/249.3.523}, \href
   {http://adsabs.harvard.edu/abs/1991MNRAS.249..523B} {249, 523}
 
+\bibitem[\protect\citeauthoryear{{Behroozi}, {Marchesini}, {Wechsler},
+  {Muzzin}, {Papovich}  \& {Stefanon}}{{Behroozi} et~al.}{2013}]{Behroozi13}
+{Behroozi} P.~S.,  {Marchesini} D.,  {Wechsler} R.~H.,  {Muzzin} A.,
+  {Papovich} C.,   {Stefanon} M.,  2013, \mn@doi [\apj]
+  {10.1088/2041-8205/777/1/L10}, \href
+  {https://ui.adsabs.harvard.edu/abs/2013ApJ...777L..10B} {777, L10}
+
 \bibitem[\protect\citeauthoryear{{Bell} \& {de Jong}}{{Bell} \& {de
   Jong}}{2001}]{bell2001}
 {Bell} E.~F.,  {de Jong} R.~S.,  2001, \mn@doi [\apj] {10.1086/319728}, \href
@@ -272,6 +279,14 @@
   et~al.}{2015}]{liske2015}
 {Liske} J.,  et~al., 2015, \mn@doi [\mnras] {10.1093/mnras/stv1436}, \href
   {http://adsabs.harvard.edu/abs/2015MNRAS.452.2087L} {452, 2087}
+
+\bibitem[\protect\citeauthoryear{{Ludlow}, {Navarro}, {Angulo},
+  {Boylan-Kolchin}, {Springel}, {Frenk}  \& {White}}{{Ludlow}
+  et~al.}{2014}]{Ludlow14}
+{Ludlow} A.~D.,  {Navarro} J.~F.,  {Angulo} R.~E.,  {Boylan-Kolchin} M.,
+  {Springel} V.,  {Frenk} C.,   {White} S. D.~M.,  2014, \mn@doi [\mnras]
+  {10.1093/mnras/stu483}, \href
+  {https://ui.adsabs.harvard.edu/abs/2014MNRAS.441..378L} {441, 378}
 
 \bibitem[\protect\citeauthoryear{{Ludlow} et~al.,}{{Ludlow}
   et~al.}{2017}]{ludlow2017}

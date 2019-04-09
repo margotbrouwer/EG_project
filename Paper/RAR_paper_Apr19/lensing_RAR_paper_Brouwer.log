@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  9 APR 2019 11:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  9 APR 2019 18:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -533,12 +533,12 @@ Underfull \vbox (badness 2285) has occurred while \output is active []
 
  [4]
 [5] (./lensing_RAR_paper_Brouwer.bbl [6]
-Underfull \hbox (badness 1389) in paragraph at lines 288--290
+Underfull \hbox (badness 1389) in paragraph at lines 303--305
 []\T1/aer/m/n/8 Mandelbaum R., Sel-jak U., Kauff-mann G., Hi-rata C. M.,
  []
 
 
-Package hyperref Warning: Suppressing empty link on input line 419.
+Package hyperref Warning: Suppressing empty link on input line 434.
 
 ) [7]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 469.
@@ -555,13 +555,13 @@ ed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 469.
  ) 
 Here is how much of TeX's memory you used:
- 8658 strings out of 492995
- 120995 string characters out of 6132704
- 257544 words of memory out of 5000000
- 11896 multiletter control sequences out of 15000+600000
+ 8666 strings out of 492995
+ 121125 string characters out of 6132704
+ 259390 words of memory out of 5000000
+ 11902 multiletter control sequences out of 15000+600000
  53619 words of font info for 117 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,17n,35p,1361b,474s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,17n,35p,1361b,389s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -589,10 +589,10 @@ t/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2017/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/2017/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2017/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on lensing_RAR_paper_Brouwer.pdf (8 pages, 351737 bytes).
+Output written on lensing_RAR_paper_Brouwer.pdf (8 pages, 353744 bytes).
 PDF statistics:
- 746 PDF objects out of 1000 (max. 8388607)
- 704 compressed objects within 8 object streams
- 131 named destinations out of 1000 (max. 500000)
+ 759 PDF objects out of 1000 (max. 8388607)
+ 717 compressed objects within 8 object streams
+ 133 named destinations out of 1000 (max. 500000)
  153 words of extra memory for PDF output out of 10000 (max. 10000000)
 
