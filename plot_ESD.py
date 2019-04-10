@@ -47,9 +47,9 @@ colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 ## Define paths of ESD profiles
 
 # Fiducial plotting parameters
-Runit = 'pc'
+Runit = 'Mpc'
 datatitles = []
-Nrows = 2
+Nrows = 1
 
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
 
@@ -74,7 +74,7 @@ params1 = ['KiDS', 'GAMA']
 params2 = np.arange(4)+1
 N1 = len(params1)
 N2 = len(params2)
-Nrows = 1
+Nrows = 2
 
 path_lenssel = np.array([['zANNz2ugri_0p1_0p2_0p3_0p4_0p5/zANNz2ugri_0_0p5',
                             'Z_0p1_0p2_0p3_0p4_0p5_GAMA/Z_0_0p5']]*N2)
@@ -149,10 +149,10 @@ for N1 in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', zorder=4)
+                color=colors[Nplot], ls='', marker='.', zorder=4)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Ndata], ls='', marker='.', label=datalabels[Nplot], zorder=4)
+                color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
      
         
         # Plot the axes and title
@@ -177,7 +177,7 @@ for N1 in range(Nrows):
         ax.yaxis.set_label_coords(-0.1/Ncolumns, 0.5)
         
         if Nbins[0]>1:
-            plt.title(datatitles[N], x = 0.26, y = 0.88, fontsize=16)
+            plt.title(datatitles[N], x = 0.5, y = 0.9, fontsize=16)
 
         plt.xscale('log')
         plt.yscale('log')
@@ -199,7 +199,7 @@ handles, labels = ax_sub.get_legend_handles_labels()
 #plt.legend()
 
 if Nbins[0] > 1:
-    plt.legend(loc='lower right')
+    plt.legend(loc='best')
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.5*Ncolumns, 0.7*Nrows)) # side
 #    plt.legend(handles[::-1], labels[::-1], loc='lower right')
 else:

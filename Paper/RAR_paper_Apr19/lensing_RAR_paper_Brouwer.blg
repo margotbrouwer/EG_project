@@ -1,48 +1,48 @@
-This is BibTeX, Version 0.99d (TeX Live 2013)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99d (TeX Live 2017)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: lensing_RAR_paper_Brouwer.aux
 The style file: mnras.bst
 Database file #1: biblio.bib
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 77 entries,
+You've used 78 entries,
             2881 wiz_defined-function locations,
-            1340 strings with 36324 characters,
-and the built_in function-call counts, 36175 in all, are:
-= -- 3208
-> -- 2357
-< -- 176
-+ -- 1067
-- -- 302
-* -- 4560
-:= -- 5490
+            1349 strings with 36518 characters,
+and the built_in function-call counts, 36690 in all, are:
+= -- 3246
+> -- 2401
+< -- 178
++ -- 1085
+- -- 310
+* -- 4627
+:= -- 5575
 add.period$ -- 0
-call.type$ -- 77
-change.case$ -- 154
-chr.to.int$ -- 76
-cite$ -- 77
-duplicate$ -- 1766
-empty$ -- 1760
-format.name$ -- 546
-if$ -- 6321
+call.type$ -- 78
+change.case$ -- 156
+chr.to.int$ -- 77
+cite$ -- 78
+duplicate$ -- 1789
+empty$ -- 1782
+format.name$ -- 556
+if$ -- 6407
 int.to.chr$ -- 2
 int.to.str$ -- 0
-missing$ -- 77
-newline$ -- 245
-num.names$ -- 488
-pop$ -- 376
+missing$ -- 78
+newline$ -- 248
+num.names$ -- 496
+pop$ -- 381
 preamble$ -- 2
-purify$ -- 308
+purify$ -- 312
 quote$ -- 0
-skip$ -- 1084
+skip$ -- 1097
 stack$ -- 0
-substring$ -- 2381
-swap$ -- 914
-text.length$ -- 313
+substring$ -- 2407
+swap$ -- 930
+text.length$ -- 317
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 693
+type$ -- 702
 warning$ -- 0
-while$ -- 570
+while$ -- 578
 width$ -- 0
-write$ -- 785
+write$ -- 795

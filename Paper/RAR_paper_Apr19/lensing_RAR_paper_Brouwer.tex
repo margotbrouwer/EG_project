@@ -21,7 +21,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Basic setup. Most papers should leave these options alone.
-\documentclass[fleqn,usenatbib]{mnras}
+\documentclass[usenatbib]{mnras}
 %\pdfminorversion=5
 
 % MNRAS is set in Times font. If you don't have this installed (most LaTeX
@@ -37,6 +37,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{ae,aecompl}
 \usepackage{hyperref}
+\usepackage{ulem}
 
 %%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
 
@@ -247,9 +248,32 @@ We recognize that, by using the unadulterated GGL equations to measure the (appa
 \label{sec:conversion}
 \begin{itemize}
 	\item Describe SIS method (Margot).
-	\item Describe interpolation method (Kyle).
+	\item \sout{Describe interpolation method (Kyle).}
 	\item Test both methods using the Bahamas simulation.
 \end{itemize}
+
+\subsubsection{Piece-wise power law density profile}
+
+We can instead assume a more self-consistent form for the volume density profile and parametrize it as a piece-wise power law constrained to be continuous. This comes at the cost of needing to invert the non-linear function $\Delta\Sigma(\rho)$, which we achieve via an iterative method. We choose to parametrize $\rho(r)$ in terms of $N$ pairs of values $(r_n,\rho_n)$ such that the slope $a_n$ and normalization $b_n$ of the power law profile segments are:
+\begin{align}
+  \log\rho &= a_n \log(r) + b_n \\
+  a_n &= \frac{\log(\rho_{n+1})-\log(\rho_n)}{\log(r_{n+1})-\log(r_n)}\\
+  b_n &= \log(\rho_n) - a_n\log(r_n)\\
+  (a_n, b_n) &=
+  \begin{cases}
+    (a_0, b_0) & {\rm if}\ r < r_0\\
+    (a_n, b_n) & {\rm if}\ r_n \leq r < r_{n+1}\\
+    (a_{N-1}, b_{N-1}) & {\rm if}\ r \geq r_N
+  \end{cases}
+\label{eq:rho_piecewise_powerlaw}\end{align}
+(Throughout, $\log$ denotes the natural logarithm.) We provide an expression for the discrete excess surface density profile in terms of the volume density profile, i.e. the function to be inverted, in Appendix~\ref{sec:appendix_invert_esd}.
+
+In order to invert $\Delta\Sigma_m(\rho_n)$, we take as constant the values $\{R_m\}$, $\{\Delta\Sigma_m\}_{\rm obs}$ and $\{r_n\}$. We then propose an initial guess $\{\rho_n\}$ which we perturb iteratively, calculating the corresponding $\{\Delta\Sigma_m\}$ at each iteration and comparing with $\{\Delta\Sigma_m\}_{\rm obs}$ via the likelihood function:
+\begin{align}
+\log\mathcal{L} &\propto -\frac{1}{2}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)^{\rm T}\Sigma^{-1}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)
+\end{align}
+Note that $\Sigma$ is the covariance matrix for the $\Delta\Sigma_{\rm obs}$, not to be confused with the surface density. We use the package {\sc emcee} \citep{foreman-mackey13} to estimate the posterior probability distribution of $\{\rho_n\}$, and subsequently of the corresponding $\{g_{{\rm obs},n}\}$ via integration of the volume density profile.
+
 
 \subsection{Isolated galaxy selection}
 \label{sec:isolation}
@@ -372,6 +396,10 @@ Write at the end.
 Write at the end.
 
 \begin{comment}
+KAO acknowledges support from VICI grant 016.130.338 of the Netherlands Foundation for Scientific Research (NWO).
+
+We are grateful to \url{https://math.stackexchange.com} user Paul Enta for providing an expression for one of the integrals needed in Appendix~\ref{sec:appendix_invert_esd}.
+  
 V. Demchenko acknowledges the Higgs Centre Nimmo Scholarship and the Edinburgh Global Research Scholarship. J. Harnois-D{\'e}raps is supported by the European Commission under a Marie-Sk{\l}odowska-Curie European Fellowship (EU project 656869). M. Bilicki is supported by the Netherlands Organization for Scientific Research, NWO, through grant number 614.001.451. C. Heymans acknowledges support from the European Research Council under grant number 647112. H. Hoekstra acknowledges support from Vici grant 639.043.512, financed by the Netherlands Organization for Scientific Research. K. Kuijken acknowledges support by the Alexander von Humboldt Foundation. H. Hildebrandt is supported by an Emmy Noether grant (No. Hi 1495/2-1) of the Deutsche Forschungsgemeinschaft. P. Schneider is supported by the Deutsche Forschungsgemeinschaft in the framework of the TR33 `The Dark Universe'. E. van Uitert acknowledges support from an STFC Ernest Rutherford Research Grant, grant reference ST/L00285X/1.
 
 Computations for the $N$-body simulations were performed in part on the Orcinus supercomputer at the WestGrid HPC consortium (\url{www.westgrid.ca}), in part on the GPC supercomputer at the SciNet HPC Consortium. SciNet is funded by: the Canada Foundation for Innovation under the auspices of Compute Canada; the Government of Ontario; Ontario Research Fund - Research Excellence; and the University of Toronto.
@@ -401,6 +429,39 @@ end{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\appendix
+\onecolumn
+\section{Excess surface density profile of a piece-wise power law volume density profile}
+\label{sec:appendix_invert_esd}
+
+\noindent The excess surface density profile is measured in a series of discrete radial bins with edges $R_m$. The representative value at the centre of the bin -- here we define the bin centre as $\frac{1}{2}(R_m+R_{m+1})$, i.e. not the `logarithmic centre' $\sqrt{R_mR_{m+1}}$, which ensures accuracy in the calculation of the mean enclosed surface density -- is $\Delta\Sigma_m=\overline{\Sigma}_m-\Sigma_m$, where $\overline{\Sigma}_m$ is the mean surface density within $\frac{1}{2}(R_m+R_{m+1})$ and $\Sigma_m$ is the surface density averaged over the interval $[R_m,R_{m+1})$. We give an expression for this discrete excess surface density profile in terms of the parametric form for $\rho(r)$ given in Eq.~\ref{eq:rho_piecewise_powerlaw}.
+
+The mean enclosed surface density is:
+\begin{align}
+  \overline{\Sigma}_m &= \frac{1}{\pi R_mR_{m+1}}\left[I_1(0, \sqrt{R_0R_1}, \tilde{a}_0, \tilde{b}_0) + 
+\sum_{k=0}^m I_1(\sqrt{R_mR_{m+1}},\sqrt{R_{m+1}R_{m+2}}, \tilde{a}_m, \tilde{b}_m)\right]\\
+  \tilde{a}_m &= \frac{\log(\Sigma_{m+1})-\log(\Sigma_m)}{\frac{1}{2}\left(\log(R_{m+2})-\log(R_m)\right)}\\
+  \tilde{b}_m &= \log(\Sigma_m) - \frac{1}{2}\tilde{a}_m\log(R_mR_{m+1})\\
+  I_1(R_i,R_j,\tilde{a},\tilde{b}) &= \frac{2\pi e^{\tilde{b}}}{\tilde{a}+2}\left(R_j^{a+2} - R_i^{a+2}\right)
+\end{align}
+\noindent and the local surface density is given by:
+\begin{align}
+  \Sigma_m &= \sum_{n=0}^{N-1}
+  \begin{cases}
+    0 & {\rm if}\ r_{n+1} < R_m\\
+    \frac{4e^{b_n}}{R_{m+1}^2-R_m^2} \left(-I_2(r_{n+1},R_m,a_n)\right) & {\rm if}\ r_n < R_m\ {\rm and}\ R_m \leq r_{n+1} < R_{m+1}\\
+    \frac{4e^{b_n}}{R_{m+1}^2-R_m^2} \left(I_2(r_{n+1},R_{m+1},a_n)-I_2(r_{n+1},R_m,a_n)\right) & {\rm if}\ r_n < R_m\ {\rm and}\ r_{n+1} \geq R_{m+1}\\
+    \frac{4e^{b_n}}{R_{m+1}^2-R_m^2} (I_2(r_{n+1},r_n,a_n)-I_2(r_{n+1},R_m,a_n)\\ \quad +I_2(r_n,R_m,a_n)+I_2(r_{n+1},R_{m+1},a_n)\\ \quad -I_2(r_{n+1},r_n,a_n)) & {\rm if}\ R_m \leq r_n < R_{m+1}\ {\rm and}\ r_n \geq R_{m+1}\\
+    \frac{4e^{b_n}}{R_{m+1}^2-R_m^2} (I_2(r_{n+1},R_{m+1},a_n)-I_2(r_{n+1},R_m,a_n)\\ \quad -I_2(r_n,R_{m+1},a_n)+I_2(r_n,R_m,a_n)) & {\rm if}\ r_n \geq R_{m+1}\\
+    \frac{4e^{b_n}}{R_{m+1}^2-R_m^2} (I_2(r_{n+1},r_n,a_n)-I_2(r_{n+1},R_m,a_n)\\ \quad +I_2(r_n,R_m,a_n)-I_2(r_{n+1},r_n,a_n)) & {\rm if}\ r_n \geq R_m\ {\rm and}\ r_{n+1} < R_m\\
+  \end{cases}\\
+  I_2(r,R,a) &=
+  \begin{cases}
+    -\frac{1}{3}R^{a+3}\left(\frac{r^2}{R^2}-1\right)^{\frac{3}{2}}{}_2{\rm F}_1\left(\frac{3}{2},-\frac{a}{2};\frac{5}{2};1-\frac{r^2}{R^2}\right) & {\rm if}\ r\ {\rm is}\ {\rm finite}\\
+    \frac{\sqrt{\pi}}{2}\frac{\Gamma\left(-\frac{a+1}{2}\right)}{\Gamma\left(-\frac{a}{2}\right)}\frac{R^{a+3}}{a+3} & {\rm if}\ r=\infty
+  \end{cases}
+\end{align}
+where ${}_2{\rm F}_1(\cdot,\cdot;\cdot;\cdot)$ is the Gaussian hypergeometric function and $\Gamma(\cdot)$ is the Gamma function.
 
 % Don't change these lines
 \bsp	% typesetting comment
