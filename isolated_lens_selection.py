@@ -25,6 +25,14 @@ cat = 'gama' # Select the lens catalogue (kids/gama/mice)
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
+
+"""
+if cat == 'kids':
+    lensDl = lensDc.to('pc').value * (1+lensZ)
+    rmag_abs = rmag - 5. * (np.log10(lensDl) - 1.)
+    lensLum = 10.**(-0.4 * rmag_abs)
+    logmstar = np.log10(lensLum * 10.**logmstar)
+"""
 logmstarlist = logmstar
 
 # Remove all galaxies with logmstar=NAN

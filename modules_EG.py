@@ -32,17 +32,20 @@ def import_kidscat(path_kidscat, kidscatname, h):
     kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
     
     # List of the observables of all sources in the KiDS catalogue
-    galRA = kidscat['RA']
-    galDEC = kidscat['DEC']
-    galID =  np.arange(len(galRA), dtype=int)
+    galID =  kidscat['ID']
+    galRA = kidscat['RAJ2000']
+    galDEC = kidscat['DECJ2000']
+    galZ = kidscat['zANNz2ugri']
     
-    galZB = kidscat['Z_B_BPZ']
-    galZ = kidscat['Z_MLPQNA']
+    rmag = kidscat['MAG_AUTO']
+    rmag_abs = kidscat['MAG_ABS_r']
+    logmstar = kidscat['MASS_BEST']
     
-    rmag = kidscat['MAG_ISO_r_CALIB']
+    #gmag = kidscat['MAG_GAAP_g']
+    #imag = kidscat['MAG_GAAP_i']
+    #logML = -0.68 + 0.70*(gmag - imag)
     
-    return galID, galRA, galDEC, galZB, galZ, rmag
-
+    return galID, galRA, galDEC, galZ, rmag, rmag_abs, logmstar
 
 def import_gamacat(path_gamacat, gamacatname, h):
     
@@ -140,13 +143,13 @@ def import_lenscat(cat, h, cosmo):
         lenscatname = 'GAMACatalogue_2.0.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_gamacat(path_lenscat, lenscatname, h)
-        
+    
     if 'kids' in cat:
-        fields = ['G9', 'G12', 'G15', 'G23', 'GS']
-        lenscatname = 'kids_masses/catalog_DR2_DR3_5M_234params_FULL_2017-10-10.fits'
+        fields = ['K1000']
+        lenscatname = 'photozs.DR4_GAMAequ_masses.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_lenscat, lenscatname, h)
-        
+
     if 'lephare' in cat:
         fields = ['G9', 'G12', 'G15', 'G23', 'GS']
         lenscatname = 'KIDS_allcats.LPoutput.gamalike.fits'

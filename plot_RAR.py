@@ -94,7 +94,7 @@ Nrows = 1
 
 
 #path_sheardata = 'data2/brouwer/shearprofile/EG_results'
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
 
 ## Input lens selections
 
@@ -155,14 +155,17 @@ datatitles = [r'Maximum satellite mass (Rmin=4Mpc)', r'Minimum satellite distanc
 
 """
 
-# GAMA (isolated)
-path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])
-path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']])
-path_filename = np.array([['No_bins_A']])
+# GAMA+KiDS (isolated)
+path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar', \
+                        'No_bins/dist0p1perc_4p5_inf-zANNz2ugri_0_0p5_lw-logmbar']])
+path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2', \
+                        'ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']])
+path_filename = np.array([['No_bins_A']*2])
 
-datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)']# $({\rm log}_{10}({\rm \bar{M}}_*)=11.1 {\rm M}_\odot)$']
+datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)', \
+                r'KiDS-1000 lensing observations (isolated galaxies)']
 
-plotfilename = '%s/Plots/RAR_GAMA_isolated+McGaugh+Lelli_dSphs+Slopes'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_KiDS_isolated'%path_sheardata
 
 """
 
@@ -195,15 +198,25 @@ print('Plots, profiles:', Nbins)
 
 # Importing the shearprofiles and lens IDs
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
+
+data_y[1] = data_y[1]*1e3
+error_l[1] = error_l[1]*1e3
+error_h[1] = error_h[1]*1e3
+
+print(data_y)
+print(error_h)
+
 data_y, error_h, error_l = 4. * G * 3.08567758e16 *\
     np.array([data_y, error_h, error_l]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
+
+
 print('data_y:', data_y)
+print('error_h:', error_h)
+
 
 error_h = 1./np.log(10.) * error_h/abs(data_y)
 error_l = 1./np.log(10.) * error_l/abs(data_y)
 data_x = np.log10(data_x)
-
-print('error_h:', error_h)
 
 floor = 1e-15
 error_h[data_y<0.] = data_y[data_y<0.] + error_h[data_y<0.] - floor
@@ -461,7 +474,7 @@ for N1 in range(Nrows):
             ax_sub.plot(loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, label='McGaugh+2016 observations (mean)', \
                 ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=3)
             ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=50, cmin=1, cmap='Blues')
-            """
+            
             
             # Plot Lelli+2017 dwarf Spheroidals
             ax_sub.errorbar(loggbar_dsph, loggobs_dsph, xerr=[-loggbar_dsph_elow,loggbar_dsph_ehigh], \
@@ -470,7 +483,7 @@ for N1 in range(Nrows):
             ax_sub.errorbar(loggbar_dsph[hqmask], loggobs_dsph[hqmask], \
             xerr=[-loggbar_dsph_elow[hqmask],loggbar_dsph_ehigh[hqmask]], yerr=[-loggobs_dsph_elow[hqmask],loggobs_dsph_ehigh[hqmask]], \
             marker='o', color='orange', ls='', label='Lelli+2017 Dwarf Spheroidals (velocity dispersions at r$_{1/2}$)', zorder=4)
-            
+            """
             
         try:
             # Plot mock shearprofiles
@@ -522,11 +535,11 @@ for N1 in range(Nrows):
         #ax_sub.plot(gbar_kyle[2], gobs_kyle[2], ls='--', marker='', color=colors[3], label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
         
         # Plot Verlinde slopes
-        gD_0, gobs_0 = calc_gobs_0(gbar_log)
-        gD_2, gobs_2 = calc_gobs_2(gbar_log)
-        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=6)
-        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
-        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde (Point mass: ${\rm M_b}(r)$=const.)', zorder=6)
+        #gD_0, gobs_0 = calc_gobs_0(gbar_log)
+        #gD_2, gobs_2 = calc_gobs_2(gbar_log)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=6)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde (Point mass: ${\rm M_b}(r)$=const.)', zorder=6)
         
         #plt.xscale('log')
         #plt.yscale('log')
