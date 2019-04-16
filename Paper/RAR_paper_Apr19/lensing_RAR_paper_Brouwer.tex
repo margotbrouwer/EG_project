@@ -37,7 +37,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{ae,aecompl}
 \usepackage{hyperref}
-\usepackage{ulem}
+%\usepackage{ulem}
 
 %%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
 
@@ -143,9 +143,9 @@ It has been known for several decades that the outer regions of galaxies rotate 
 
 Following more recent observations using Weak gravitational Lensing \cite[WL,][]{hoekstra2004,linden2014,mandelbaum2015}, Baryon Acoustic Oscillations \cite[BAO's,][]{eisenstein2005,blake2011} and the Cosmic Microwave background \cite[CMB,][]{spergel2003,planck2014}, Cold Dark Matter\footnote{DM particles that moved at non-relativistic speeds at the time of recombination, as favoured by measurements of the CBM \cite[]{planck2014} and the Lyman-$\alpha$ forest \cite[]{viel2013}.} (CDM) became a key ingredient of the current standard model of cosmology: the $\lcdm$ model. In this paradigm, CDM accounts for $\Omega_{\rm CDM}=0.266$ of the critical density in the Universe, while baryonic matter only accounts for $\Omega_{\rm CDM}=0.049$ \cite[]{planck2018}. The cosmological constant $\Lambda$, which is necessary to explain the accelerated expansion of the Universe and is usually associated with Dark Energy (DE), accounts for $\Omega_{\rm \Lambda}=0.685$.
 
-Although the $\lcdm$ model successfully describes the behavior of DM on a wide range of scales, no conclusive evidence for the existence of DM particles has been found so far \cite[despite years of enormous effort; for an overview, see][]{bertone2005,bertone2018}. This still leaves some room for alternative theories of gravity, such as Modified Newtonian Dynamics  \cite[MOND,][]{milgrom1983} and the more recent theory of Emergent Gravity \cite[EG,][]{verlinde2016}. In these theories particle DM does not exist, and all gravity is due to the baryonic matter (or, in the case of EG, the interaction between baryons and the entropy associated with DE). Hence, one of the main properties of these theories is that the mass discrepancy in galaxies correlates strongly with their baryonic mass distribution.
+Although the $\lcdm$ model successfully describes the behaviour of DM on a wide range of scales, no conclusive evidence for the existence of DM particles has been found so far \cite[despite years of enormous effort; for an overview, see][]{bertone2005,bertone2018}. This still leaves some room for alternative theories of gravity, such as Modified Newtonian Dynamics  \cite[MOND,][]{milgrom1983} and the more recent theory of Emergent Gravity \cite[EG,][]{verlinde2016}. In these theories particle DM does not exist, and all gravity is due to the baryonic matter (or, in the case of EG, the interaction between baryons and the entropy associated with DE). Hence, one of the main properties of these theories is that the mass discrepancy in galaxies correlates strongly with their baryonic mass distribution.
 
-Such a correlation has indeed been widely observed. First astronomers discovered the Tully-Fisher relation \cite[TFR,][]{tully1977} between the luminosity of a spiral galaxy and its asymptotic rotation velocity \cite[]{pierce1988,bernstein1994}. Since this corresponds to a relation between the baryonic and the total galaxy mass, this has later been named the `baryonic' TFR \cite[BTFR,][]{mcgaugh2000,mcgaugh2012}. As the radial resolution of observations increased, astronomers found a strong correlation between the observed rotation velocity $v\un{obs}(r)$ as a function of galaxy radius $r$, and the enclosed luminous mass \mbox{$M\un{b}(<r)$} \cite[]{sanders1986,sanders1996,mcgaugh2004,sanders2007,wu2015}. Since $M\un{b}(<r)$ corresponds to the \emph{expected} gravitational acceleration $g\un{b}(r)$ from baryonic matter, and the observed gravitational acceleration can be calculated through $g\un{obs}(r)=v\un{obs}^2(r)/r$, this relation has been named the Radial Acceleration Relation (RAR)\footnote{Another well-established name for this same relation is the Mass-Discrepency Acceleration Relation (MDAR), which refers to the correspondance between the observed baryonic/total mass and the inferred mass discrepency commonly attributed to DM. Throughout this work we use the term RAR for brevity.}.
+Such a correlation has indeed been widely observed. First astronomers discovered the Tully-Fisher relation \cite[TFR,][]{tully1977} between the luminosity of a spiral galaxy and its asymptotic rotation velocity \cite[]{pierce1988,bernstein1994}. Since this corresponds to a relation between the baryonic and the total galaxy mass, this has later been named the `baryonic' TFR \cite[BTFR,][]{mcgaugh2000,mcgaugh2012}. As the radial resolution of observations increased, astronomers found a strong correlation between the observed rotation velocity $v\un{obs}(r)$ as a function of galaxy radius $r$, and the enclosed luminous mass \mbox{$M\un{b}(<r)$} \cite[]{sanders1986,sanders1996,mcgaugh2004,sanders2007,wu2015}. Since $M\un{b}(<r)$ corresponds to the \emph{expected} gravitational acceleration $g\un{b}(r)$ from baryonic matter, and the observed gravitational acceleration can be calculated through $g\un{obs}(r)=v\un{obs}^2(r)/r$, this relation has been named the Radial Acceleration Relation (RAR)\footnote{Another well-established name for this same relation is the Mass-Discrepency Acceleration Relation (MDAR), which refers to the correspondence between the observed baryonic/total mass and the inferred mass discrepancy commonly attributed to DM. Throughout this work we use the term RAR for brevity.}.
 
 Particularly, the latest results from \cite{mcgaugh2016} (hereafter M16) have measured the RAR relation with unprecedented accuracy, using the Spitzer Photometry and Accurate Rotation Curves \cite[SPARC,][]{lelli2016b} data of 153 late-type galaxies. Their results showed a tight correlation between $g\un{obs}$ and $g\un{bar}$, which they could fit using a simple double power law (Eq. 4 in M16) depending only on $g\un{bar}$ and one free parameter: the acceleration scale $g\un{\dagger}$ where Newtonian gravity appears to break down. This sparked the interest of scientists working on alternative theories of gravity, but also of those in favor of a statistical explanation of the RAR within the $\lcdm$ framework \cite[]{keller2017,desmond2017,ludlow2017}.
 
@@ -155,7 +155,7 @@ The goal of this work is to extend observations of the RAR to lower acceleration
 
 First, we measure the baryonic and total density profiles of our galaxies through their luminosities and GGL profiles. These measurements will be performed using photometric data from Sloan Digital Sky Survey \cite[SDSS,]{abazajian2009} and the VISTA Kilo-Degree Infrared Galaxy survey \cite[VIKING]{edge2013}, and WL data from the Kilo-Degree Survey \cite[KiDS;][]{dejong2013}. We then translate these measurements into the baryonic and observed radial accelerations, $g\un{bar}$ and $g\un{obs}$. Finally, we compare the resulting RAR to predictions from different modified gravity theories (MOND and EG) and $\lcdm$.
 
-The $\lcdm$ predictions will not only be provided by the N17 analytical model, but also by two mock galaxy catalogues based on two different DM simulations. One is the Marenostrum Institut de Ci{\`e}ncies de l'Espai (MICE) Galaxy and Halo Light-cone catalog \cite[]{carretero2015,hoffmann2015}, which is based on the MICE Grand Challenge lightcone simulation \cite[MICE-GC,][]{fosalba2015a,fosalba2015b,crocce2015}. The other mock galaxy catalog is based on a suite of large-volume cosmological hydrodynamical simulations, which is called the BAryons and HAloes of MAssive Systems (BAHAMAS) project \cite[]{mccarthy2017}. Our final goal is to distinguish which of the aforementioned predictions best describe the RAR at lower accelerations.
+The $\lcdm$ predictions will not only be provided by the N17 analytical model, but also by two mock galaxy catalogues based on two different DM simulations. One is the Marenostrum Institut de Ci{\`e}ncies de l'Espai (MICE) Galaxy and Halo Light-cone catalogue \cite[]{carretero2015,hoffmann2015}, which is based on the MICE Grand Challenge lightcone simulation \cite[MICE-GC,][]{fosalba2015a,fosalba2015b,crocce2015}. The other mock galaxy catalogue is based on a suite of large-volume cosmological hydrodynamical simulations, which is called the BAryons and HAloes of MAssive Systems (BAHAMAS) project \cite[]{mccarthy2017}. Our final goal is to distinguish which of the aforementioned predictions best describe the RAR at lower accelerations.
 
 Having over ... foreground galaxies at our disposal, we are able to select specific galaxy samples designed to optimally test these predictions. Particularly, we note that most models (MOND, EG, and the N17 analytical DM model) focus on the description of individual, isolated galaxies. In order to test them, therefore, we select a sample of galaxies whose lensing profiles are not affected by their neighbors within the radius of our measurement. In contrast, the predictions from the MICE and BAHAMAS simulations can be tested for both isolated and non-isolated galaxy samples.
 
@@ -188,7 +188,7 @@ camera mounted on the VLT Survey Telescope \cite[]{capaccioli2011}. Over the pas
 
 GGL studies with KiDS have hitherto been performed in combination with the spectroscopic GAMA survey (see Sect. \ref{sec:gama} below). Already since the previous data release \cite[KiDS-DR3,][]{dejong2017} the KiDS survey completely covers the $286 \deg^2$ GAMA area. Although the final survey will span 1350 $\deg^2$ on the sky, the current state-of-the-art is the 4th Data Release \cite[KiDS-DR4,][]{kuijken2019} containing observations from 1006 square-degree survey tiles. The measurement of the source shapes and photometric redshifts are performed in similar fashion to \cite{dejong2017}. Changes and improvements to these methods are described in \cite{kuijken2019}. 
 
-The measurements of the galaxy shapes are based on the $r$-band data, since this filter was used during the darkest time (moon distance $> 90 \deg$) and with the best atmospheric seeing conditions ($<0.8 \as$). The $r$-band observations are co-added using the {\scshape Theli} pipeline \cite[]{erben2013}, which is improved through the addition of an illumination correction. From these images the galaxy positions are detected through the {\scshape SExtractor} algorithm \cite[]{bertin1996}. After detection, the shapes of the galaxies are measured using the \emph{lens}fit pipeline \cite[]{miller2007,miller2013}, which includes a self-calibration algorithm based on \cite{fenechconti2017}.
+The measurements of the galaxy shapes are based on the $r$-band data, since this filter was used during the darkest time (moon distance $> 90 \deg$) and with the best atmospheric seeing conditions ($<0.8 \as$). The $r$-band observations are co-added using the {\scshape Theli} pipeline \cite[]{erben2013}, which is improved through the addition of an illumination correction. From these images the galaxy positions are detected through the {\scshape SExtractor} algorithm \cite[]{bertin1996}. After detection, the shapes of the galaxies are measured using the \emph{lens}fit pipeline \cite[]{miller2007,miller2013}, which includes a self-calibration algorithm based on \cite{fenechconti2017}.Each shape is accompanied by a \emph{lens}fit weight $w\un{s}$, which gives an estimate of the precision of the ellipticity measurement.
 
 The $u$, $g$ and $i$ bands are observed for the purpose of creating the photometric redshift and stellar mass estimates. In addition, the  VISTA Kilo-degree INfrared Galaxy survey \cite[VIKING,][]{edge2013} performed on the VISTA telescope adds the $ZYJHK_{\rm s}$ bands. All bands are reduced and co-added using the Astro-WISE pipeline \cite[]{mcfarland2013}. The galaxy colours, which form the basis of the photometric redshift measurements, are measured from these images using the Gaussian Apertrue and PSF pipeline \cite[GAaP][]{kuijken2008,kuijken2015}.
 
@@ -222,7 +222,7 @@ In addition, each galaxy has a pair of lensing shear values associated with it (
 magnitude cut of $M\un{r}>−19.3 \, {\rm mag}$, in order to resemble the KiDS source redshift
 distribution more closely.
 
-The MICE-GC mock catalogue also features very accurate clustering. At lower redshifts ($z<0.25$) the clustering of the mock galaxies as a function of luminosity is constructed to reproduce the SDSS clustering observations \cite{zehavi2011}, while at higher redshifts (0.45<z<1.1) it was validated against Cosmic Evolution Survey \cite[COSMOS,][]{ilbert2009}. This makes MICE especially suitable to reproduce the RAR at larger scales where neighboring galaxies start to affect the lensing signal, and to test criteria on galaxy the isolation (see Section \ref{sec:isolation}).
+The MICE-GC mock catalogue also features very accurate clustering. At lower redshifts ($z<0.25$) the clustering of the mock galaxies as a function of luminosity is constructed to reproduce the SDSS clustering observations \cite{zehavi2011}, while at higher redshifts (0.45<z<1.1) it was validated against Cosmic Evolution Survey \cite[COSMOS,][]{ilbert2009}. This makes MICE especially suitable to reproduce the RAR at larger scales where neighbouring galaxies start to affect the lensing signal, and to test criteria on galaxy the isolation (see Section \ref{sec:isolation}).
 
 Because the MICE mock catalogue consists of one large realization, it is not possible to estimate the covariance matrix on the measured lensing signal. However, we can split this realization into multiple smaller areas in order to estimate the `sample variance': the difference between astrophysical measurements from different parts of the sky.
 
@@ -242,29 +242,81 @@ Written by Kyle.
 \subsection{Lensing measurement}
 \label{sec:lensing}
 
-We recognize that, by using the unadulterated GGL equations to measure the (apparent) density distribution around foreground galaxies, we necessarily assume that the laws of GR hold with respect to the deflection of light by a gravitational potential. We motivate in Sect. \ref{sec:MOND} and \ref{sec:EG} why this assumption holds for the modified gravity theories we test in this work. 
+The measurement of the projected mass density that we use to estimate the gravitational acceleration around galaxies (see Sect. \ref{sec:conversion}), is obtained through the WL method \cite[for a general introduction, see][]{bartelmann2001,schneider2006}. More specifically, we use GGL: the measurement of the coherent image distortion of a field of background galaxies (sources) by the gravitational potential of a sample of foreground galaxies (lenses). Because the individual image distortions are very small (only $\sim1\%$ compared to the galaxy's unknown original shape), this method can only be performed statistically for a large sample of sources. We average their projected ellipticity component $\epsilon\un{t}$ tangential to the direction of the lens galaxy, which is the sum of the intrinsic ellipticity $\epsilon\un{int}$ and the tangential shear $\gamma\un{t}$ caused by WL. Assuming no preferential alignment in the intrinsic galaxy shapes ($\lan\epsilon\un{int}\ran=0$), the average $\lan\epsilon\un{t}\ran$ is an estimator of $\gamma\un{t}$. By measuring this averaged quantity in circular annuli around the lens centre, we obtain the shear profile $\gamma\un{t}(R)$ as a function of of projected radius $R$.
 
-\subsection{Conversion to radial acceleration}
+The lensing shear profile can be related to the physical Excess Surface Density (ESD) profile:
+\begin{equation}
+	\Delta \Sigma (R) = \Sigma_{\rm crit} \gamma_{\rm t}(R) = \mean{\Sigma}(<R) - \Sigma(R) \, ,
+	\label{eq:deltasigma}
+\end{equation}
+which is the surface density $\Sigma(R)$ at projected radius $R$, subtracted from the average surface density $\mean{\Sigma}(<R)$ within $R$. The conversion factor between $\gamma\un{t}$ and $\Delta\Sigma$ is the inverse of the critical surface density, also called the lensing efficiency:
+\begin{equation}
+	\Sigma\un{crit}^{-1} = \frac{4\pi G}{c^2} D(z\un{l}) \int_{z\un{l}}^{\infty}  \frac{D(z\un{l}, z\un{s})}{D(z\un{s})} n(z\un{s}) \, {\rm d} z\un{s} \, ,
+	\label{eq:sigmacrit}
+\end{equation}
+where $D(z\un{l})$ and $D(z\un{s})$ are the angular diameter distances distances to the lens and the source respectively, and $D(z\un{l}, z\un{s})$ the distance between them. The constant multiplication factor is defined by the speed of light $c$ and Newton's gravitational constant $G$. For the lens redshifts $z\un{l}$, we use the ANNz machine-learning redshifts of the KiDS foreground galaxy sample (see Sect. \ref{sec:gamalike_kids}). For the source redshifts $z\un{s}$ we follow the method used in \cite{dvornik2018}, by integrating over the part of the redshift probability distribution $n(z\un{s})$ where $z\un{s}>z\un{l}$. In addition, sources only contribute their shear to the lensing signal when $z\un{B}+\Delta z > z\un{l}$, i.e. the sum of their best-fit photometric redshift $z\un{B}$ and the redshift buffer $\Delta z=0.2$ is greater than the lens redshift. Following \cite{brouwer2017}, we measure the ESD profiles between: $0.03 < R < 30 \hMpc$.
+
+To increase the signal-to-noise ratio ($S/N$) of the lensing signal even further, the ESD profile is averaged (or `stacked') for large samples of lenses. We define a lensing weight $W\un{ls}$ which depends on both the \emph{lens}fit weight $w\un{s}$ and the lensing efficiency $\Sigma\un{crit}^{-1}$:
+\begin{equation}
+	W_{\rm{ls}} = w_{\rm s} \left( \Sigma_{\rm crit,ls}^{-1} \right)^2 \, ,
+	\label{eq:weights}
+\end{equation}
+and use it to optimally sum the measurements from all lens-source pairs into the average ESD:
+\begin{equation}
+	\Delta\Sigma = \frac{1}{1+\mu} \frac{\sum_{ls} W_{ls} \, \epsilon_{{\rm t},ls} \, \Sigma_{{\rm crit},ls} }{ \sum_{ls}{W_{ls}} }  \, .
+	\label{eq:ESDmeasured}
+\end{equation}
+Here the factor (1+$\mu$) corrects for the `multiplicative bias' \cite[]{fenechconti2017}. Extending the method of \cite{dvornik2017} to the higher KiDS-DR4 redshifts, $\mu$ is calculated from the multiplicative bias corrections $m$ of the individual sources:
+\begin{equation}
+	\mu=\frac{\sum_{s} w_{s} m_{s}}{\sum_{ls} w_{s}} \, ,
+	\label{eq:biascorr}
+\end{equation}
+in 11 linear redshift bins between \mbox{$0.1<z\un{B}<1.2$}. The value of this correction is ... % What is the value of $\mu$ in K1000?
+
+The GGL method described above is basically identical to the procedure used by recent KiDS-GGL papers, specifically: \cite{dvornik2017,dvornik2018} and \cite{brouwer2017,brouwer2018}. For more details on the KiDS-GGL procedure, we recommend reading these recent works. The method that was used in older works \cite[]{viola2015,sifon2015,uitert2016,brouwer2016} is also very similar, although small changes have occurred in the pipeline with the arrival of new data-releases.
+
+Note that we use the unadulterated GGL method throughout this work, also when testing the MOND and EG theories. We recognize that, by using the basic GGL equations to measure the (apparent) density distributions in these frameworks, we necessarily assume that the laws of GR hold with respect to the deflection of light by a gravitational potential. We therefore motivate in Sect. \ref{sec:MOND} and \ref{sec:EG} why this assumption holds for the alternative gravity theories we test in this work.
+
+
+\subsection{Isolated galaxy selection}
+\label{sec:isolation}
+
+After performing the measurement of the RAR using GGL, our final goal is to compare the results to different analytical models (see Sect. \ref{sec:predictions}) and N-body simulations (see Sect. \ref{sec:mice_mocks} and \ref{sec:bahamas_mocks}) which make specific predictions on the galaxy-halo connection. While the simulations are designed to describe galaxies in their cosmological environment, the analytical models mainly focus on the description of individual, isolated galaxies. This means that, in order to test the latter, we need to select galaxies that are (as much as possible) isolated. The main goal being that their GGL profiles are not significantly affected by neighbouring, within the radius of the lensing measurement.
+
+As a general rule, we define our isolated lens sample as: galaxies that do not have any neighbors with a stellar mass $M\un{nb}$ greater then a fraction $f\un{mass}$ of their stellar mass $M_*$, within a spherical radius of $R\un{iso}$. We determine the optimal values of $f\un{mass}$ and $R\un{iso}$ ...
+%R(Msat>0.1Mcen)>3Mpc.
+
+
+
+\section{Conversion to  the RAR}
 \label{sec:conversion}
 \begin{itemize}
 	\item Describe SIS method (Margot).
-	\item \sout{Describe interpolation method (Kyle).}
-	\item Test both methods using the Bahamas simulation.
+	\item Describe tests with the Bahamas simulation.
 \end{itemize}
 
-\subsubsection{Piece-wise power law density profile}
+
+After measuring the lensing profile around a galaxy sample, the next important step is to convert it into the corresponding RAR. We start from the ESD $\Delta\Sigma(R)$ as a function of projected radius and the measured stellar masses $M\un{*}$ of the galaxies, and aim to arrive at their total observed radial acceleration $g\un{obs}$ as a function of the expected baryonic radial acceleration $g\un{bar}$. To make sure the results are robust, we compare two different methods: a simple analytical method which assumes that DM haloes can be roughly approximated with a Singular Isothermal Sphere (SIS), and an elaborate numerical approach which fits a piece-wise power law to the stacked ESD profile (without any assumption on the averaged halo shape except for spherical symmetry). We validate both methods using mock surface density maps from the BAHAMAS simulation.
+
+\subsection{Singular Isothermal Sphere approximation}
+\label{SIS_approximation}
+
+
+
+\subsection{Piece-wise power law density profile}
+\label{piece-wise_powerlaw}
 
 We can instead assume a more self-consistent form for the volume density profile and parametrize it as a piece-wise power law constrained to be continuous. This comes at the cost of needing to invert the non-linear function $\Delta\Sigma(\rho)$, which we achieve via an iterative method. We choose to parametrize $\rho(r)$ in terms of $N$ pairs of values $(r_n,\rho_n)$ such that the slope $a_n$ and normalization $b_n$ of the power law profile segments are:
 \begin{align}
-  \log\rho &= a_n \log(r) + b_n \\
-  a_n &= \frac{\log(\rho_{n+1})-\log(\rho_n)}{\log(r_{n+1})-\log(r_n)}\\
-  b_n &= \log(\rho_n) - a_n\log(r_n)\\
-  (a_n, b_n) &=
-  \begin{cases}
-    (a_0, b_0) & {\rm if}\ r < r_0\\
-    (a_n, b_n) & {\rm if}\ r_n \leq r < r_{n+1}\\
-    (a_{N-1}, b_{N-1}) & {\rm if}\ r \geq r_N
-  \end{cases}
+\log\rho &= a_n \log(r) + b_n \\
+a_n &= \frac{\log(\rho_{n+1})-\log(\rho_n)}{\log(r_{n+1})-\log(r_n)}\\
+b_n &= \log(\rho_n) - a_n\log(r_n)\\
+(a_n, b_n) &=
+\begin{cases}
+(a_0, b_0) & {\rm if}\ r < r_0\\
+(a_n, b_n) & {\rm if}\ r_n \leq r < r_{n+1}\\
+(a_{N-1}, b_{N-1}) & {\rm if}\ r \geq r_N
+\end{cases}
 \label{eq:rho_piecewise_powerlaw}\end{align}
 (Throughout, $\log$ denotes the natural logarithm.) We provide an expression for the discrete excess surface density profile in terms of the volume density profile, i.e. the function to be inverted, in Appendix~\ref{sec:appendix_invert_esd}.
 
@@ -274,15 +326,8 @@ In order to invert $\Delta\Sigma_m(\rho_n)$, we take as constant the values $\{R
 \end{align}
 Note that $\Sigma$ is the covariance matrix for the $\Delta\Sigma_{\rm obs}$, not to be confused with the surface density. We use the package {\sc emcee} \citep{foreman-mackey13} to estimate the posterior probability distribution of $\{\rho_n\}$, and subsequently of the corresponding $\{g_{{\rm obs},n}\}$ via integration of the volume density profile.
 
-
-\subsection{Isolated galaxy selection}
-\label{sec:isolation}
-
-After performing the measurement of the RAR using GGL, our final goal is to compare the results to different analytical models (see Sect. \ref{sec:predictions}) and N-body simulations (see Sect. \ref{sec:mice_mocks} and \ref{sec:bahamas_mocks}) which make specific predictions on the galaxy-halo connection. While the simulations are designed to describe galaxies in their cosmological environment, the analytical models mainly focus on the description of individual, isolated galaxies. This means that, in order to test the latter, we need to select galaxies that are (as much as possible) isolated. The main goal being that their GGL profiles are not significantly affected by neighboring, within the radius of the lensing measurement.
-
-As a general rule, we define our isolated lens sample as: galaxies that do not have any neighbors with a stellar mass $M\un{nb}$ greater then a fraction $f\un{mass}$ of their stellar mass $M_*$, within a spherical radius of $R\un{iso}$. We determine the optimal values of $f\un{mass}$ and $R\un{iso}$ ...
-%R(Msat>0.1Mcen)>3Mpc.
-
+\subsection{Testing the RAR conversion with BAHAMAS}
+\label{sec:conversion_test}
 
 \section{Theoretical predictions}
 \label{sec:predictions}
@@ -290,7 +335,7 @@ As a general rule, we define our isolated lens sample as: galaxies that do not h
 \subsection{Modified Newtonian Dynamics}
 \label{sec:MOND}
 
-With his theory of Modified Newtonian Dynamics (MOND), \cite{milgrom1983} postulated that the `missing mass problem' in galaxies is not caused by an undiscovered fundamental particle, but that instead our current gravitational theory should be revised. MOND's basic premise is that one can adjust Newtons second law of motion ($F=ma$) by inserting a general function $\mu(a/a_0)$, which only comes into play when the acceleration $a$ of a test mass $m$ is much smaller than a critical acceleration $a_0$. The goal of this function is to facilitate the discovered flat rotation curves in the outskirts of galaxies, while still reproducing the Newtonian behavior of the inner disk. In short, the force $F$ becomes:
+With his theory of Modified Newtonian Dynamics (MOND), \cite{milgrom1983} postulated that the `missing mass problem' in galaxies is not caused by an undiscovered fundamental particle, but that instead our current gravitational theory should be revised. MOND's basic premise is that one can adjust Newtons second law of motion ($F=ma$) by inserting a general function $\mu(a/a_0)$, which only comes into play when the acceleration $a$ of a test mass $m$ is much smaller than a critical acceleration $a_0$. The goal of this function is to facilitate the discovered flat rotation curves in the outskirts of galaxies, while still reproducing the Newtonian behaviour of the inner disk. In short, the force $F$ becomes:
 \begin{align}\label{eq:mond_f}
 	& F(a) = m \, \mu(\frac{a}{a_0}) \, a \, ,
 	& \mu(x \gg 1) \approx 1 \, , \, \mu(x \ll 1) \approx x \, .
@@ -304,7 +349,7 @@ This can be written in terms of the expected baryonic acceleration $g\un{bar}=GM
 \begin{equation}
 	g\un{dM}(g\un{bar}) = \sqrt{a_0 \, g\un{bar}} \, ,
 \end{equation}
-which demonstrates that MOND predicts a very simple relation for the RAR: $g\un{obs}=g\un{bar}$ in the Newtonian regime ($g\un{obs}\gg a_0$), and following Eq. \ref{eq:mond_g} in the deep-MOND regime ($g\un{obs}\ll a_0$). However, since $\mu(a/a_0)$ (also known as the `interpolating function') is not specified by \cite{milgrom1983}, there is no specific constraint on the behavior of this relation in between the two regimes. In the work of \cite{milgrom2008}, several families of interpolation functions are discussed. Selecting the third family (given by their Eq. 13) with constant parameter $\alpha=1/2$, provides the function that M16 later used to fit to their measurement of the RAR using rotation curves 153 galaxies. This relation can be written as:
+which demonstrates that MOND predicts a very simple relation for the RAR: $g\un{obs}=g\un{bar}$ in the Newtonian regime ($g\un{obs}\gg a_0$), and following Eq. \ref{eq:mond_g} in the deep-MOND regime ($g\un{obs}\ll a_0$). However, since $\mu(a/a_0)$ (also known as the `interpolating function') is not specified by \cite{milgrom1983}, there is no specific constraint on the behaviour of this relation in between the two regimes. In the work of \cite{milgrom2008}, several families of interpolation functions are discussed. Selecting the third family (given by their Eq. 13) with constant parameter $\alpha=1/2$, provides the function that M16 later used to fit to their measurement of the RAR using rotation curves 153 galaxies. This relation can be written as:
 \begin{equation}\label{eq:mcgaugh}
 	g\un{obs} = \frac{g\un{bar}}{1 - e^{-\sqrt{g\un{bar}/a_0}}} \, .
 \end{equation}
@@ -337,7 +382,7 @@ In terms of the expected baryonic acceleration $g\un{bar}(r) = G M\un{b}/r^2$, t
 g_{\rm EG}(g\un{bar}) = g\un{bar} + \sqrt{\frac{cH_{0}}{6}} \, \sqrt{g\un{bar}} \, .
 \end{equation}
 
-Note that Eq. \ref{eq:veg_mdm} is only a macroscopic approximation of the underlying microscopic phenomena described at the start of this section, and is thus only valid for static, spherically symmetric and isolated baryonic mass distributions. For this reason, we select only the most isolated galaxies from our sample (see Sect. \ref{sec:isolation}), such that our WL measurements are not influenced by neighboring galaxies. In addition, cosmological evolution of the $H_0$ parameter is not yet implemented in the theory, restricting its validity to galaxies with relatively low redshifts. However, we calculate that at our mean lens redshift ($\langle z \rangle \sim 0.2$) using an evolving $H(z)$ would result in only a $~5\%$ difference in our ESD measurements, based on the background cosmology used in this work.
+Note that Eq. \ref{eq:veg_mdm} is only a macroscopic approximation of the underlying microscopic phenomena described at the start of this section, and is thus only valid for static, spherically symmetric and isolated baryonic mass distributions. For this reason, we select only the most isolated galaxies from our sample (see Sect. \ref{sec:isolation}), such that our WL measurements are not influenced by neighbouring galaxies. In addition, cosmological evolution of the $H_0$ parameter is not yet implemented in the theory, restricting its validity to galaxies with relatively low redshifts. However, we calculate that at our mean lens redshift ($\langle z \rangle \sim 0.2$) using an evolving $H(z)$ would result in only a $~5\%$ difference in our ESD measurements, based on the background cosmology used in this work.
 
 In order to test V16 using the standard WL methodology, we need to assume that the deflection of photons by a gravitational potential in this alternative theory corresponds to that in GR. This assumption is justified because, in EG's original (anti-de Sitter) form, Einstein's laws emerge from its underlying description of space-time. The additional gravitational force described by ADM does not affect this underlying theory, which is an effective description of GR. Therefore, we assume that the gravitational potential of an ADM distribution produces the same lensing shear as an equivalent distribution of actual matter.
 
