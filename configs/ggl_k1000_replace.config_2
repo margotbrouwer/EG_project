@@ -33,7 +33,7 @@ h                   0.7                                         # Reduced Hubble
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
  Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
  Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
- ncores                 6                                # Any number of cores your machine can use to run the code.
+ ncores                 1                                # Any number of cores your machine can use to run the code.
 
 
 # Lens selection
@@ -50,9 +50,11 @@ lensID_file        None                                                         
 
 
 
- lens_limits1       zANNz2ugri     self               0,0.5
- lens_limits2       dist0p2perc     /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   4.5,inf
+ lens_limits1       zANNz2ugri     self               0.,0.5
+#lens_limits2       dist0p2perc    /data/users/brouwer/LensCatalogues/gama_isolated_galaxies_perc_h70.fits          4p5Mpc,inf
+ lens_limits2       fsat4p5Mpc           /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_Msat-4p5Mpc_h70.fits    0,0.1
 #lens_limits2       logmstar       self               8.5,11.
+
 
 # Source selection
  src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or

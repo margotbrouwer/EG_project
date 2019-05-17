@@ -25,4 +25,4 @@ for c in range(catnum):
     except:
         print(c)
         print(profname)
-
+        print()

@@ -46,6 +46,7 @@ colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
 # Defining the paths to the data
 blind = 'A'
+logplot = False
 
 #Import constants
 pi = np.pi
@@ -74,11 +75,21 @@ def calc_gobs_2(gbar):
     gobs_2 = gbar + gD_2
     return gD_2, gobs_2
 
-gbar_mond = np.linspace(-12, -8, 50)
-gbar_ext = np.linspace(-15, -12, 30)
-gbar_uni = np.linspace(-15, -8, 50)
-gbar_log = np.logspace(-15, -8, 50)
 
+# Define guiding lines
+gbar_mond = np.logspace(-12, -8, 50)
+gbar_ext = np.logspace(-15, -12, 30)
+gbar_uni = np.logspace(-15, -8, 50)
+
+gobs_mond_M16 = gobs_mond(gbar_mond)
+gobs_mond_ext = gobs_mond(gbar_ext)
+if not logplot:
+    gobs_mond_M16 = np.log10(gobs_mond_M16)
+    gobs_mond_ext = np.log10(gobs_mond_ext)
+    
+    gbar_mond = np.log10(gbar_mond)
+    gbar_ext = np.log10(gbar_ext)
+    gbar_uni = np.log10(gbar_uni)
 
 ## Import shear and random profiles
 
@@ -119,19 +130,22 @@ path_mockfilename = np.array([['shearcovariance_bin_%i_A'%i] for i in np.arange(
 
 plotfilename = '%s/Plots/RAR_GAMA+Navarro_4-massbins_isolated_strong'%path_sheardata
 
+"""
 
 # Mass bins (4) with equal S/N (KiDS-only vs MICE)
-paramlims = [8.5, 10.5, 10.8, 11.1, 12.0]
+paramlims = np.array([8.5, 10.3, 10.6, 10.8, 11.0])
 N = len(paramlims)-1
 Nrows = 1
-path_lenssel = np.array([['logmstar_8p5_10p5_10p8_11p1_12p0/nQ_3_inf_lw-logmbar']]*N)
-path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']]*N)
-path_filename = np.array([['shearcovariance_bin_%i_A'%i] for i in np.arange(N)+1])
 
-datatitles = [r'KiDS-GAMA observations', 'MICE']
-datalabels = [r'($%g < M_* < %g M_\odot$)'%(paramlims[i], paramlims[i+1]) for i in range(N)]
-plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_equal_SN_oneplot'%path_sheardata
+path_lenssel = np.array([['logmbar_8p5_10p3_10p6_10p8_11p0/dist0p1perc_4p5_inf-zANNz2ugri_0p1_0p5_lw-logmbar']*N])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']*N])
+path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%i for i in np.arange(N)+1]])
 
+datatitles = [r'KiDS-1000 (isolated)']
+datalabels = [r'{\rm $%g < M_{bar} < %g M_\odot$}'%(paramlims[i], paramlims[i+1]) for i in range(N)]
+plotfilename = '%s/Plots/RAR_KiDS_4-massbins_equal_SN_oneplot'%path_sheardata
+
+"""
 
 # Compare isolation criteria (New vs. Old)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar', \
@@ -153,21 +167,21 @@ datalabels = ['Weaker (%sperc/%sMpc)'%(percvalues[0],distvalues[0]), 'Fiducial (
     'Stronger (%sperc/%sMpc)'%(percvalues[2],distvalues[2])]
 datatitles = [r'Maximum satellite mass (Rmin=4Mpc)', r'Minimum satellite distance (Mmax=0p2perc)']
 
-"""
+
 
 # GAMA+KiDS (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar', \
-                        'No_bins/dist0p1perc_4p5_inf-zANNz2ugri_0_0p5_lw-logmbar']])
-path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2', \
+                        'No_bins/dist0p1perc_4p5_inf-zANNz2ugri_0p1_0p5_lw-logmbar']])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2', \
                         'ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_1em15_5em12_mps2']])
-path_filename = np.array([['No_bins_A']*2])
+path_filename = np.array([['shearcovariance/No_bins_A']*2])
 
-datalabels = [r'KiDS+GAMA lensing observations (isolated galaxies)', \
-                r'KiDS-1000 lensing observations (isolated galaxies)']
+datalabels = [r'K1000 + GAMA-II (isolated: D(M$>$0.1)$>$4.5 Mpc)', \
+                r'KiDS-1000 foreground galaxies (isolated)']
 
-plotfilename = '%s/Plots/RAR_GAMA_KiDS_isolated'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_KiDS_isolated_lin'%path_sheardata
 
-"""
+
 
 # GAMA+MICE (isolated)
 path_lenssel = np.array([['No_bins/dist0p1perc_4p5_inf-nQ_3_inf_lw-logmbar']])#, 'No_bins/dist0p2perc_4_inf_lw-lmstellar']])
@@ -186,7 +200,7 @@ plotfilename = '%s/Plots/RAR_GAMA+MICE+Navarro_isolated_strong'%path_sheardata
 """
 
 ## Measured ESD
-esdfiles = np.array([['%s/%s/%s/shearcovariance/%s.txt'%\
+esdfiles = np.array([['%s/%s/%s/%s.txt'%\
 	(path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
 	for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
 
@@ -199,30 +213,23 @@ print('Plots, profiles:', Nbins)
 # Importing the shearprofiles and lens IDs
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 
-data_y[1] = data_y[1]*1e3
-error_l[1] = error_l[1]*1e3
-error_h[1] = error_h[1]*1e3
-
-print(data_y)
-print(error_h)
-
+# Convert ESD (Msun/pc^2) to acceleration (m/s^2)
 data_y, error_h, error_l = 4. * G * 3.08567758e16 *\
-    np.array([data_y, error_h, error_l]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
-
+    np.array([data_y, error_h, error_l])
 
 print('data_y:', data_y)
 print('error_h:', error_h)
 
+if not logplot:
+    # Convert the errors into log-errors
+    error_h = 1./np.log(10.) * error_h/abs(data_y)
+    error_l = 1./np.log(10.) * error_l/abs(data_y)
 
-error_h = 1./np.log(10.) * error_h/abs(data_y)
-error_l = 1./np.log(10.) * error_l/abs(data_y)
-data_x = np.log10(data_x)
-
-floor = 1e-15
-error_h[data_y<0.] = data_y[data_y<0.] + error_h[data_y<0.] - floor
-data_y[data_y<0.] = floor
-data_y[data_y>0.] = np.log10(data_y[data_y>0.])
-
+    floor = 1e-15
+    error_h[data_y<0.] = data_y[data_y<0.] + error_h[data_y<0.] - floor
+    data_y[data_y<0.] = floor
+    data_y[data_y>0.] = np.log10(data_y[data_y>0.])
+    data_x = np.log10(data_x)
 
 # Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
@@ -253,37 +260,49 @@ errorh_cres = 10**(cres[1]+cres[3]) - 10**cres[1]
 """
 
 # Import Kyle's RAR (based on Navarro et al. 2017)
-#masses_navarro = ['1.0E9', '2.1E10', '1.0E11'] # (in Msun)
-masses_navarro = ['1.5E10', '4.6E10', '8.9E10', '1.8E11'] # Median bin mass (in Msun)
+masses_navarro = ['1.5E10', '3.2E10', '4.6E10', '8.9E10'] # (in Msun)
+#masses_navarro = ['1.5E10', '4.6E10', '8.9E10', '1.8E11'] # Median bin mass (in Msun)
 #masses_navarro = ['6.3E10'] # Median of all isolated galaxies
 
-data_navarro = [np.loadtxt('RAR_profiles/RAR_Mstar%s.txt'%m).T for m in masses_navarro]
+gbar_navarro = []
+gobs_navarro = []
+for m in range(len(masses_navarro)):
+    data_navarro = np.loadtxt('RAR_profiles/RAR_Mstar%s.txt'%masses_navarro[m]).T
+    
+    if logplot:
+        gbar_navarro.append(data_navarro[1])
+        gobs_navarro.append(data_navarro[1] + data_navarro[0])
+    else:
+        gbar_navarro.append(np.log10(data_navarro[1]))
+        gobs_navarro.append(np.log10(data_navarro[1] + data_navarro[0]))
 
-gbar_navarro = np.array([data_navarro[m][1] for m in range(len(masses_navarro))])
-gobs_navarro = np.array([data_navarro[m][1] + data_navarro[m][0] for m in range(len(masses_navarro))])
+#gbar_navarro = np.array([data_navarro[m][1] for m in range(len(masses_navarro))])
+#gobs_navarro = np.array([data_navarro[m][1] + data_navarro[m][0] for m in range(len(masses_navarro))])
 #gobs_kyle = np.array([kyle9[1]+kyle9[0], kyle10[1]+kyle10[0], kyle11[1]+kyle11[0]])
-gbar_navarro, gobs_navarro = [np.log10(gbar_navarro), np.log10(gobs_navarro)]
+#gbar_navarro, gobs_navarro = [np.log10(gbar_navarro), np.log10(gobs_navarro)]
 
 # Import McGaugh data
 data_mcgaugh = np.loadtxt('RAR_profiles/mcgaugh2016_RAR.txt').T
-loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error = np.array([data_mcgaugh[d] for d in range(4)])
+gbar_mcgaugh, gbar_mcgaugh_error, gobs_mcgaugh, gobs_mcgaugh_error = np.array([data_mcgaugh[d] for d in range(4)])
 
 data_mcgaugh_binned = np.loadtxt('RAR_profiles/mcgaugh2016_RAR_binned.txt').T
-loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, sd_mcgaugh, N_mcgaugh = np.array([data_mcgaugh_binned[d] for d in range(4)])
+gbar_mcgaugh_binned, gobs_mcgaugh_binned, sd_mcgaugh, N_mcgaugh = np.array([data_mcgaugh_binned[d] for d in range(4)])
 
-gbar_mcgaugh, gbar_mcgaugh_error, gobs_mcgaugh, gobs_mcgaugh_error = \
-loggbar_mcgaugh, loggbar_mcgaugh_error, loggobs_mcgaugh, loggobs_mcgaugh_error
-#gbar_mcgaugh = 10.**loggbar_mcgaugh
-#gobs_mcgaugh = 10.**loggobs_mcgaugh
+if logplot:
+    gbar_mcgaugh, gbar_mcgaugh_error, gobs_mcgaugh, gobs_mcgaugh_error, \
+    gbar_mcgaugh_binned, gobs_mcgaugh_binned = \
+    [10.**gbar_mcgaugh, 10.**gbar_mcgaugh_error, 10.**gobs_mcgaugh, \
+    10.**gobs_mcgaugh_error, 10.**gbar_mcgaugh_binned, 10.**gobs_mcgaugh_binned]
+
 """
 gbar_mcgaugh_error_low = gbar_mcgaugh - 10.**(loggbar_mcgaugh-loggbar_mcgaugh_error)
 gbar_mcgaugh_error_high = 10.**(loggbar_mcgaugh+loggbar_mcgaugh_error) - gbar_mcgaugh
 gobs_mcgaugh_error_low = gobs_mcgaugh - 10.**(loggobs_mcgaugh-loggobs_mcgaugh_error)
 gobs_mcgaugh_error_high = 10.**(loggobs_mcgaugh+loggobs_mcgaugh_error) - gobs_mcgaugh
-"""
+
 #gbar_mcgaugh_error = np.log(10.) * gbar_mcgaugh * loggbar_mcgaugh_error
 #gobs_mcgaugh_error = np.log(10.) * gobs_mcgaugh * loggobs_mcgaugh_error
-#"""
+
 
 # Bin the McGaugh data
 Nbins_gbar = 14
@@ -300,7 +319,6 @@ gobs_mcgaugh_std = np.array([np.std(gobs_mcgaugh[inds==b]) for b in range(Nbins_
 gbar_mcgaugh_meanerror = np.sqrt(np.array([np.sum((gbar_mcgaugh_error[inds==b])**2.) for b in range(Nbins_gbar)]))/gbar_mcgaugh_number
 gobs_mcgaugh_meanerror = np.sqrt(np.array([np.sum((gobs_mcgaugh_error[inds==b])**2.) for b in range(Nbins_gbar)]))/gbar_mcgaugh_number
 
-"""
 gobs_mcgaugh_meanerror_low = np.sqrt(np.array([np.sum((gobs_mcgaugh_error_low[inds==b])**2.) for b in range(Nbins_gbar)]))
 gobs_mcgaugh_meanerror_high = np.sqrt(np.array([np.sum((gobs_mcgaugh_error_high[inds==b])**2.) for b in range(Nbins_gbar)]))
 gobs_mcgaugh_meanerror_low, gobs_mcgaugh_meanerror_high = \
@@ -347,9 +365,10 @@ try:
     data_y_mock, error_h_mock, error_l_mock = 4. * G * 3.08567758e16 *\
         np.array([data_y_mock, error_h_mock, error_l_mock]) # Convert ESD (Msun/pc^2) to acceleration (m/s^2)
     
-    error_h_mock = 1./np.log(10.) * error_h_mock/data_y_mock
-    error_l_mock = 1./np.log(10.) * error_l_mock/data_y_mock
-    data_x_mock, data_y_mock = np.log10(np.array([data_x_mock, data_y_mock]))
+    if not logplot:
+        error_h_mock = 1./np.log(10.) * error_h_mock/data_y_mock
+        error_l_mock = 1./np.log(10.) * error_l_mock/data_y_mock
+        data_x_mock, data_y_mock = np.log10(np.array([data_x_mock, data_y_mock]))
     
     IDfiles_mock = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles_mock])
     lensIDs_selected_mock = np.array([np.loadtxt(m) for m in IDfiles_mock])
@@ -414,7 +433,6 @@ gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subpl
 
 ax = fig.add_subplot(gs_full[0,0])
 
-
 for N1 in range(Nrows):
     for N2 in range(Ncolumns):
     
@@ -423,9 +441,9 @@ for N1 in range(Nrows):
         N = np.int(N1*Ncolumns + N2)
         
         # Plot guiding lines
-        ax_sub.plot(np.log10(gbar_log), np.log10(gobs_mond(gbar_log)), label = r'McGaugh+2016 fitting function (extrapolated)',\
-            color='grey', ls='-', marker='', zorder=6)
-        ax_sub.plot(gbar_ext, gobs_mond(gbar_ext), color='grey', ls='--', marker='', zorder=2)
+        ax_sub.plot(gbar_mond, gobs_mond_M16, label = r'McGaugh+2016 fitting function (extrapolated)',\
+            color='grey', ls='-', marker='', zorder=1)
+        ax_sub.plot(gbar_ext, gobs_mond_ext, color='grey', ls='--', marker='', zorder=1)
         ax_sub.plot(gbar_uni, gbar_uni, label = r'Unity (No dark matter: $g_{\rm tot} = g_{\rm bar}$)', \
         color='grey', ls=':', marker='', zorder=1)
                 
@@ -441,50 +459,46 @@ for N1 in range(Nrows):
             """
             
             if Nbins[1] > 2:
-                data_x_plot = data_x[Ndata] * (1.+0.1*Nplot)
+                data_x_plot = data_x[Ndata] * (1.+0.001*Nplot)
             else:
                 data_x_plot = data_x[Ndata]
             
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color='black', ls='', marker='.', zorder=4)
+                color=colors[Nplot], ls='', marker='.', zorder=4)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color='black', ls='', marker='.', label=datalabels[Nplot], zorder=4)
-            
+                color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
             """
             # Plot Navarro predictions
             ax_sub.plot(gbar_navarro[Ndata], gobs_navarro[Ndata], ls='--', marker='', color=colors[Ndata], \
             label='Navarro+2017 ($M_*=%s} M_\odot$)'%masses_navarro[Ndata].replace('E','\cdot10^{'), zorder=5)
-
-                        
-            ## Plot McGaugh observations
-            # Binned
-            ax_sub.errorbar(gbar_mcgaugh_mean, gobs_mcgaugh_mean, yerr=gobs_mcgaugh_meanerror, \
-            marker='s', color='red', ls='', label='McGaugh+2016 observations (mean + mean error)', zorder=5)
-            
-            # Not binned
-            ax_sub.errorbar(gbar_mcgaugh, gobs_mcgaugh, xerr=gbar_mcgaugh_error, \
-            yerr=gobs_mcgaugh_error, ls='', marker='.', color=colors[0], alpha=0.04, \
-            label='McGaugh+2016 observations', zorder=2)
-            
-            
-            # 2D histogram
-            ax_sub.plot(loggbar_mcgaugh_binned, loggobs_mcgaugh_binned, label='McGaugh+2016 observations (mean)', \
-                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=3)
-            ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=50, cmin=1, cmap='Blues')
-            
-            
-            # Plot Lelli+2017 dwarf Spheroidals
-            ax_sub.errorbar(loggbar_dsph, loggobs_dsph, xerr=[-loggbar_dsph_elow,loggbar_dsph_ehigh], \
-            yerr=[-loggobs_dsph_elow,loggobs_dsph_ehigh], marker='o', color='orange', ls='', zorder=3, alpha=0.1)
-            
-            ax_sub.errorbar(loggbar_dsph[hqmask], loggobs_dsph[hqmask], \
-            xerr=[-loggbar_dsph_elow[hqmask],loggbar_dsph_ehigh[hqmask]], yerr=[-loggobs_dsph_elow[hqmask],loggobs_dsph_ehigh[hqmask]], \
-            marker='o', color='orange', ls='', label='Lelli+2017 Dwarf Spheroidals (velocity dispersions at r$_{1/2}$)', zorder=4)
             """
             
+        ## Plot McGaugh observations
+        
+        # Binned
+        ax_sub.plot(gbar_mcgaugh_binned, gobs_mcgaugh_binned, label='McGaugh+2016 observations (mean)', \
+            ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=2)
+        """
+        # 2D histogram
+        ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=[gbar_mond, gbar_mond], cmin=1, cmap='Blues')
+        
+        # Not binned
+        ax_sub.errorbar(gbar_mcgaugh, gobs_mcgaugh, xerr=gbar_mcgaugh_error, \
+        yerr=gobs_mcgaugh_error, ls='', marker='.', color=colors[0], alpha=0.04, \
+        label='McGaugh+2016 observations', zorder=2)
+        
+        # Plot Lelli+2017 dwarf Spheroidals
+        ax_sub.errorbar(loggbar_dsph, loggobs_dsph, xerr=[-loggbar_dsph_elow,loggbar_dsph_ehigh], \
+        yerr=[-loggobs_dsph_elow,loggobs_dsph_ehigh], marker='o', color='orange', ls='', zorder=3, alpha=0.1)
+        
+        ax_sub.errorbar(loggbar_dsph[hqmask], loggobs_dsph[hqmask], \
+        xerr=[-loggbar_dsph_elow[hqmask],loggbar_dsph_ehigh[hqmask]], yerr=[-loggobs_dsph_elow[hqmask],loggobs_dsph_ehigh[hqmask]], \
+        marker='o', color='orange', ls='', label='Lelli+2017 Dwarf Spheroidals (velocity dispersions at r$_{1/2}$)', zorder=4)
+        """
+        
         try:
             # Plot mock shearprofiles
             for Nmock in range(Nmocks[1]):
@@ -523,17 +537,12 @@ for N1 in range(Nrows):
         
         #plt.autoscale(enable=False, axis='both', tight=None)
         
-        ax.xaxis.set_label_coords(0.5, -0.1)
-        ax.yaxis.set_label_coords(-0.1/Ncolumns, 0.5)
+        ax.xaxis.set_label_coords(0.5, -0.15)
+        ax.yaxis.set_label_coords(-0.15/Ncolumns, 0.5)
             
         # Plot Crescenzo's data
         #ax_sub.errorbar(gbar_cres, gobs_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
 
-        # Plot Kyle's prediction
-        #ax_sub.plot(gbar_kyle[0], gobs_kyle[0], ls='--', marker='', color=colors[1], label="Navarro+2017 ($M_*=10^{9} M_\odot$)", zorder=5)
-        #ax_sub.plot(gbar_kyle[1], gobs_kyle[1], ls='-', marker='', label="Navarro+2017 ($M_*=2.1*10^{10} M_\odot$)", zorder=6)
-        #ax_sub.plot(gbar_kyle[2], gobs_kyle[2], ls='--', marker='', color=colors[3], label="Navarro+2017 ($M_*=10^{11} M_\odot$)", zorder=6)
-        
         # Plot Verlinde slopes
         #gD_0, gobs_0 = calc_gobs_0(gbar_log)
         #gD_2, gobs_2 = calc_gobs_2(gbar_log)
@@ -541,22 +550,31 @@ for N1 in range(Nrows):
         #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
         #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde (Point mass: ${\rm M_b}(r)$=const.)', zorder=6)
         
-        #plt.xscale('log')
-        #plt.yscale('log')
-        
+        #"""
         # Zoomed in
-        #plt.xlim([1e-15, 1e-11])
-        #plt.ylim([0.5e-13, 1e-10])
-
+        xlims = [1e-15, 1e-11]
+        ylims = [1e-13, 1e-10]
+        """
         # Zoomed out
-        plt.xlim([-15, -8])
-        plt.ylim([-13.2, -8])
+        xlims = [1e-15, 2e-9]
+        ylims = [2e-13, 2e-9]
+        """
+        
+        if logplot:
+            plt.xscale('log')
+            plt.yscale('log')
+        else:
+            xlims, ylims = [np.log10(xlims), np.log10(ylims)]
+        
+
+        plt.xlim(xlims)
+        plt.ylim(ylims)
         
         #plt.gca().invert_xaxis()
         #plt.gca().invert_yaxis()
         
         if Nbins[0]>1:
-            plt.title(datatitles[N], x = 0.26, y = 0.88, fontsize=16)
+            plt.title(datatitles[N], x = 0.35, y = 0.85, fontsize=16)
 
 # Define the labels for the plot
 xlabel = r'Baryonic radial acceleration log($g_{\rm bar}$ [${\rm h_{%g} \, m/s^2}$])'%(h*100)

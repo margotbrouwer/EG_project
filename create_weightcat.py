@@ -22,7 +22,7 @@ O_lambda = 0.685
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Import lens catalog
-cat = 'gama'
+cat = 'kids'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -33,7 +33,7 @@ print(logmstar)
 fcold = 10.**(-0.69*logmstar + 6.63)
 mstar = 10.** logmstar
 mbar = mstar * (1 + fcold)
-logmbar = np.log10(mbar) 
+logmbar = np.log10(mbar)
 
 filename = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
 

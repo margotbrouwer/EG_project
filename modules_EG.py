@@ -38,8 +38,11 @@ def import_kidscat(path_kidscat, kidscatname, h):
     galZ = kidscat['zANNz2ugri']
     
     rmag = kidscat['MAG_AUTO']
+    rmag_gaap = kidscat['MAG_GAAP_r']
     rmag_abs = kidscat['MAG_ABS_r']
+    
     logmstar = kidscat['MASS_BEST']
+    logmstar = logmstar + (rmag_gaap-rmag)/2.5 - 2.*np.log10(h/0.7)
     
     #gmag = kidscat['MAG_GAAP_g']
     #imag = kidscat['MAG_GAAP_i']
@@ -158,7 +161,7 @@ def import_lenscat(cat, h, cosmo):
         
     if 'mice' in cat:
         fields = ['M1']
-        lenscatname = 'mice2_gama_catalog_100deg2.fits'
+        lenscatname = 'mice2_gama_catalog_400deg2.fits'
         lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
 

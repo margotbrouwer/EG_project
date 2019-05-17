@@ -8,13 +8,8 @@
  m_corr_file         /data/users/brouwer/SourceCatalogues/m_corr_kids_450.txt # NEW! This entry is required. It is a file with m-bias corrections in thin redhshift slices. See the same file in the demo folder for structure.
  kids_columns        SeqNr,ALPHA_J2000,DELTA_J2000,Z_B,model_SNratio,MASK,THELI_NAME,weight,m_cor,e1,e2
 
-#GAMA_path           /data/users/brouwer/LensCatalogues/GAMACatalogue_2.0.fits     # Path the GAMA catalog (optional - supersedes GAMA_version).
-
- GAMA_path        /data/users/brouwer/LensCatalogues/photozs.DR4_GAMAequ_ugri_lite.fits         # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog).
- lens_columns        ID,RAJ2000,DECJ2000,zANNz2ugri
-
-#GAMA_path          /data/users/brouwer/LensCatalogues/GAMA_EQU_plus_G23.fits
-#lens_columns        CATAID,RA,DEC,Z
+ GAMA_path           /data/users/brouwer/LensCatalogues/GAMACatalogue_2.0.fits     # Path the GAMA catalog (optional - supersedes GAMA_version).
+ lens_columns        ID,RA,DEC,Z
 
 
 # cosmology
@@ -28,7 +23,7 @@ h                   0.7                                         # Reduced Hubble
 
 # Algorithm
  ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Mar19            # Path to ESD output folder.
-#ESD_output_filename    EG_pipeline                             # This flag will be appended to the filenames (optional).
+ ESD_output_filename    GAMAII                             # This flag will be appended to the filenames (optional).
  ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
  Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
@@ -50,14 +45,12 @@ lensID_file        None                                                         
 
 
 
- lens_limits1       zANNz2ugri     self               0.,0.5
-#lens_limits2       dist0p2perc    /data/users/brouwer/LensCatalogues/gama_isolated_galaxies_perc_h70.fits          6Mpc,inf
- lens_limits2       fsat6Mpc           /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_Msat-6Mpc_h70.fits    0,0.1
+#lens_limits1       zANNz2ugri     self               0,0.5
+ lens_limits2       dist0p2perc     /data/users/brouwer/LensCatalogues/gama_isolated_galaxies_perc_h70.fits   6Mpc,inf
 #lens_limits2       logmstar       self               8.5,11.
 
-
 # Source selection
- src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or
+ src_limits1           Z_B        0.1,0.9             # Source parameter for limits and one value, or
 #src_limits2                                          #     two comma separated limits between -inf and inf.
 
 kids_blinds           A

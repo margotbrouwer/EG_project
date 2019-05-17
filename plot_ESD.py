@@ -10,6 +10,7 @@ import os
 from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 import scipy.optimize as optimization
+from scipy import stats
 import modules_EG as utils
 
 from matplotlib import pyplot as plt
@@ -41,7 +42,7 @@ reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
 #colors = np.array([reds,blues])
 
 #colors = ['#0571b0', '#92c5de', '#d7191c']*2#, '#fdae61']
-colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
+colors = ['#d7191c', '#0571b0', '#92c5de', '#fdae61']*2
 
 
 ## Define paths of ESD profiles
@@ -68,7 +69,7 @@ datatitles = [r'']
 
 plotfilename = '%s/Plots/ESD_GAMA_KiDS_all'%path_sheardata
 
-"""
+
 # Lens redshift comparison
 params1 = ['KiDS', 'GAMA']
 params2 = np.arange(4)+1
@@ -81,13 +82,105 @@ path_lenssel = np.array([['zANNz2ugri_0p1_0p2_0p3_0p4_0p5/zANNz2ugri_0_0p5',
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
 path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2]*N1 for p2 in params2])
 
-#"""
-
 datalabels = params1
 datatitles = [r'$0.1<Z<0.2$',r'$0.2<Z<0.3$',r'$0.3<Z<0.4$',r'$0.4<Z<0.5$']
 
 plotfilename = '%s/Plots/ESD_KiDS_GAMA_Zbins'%path_sheardata
 
+
+# Isolation test: f_iso
+
+params1 = ['KiDS']
+params2 = ['0', '0_0p1', '0_0p5', '0_1']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/fsat4p5Mpc_%s-zANNz2ugri_0_0p5'%p for p in params2]])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datalabels = [r'f$_{\rm sat}<$0', r'f$_{\rm sat}<$0.1', r'f$_{\rm sat}<$0.5', r'f$_{\rm sat}<$0.1']
+datatitles = params1
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest_fsat'%path_sheardata
+
+
+# Isolation test: r_iso
+
+params1 = ['0', '0_0p1']
+params2 = ['3Mpc', '4p5Mpc', '6Mpc']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/fsat%s_%s-zANNz2ugri_0_0p5'%(p2,p1) for p2 in params2] for p1 in params1])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = ['f$_{\rm sat}=0$', 'f$_{\rm sat}<0.1$']
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest_riso_fsat0p1'%path_sheardata
+
+
+# Isolated vs. not isolated (KiDS)
+
+params1 = ['KiDS']
+params2 = [r'All galaxies', r'Isolated ($r_{\rm iso}=3$ Mpc)', r'Isolated, bright (m$_{\rm r}<17.5$)']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/zANNz2ugri_0_0p5', 'No_bins/riso_3_inf-zANNz2ugri_0_0p5', \
+                            'No_bins/MAGAUTO_0_17p5-riso_3_inf-zANNz2ugri_0_0p5']])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
+
+
+# Isolated vs. not isolated (GAMA)
+
+params1 = ['GAMA']
+params2 = [r'All galaxies', r'Isolated: $r_{\rm iso}=3$ Mpc', r'Isolated, bright: mag$<17.3$']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_GAMAII/nQ_3_inf', 'No_bins_GAMAII/dist0p1perc_4p5_inf-nQ_3_inf', \
+                            'No_bins_GAMAII/Rpetro_0_17p3-dist0p1perc_4p5_inf-nQ_3_inf']])
+path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_GAMA_isotest'%path_sheardata
+
+"""
+# Isolated vs. not isolated (MICE)
+
+params1 = ['MICE']
+params2 = [r'All galaxies', r'Isolated ($r_{\rm iso}=3$ Mpc)', r'Isolated, bright (m$_{\rm r}<17.5$)']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/zcgal_0_0p5', 'No_bins/riso_3_inf-zcgal_0_0p5', \
+                            'No_bins/risofaint_3_inf-zcgal_0_0p5']])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
+"""
+"""
 
 ## Import measured ESD
 esdfiles = np.array([['%s/%s/%s/%s.txt'%\
@@ -106,6 +199,20 @@ data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
 
+# Calculate the difference between subsequent bins
+for n in range(len(data_y)-1):
+    chisquared = np.sum((data_y[0,n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
+    dof = len(data_y[0])
+    prob = 1. - stats.chi2.cdf(chisquared, dof)
+
+    print()
+    print(params2[n], 'vs.', params2[n+1])
+    print('Chi2:', chisquared)
+    print('DoF:', dof)
+    print('P-value:', prob)
+print()
+
+
 ## Create the plot
 
 Ncolumns = int(Nbins[0]/Nrows)
@@ -114,7 +221,7 @@ Ncolumns = int(Nbins[0]/Nrows)
 if Nbins[0] > 1:
     fig = plt.figure(figsize=(Ncolumns*5.,Nrows*4))
 else:
-    fig = plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(7,5))
 
 gs_full = gridspec.GridSpec(1,1)
 gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subplot_spec=gs_full[0,0])
@@ -141,7 +248,7 @@ for N1 in range(Nrows):
             """
             
             if Nbins[1] > 1:
-                dx = 0.05
+                dx = 0.04
                 data_x_plot = data_x[Ndata] * (1.-dx/2.+dx*Nplot)
             else:
                 data_x_plot = data_x[Ndata]
@@ -191,9 +298,8 @@ ax.set_ylabel(ylabel, fontsize=16)
 handles, labels = ax_sub.get_legend_handles_labels()
 
 
-# Zoomed in
-#plt.xlim([1e-15, 1e-11])
-#plt.ylim([0.5e-13, 1e-10])
+plt.xlim([0.03, 3])
+plt.ylim([1e-1, 1e2])
 
 # Plot the legend
 #plt.legend()
@@ -203,7 +309,7 @@ if Nbins[0] > 1:
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.5*Ncolumns, 0.7*Nrows)) # side
 #    plt.legend(handles[::-1], labels[::-1], loc='lower right')
 else:
-    plt.legend()#loc='lower right')
+    plt.legend(loc='best', fontsize=12)#loc='lower right')
 #    plt.legend(handles[::-1], labels[::-1], loc='best')
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.85, 1.55)) # top
 

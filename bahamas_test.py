@@ -26,10 +26,11 @@ h=0.7
 pc_to_meter = 3.08567758e16 # meters
 
 ## Import Bahamas file
-catnum = 402 #1039
+catnum = 1039 #402
 lenslist = np.arange(catnum)
 lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
+print(catnum)
 
 path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 
@@ -170,8 +171,8 @@ for i in np.arange(catnum):
     plt.plot(Rbins_centers, Sigma_list[i], marker='.', ls=':')
     plt.plot(profiles_centers[0:Nbins], Sigma_list[i], marker='.', ls=':')
     
-    print(Rbins_centers)
-    print(Rbins_list[i])
+    #print(Rbins_centers)
+    #print(Rbins_list[i])
     
 # Define the labels for the plot
 xlabel = r'Radius R [$Mpc/h$]'
