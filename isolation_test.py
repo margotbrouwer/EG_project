@@ -116,7 +116,7 @@ plt.figure(figsize=(4.7,3.7))
 plotscale = 1.e3 # Scale the number of galaxies
 
 plt.plot(rmagcenters, rmaghist/plotscale, color=colors[1], label=r'All galaxies')
-plt.plot(rmagcenters, isohist/plotscale, color=colors[2], label=r'Isolated galaxies (r$_{\rm iso}=3$)')
+plt.plot(rmagcenters, isohist/plotscale, color=colors[2], label=r'Isolated (r$_{\rm iso}=%g$ Mpc)'%distval)
 plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction of isolated galaxies')
 plt.text(17.7, 3.e-2, r'f$_{\rm L}=0.1$', fontsize=12)
 
@@ -141,7 +141,7 @@ plt.legend(loc='best', fontsize=10)
 plt.tight_layout()
 
 # Save plot
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test'
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%gMpc'%distval
 for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')

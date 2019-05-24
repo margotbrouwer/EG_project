@@ -50,10 +50,10 @@ lensID_file        None                                                         
 
 
 
- lens_limits1       zANNz2ugri     self               0.,0.5
-#lens_limits2       dist0p2perc    /data/users/brouwer/LensCatalogues/gama_isolated_galaxies_perc_h70.fits          6Mpc,inf
- lens_limits2       fsat6Mpc           /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_Msat-6Mpc_h70.fits    0,0.1
-#lens_limits2       logmstar       self               8.5,11.
+ lens_limits1   zANNz2ugri     self               0.,0.5
+ lens_limits2   dist0p3perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits  3,inf
+ lens_limits3   logmstar        /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits     10.9,11.1
+#lens_limits2   fsatriso           /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_Msat-riso_h70.fits    0,0.1
 
 
 # Source selection

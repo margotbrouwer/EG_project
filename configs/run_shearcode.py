@@ -52,19 +52,19 @@ replacefile = '/data2/brouwer/shearprofile/KiDS-GGL/brouwer/configs_margot/ggl_N
 findlist = ['@', '710']
 replacelist = np.array([np.arange(6)+1, np.array([1724, 2634, 2201, 1577, 3379, 710])])
 config_files = create_config(replacefile, findlist, replacelist)
-"""
+
 # Test different riso values
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 findlist = np.array(['riso'])
-replacelist = np.array([['3Mpc','4p5Mpc','6Mpc']])
+replacelist = np.array([[3., 4.5, 6.]])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Test different fiso values
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
-findlist = np.array(['percvalue'])
-replacelist = np.array([['0p3', '0p2', '0p25', '0p1']])
+findlist = np.array(['fiso'])
+replacelist = np.array([['0p1', '0p2', '0p3']])
 config_files = create_config(replacefile, findlist, replacelist)
-
+"""
 # Test different fiso values - Msat
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 findlist = np.array(['fiso'])

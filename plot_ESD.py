@@ -87,41 +87,61 @@ datatitles = [r'$0.1<Z<0.2$',r'$0.2<Z<0.3$',r'$0.3<Z<0.4$',r'$0.4<Z<0.5$']
 
 plotfilename = '%s/Plots/ESD_KiDS_GAMA_Zbins'%path_sheardata
 
-
+"""
 # Isolation test: f_iso
 
 params1 = ['KiDS']
-params2 = ['0', '0_0p1', '0_0p5', '0_1']
+params2 = ['0p0', '0p1', '0p2', '0p3']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/fsat4p5Mpc_%s-zANNz2ugri_0_0p5'%p for p in params2]])
+path_lenssel = np.array([['No_bins/dist%sperc_3_inf-logmstar_10p9_11p1-zANNz2ugri_0_0p5'%p for p in params2]])
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
-datalabels = [r'f$_{\rm sat}<$0', r'f$_{\rm sat}<$0.1', r'f$_{\rm sat}<$0.5', r'f$_{\rm sat}<$0.1']
+datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$', r'$f_{\rm iso}=0.3$']
 datatitles = params1
 
-plotfilename = '%s/Plots/ESD_KiDS_isotest_fsat'%path_sheardata
+plotfilename = '%s/Plots/ESD_KiDS_isotest_fiso'%path_sheardata
 
+"""
+# Isolation test: r_iso (KiDS)
 
-# Isolation test: r_iso
-
-params1 = ['0', '0_0p1']
-params2 = ['3Mpc', '4p5Mpc', '6Mpc']
+params1 = ['0p1']
+params2 = ['3', '4p5', '6']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/fsat%s_%s-zANNz2ugri_0_0p5'%(p2,p1) for p2 in params2] for p1 in params1])
+path_lenssel = np.array([['No_bins/dist%sperc_%s_inf-logmstar_10p9_11p1-zANNz2ugri_0_0p5'%(p1,p2) \
+                                                            for p2 in params2] for p1 in params1])
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
-datatitles = ['f$_{\rm sat}=0$', 'f$_{\rm sat}<0.1$']
-datalabels = params2
+datatitles = ['']
+datalabels = ['3 Mpc', '4.5 Mpc', '6 Mpc']
 
-plotfilename = '%s/Plots/ESD_KiDS_isotest_riso_fsat0p1'%path_sheardata
+plotfilename = '%s/Plots/ESD_KiDS_isotest_riso'%path_sheardata
+
+
+# Isolation test: r_iso (MICE)
+
+params1 = ['0p1']
+params2 = ['3', '4p5', '6']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_400deg2/dist%sperc_%s_inf-logmstar_10p9_11p1-zcgal_0_0p5'%(p1,p2) \
+                                                                for p2 in params2] for p1 in params1])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = ['']
+datalabels = ['3 Mpc', '4.5 Mpc', '6 Mpc']
+
+plotfilename = '%s/Plots/ESD_MICE_isotest_riso_fsat0p1'%path_sheardata
 
 
 # Isolated vs. not isolated (KiDS)
@@ -161,7 +181,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_GAMA_isotest'%path_sheardata
 
-"""
+
 # Isolated vs. not isolated (MICE)
 
 params1 = ['MICE']
@@ -170,16 +190,16 @@ N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/zcgal_0_0p5', 'No_bins/riso_3_inf-zcgal_0_0p5', \
-                            'No_bins/risofaint_3_inf-zcgal_0_0p5']])
+path_lenssel = np.array([['No_bins_400deg2/zcgal_0_0p5', 'No_bins_400deg2/riso_3_inf-zcgal_0_0p5', \
+                            'No_bins_400deg2/risofaint_3_inf-zcgal_0_0p5']])
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
 datatitles = params1
 datalabels = params2
 
-plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
-"""
+plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
+
 """
 
 ## Import measured ESD
@@ -198,10 +218,11 @@ print('Plots, profiles:', Nbins)
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
+print(data_y)
 
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
-    chisquared = np.sum((data_y[0,n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
+    chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
     dof = len(data_y[0])
     prob = 1. - stats.chi2.cdf(chisquared, dof)
 
@@ -299,7 +320,7 @@ handles, labels = ax_sub.get_legend_handles_labels()
 
 
 plt.xlim([0.03, 3])
-plt.ylim([1e-1, 1e2])
+plt.ylim([2e-1, 2e2])
 
 # Plot the legend
 #plt.legend()

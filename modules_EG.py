@@ -320,6 +320,75 @@ def calc_Dc(Z, cosmo):
     
     return Dc
 
+# Define grid points for trough selection
+def define_gridpoints(fieldRAs, fieldDECs, gridspace, gridtype):
+    
+    ## Creating a grid to measure the galaxy density
+    
+    # Creating DEC
+    if 'random' in gridtype:
+        gridDEC = np.arange(fieldDECs[0], fieldDECs[1], gridspace)
+    else:
+        gridDEC = np.arange(fieldDECs[0]+gridspace/2., fieldDECs[1], gridspace)
+    
+    # At these DECs, calculate the correction for the equatorial coordinate system
+    eqcor = np.cos(np.radians(np.abs(gridDEC)))
+    
+    if 'corrected' in gridtype: # Calculate RA, with correction the grid for the equatorial coordinate system
+        
+        cormin, cormax = [1./np.amax(eqcor), 1./np.amin(eqcor)]
+        print('Applying correction (min,max):', cormin, cormax)
+        
+        gridRA = [ np.arange(fieldRAs[0]+gridspace/(2.*eqcor[DEC]), fieldRAs[1], \
+        gridspace/eqcor[DEC]) for DEC in range(len(gridDEC)) ] # Corrected for equatorial frame
+        lenRA = len(gridRA[0])
+    
+        gridlist = [ [ [gridRA[DEC][RA], gridDEC[DEC]] for RA in range(len(gridRA[DEC]))] for DEC in range(len(gridDEC)) ]
+        gridlist = np.vstack(gridlist)
+        
+        gridRAlist, gridDEClist = gridlist[:,0], gridlist[:,1]
+    
+    else: # Calculate RA, without correction the grid for the equatorial coordinate system
+        
+        print('Not correcting for equatorial coordinates!')
+        
+        gridRA = np.arange(fieldRAs[0]+gridspace/2., fieldRAs[1], gridspace)
+        lenRA = len(gridRA)
+        
+        gridRAlist, gridDEClist = np.meshgrid(gridRA, gridDEC)
+        gridRAlist = np.reshape(gridRAlist, np.size(gridRAlist))
+        gridDEClist = np.reshape(gridDEClist, np.size(gridDEClist))
+        #gridlist = [ [ [RA, DEC] for RA in gridRA ] for DEC in gridDEC ]
+
+    gridcoords = SkyCoord(ra=gridRAlist*u.deg, dec=gridDEClist*u.deg) # All grid coordinates    
+    
+    """
+    ## Masking grid points
+    inmask = (fieldRAs[0] < gridRAlist) & (gridRAlist < fieldRAs[1])
+    gridRAlist, gridDEClist = gridRAlist[inmask], gridDEClist[inmask]
+    
+    print( 'Number of grid coordinates:', len(gridRA), 'x', len(gridDEC), '=', len(gridRA)*len(gridDEC), '/', np.sum(inmask) )
+    
+    # Distances of grid points to the nearest source
+    idx, d2dsrc, d3d = gridcoords.match_to_catalog_sky(srccoords)
+
+    # Find grid points that are outside the field
+    inmask = (d2dsrc > 1*u.deg) # Points that lie outside the source field
+    incoords = gridcoords[inmask]
+    
+    if len(outcoords) > 0:
+        # Remove points that lie close to the edge of the galaxy field
+        idx, d2dout, d3d = gridcoords.match_to_catalog_sky(outcoords)
+        gridmask = (d2dout > 0.5*u.deg)
+        
+        # Define new grid coordinates
+        gridRA, gridDEC, gridcoords = gridRA[gridmask], gridDEC[gridmask], gridcoords[gridmask]
+    """
+    print('Gridcoords:', lenRA, 'x', len(gridDEC), '=', len(gridcoords))
+    
+    
+    return gridRAlist, gridDEClist, gridcoords
+
 # Write the results to a fits catalogue
 def write_catalog(filename, outputnames, formats, output):
     

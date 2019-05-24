@@ -20,7 +20,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'mice' # Select the lens catalogue (kids/gama/mice or mice-faint)
+cat = 'mice-faint' # Select the lens catalogue (kids/gama/mice or mice-faint)
 
 # Import lens catalog
 fields, path_galcat, galcatname, galID, galRA, galDEC, galZ, galDc, rmag, rmag_abs, logmstar =\
@@ -38,7 +38,7 @@ else:
     faintID, faintRA, faintDEC, faintZ, faintDc, faint_rmag, faint_rmag_abs, faint_e1, faint_e2, faint_logmstar =\
     utils.import_micecat('/data/users/brouwer/LensCatalogues', 'mice2_faint_catalog_400deg2.fits', h)
     
-    faintmask = (faint_rmag<22.5)
+    faintmask = (faint_rmag<21.)
     faintRA, faintDEC, faintZ, faintDc = [faintRA[faintmask], faintDEC[faintmask], faintZ[faintmask], faintDc[faintmask]]
     faintDa = faintDc/(1.+faintZ)
     
