@@ -20,7 +20,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'gama' # Select the lens catalogue (kids/gama/mice)
+cat = 'kids' # Select the lens catalogue (kids/gama/mice)
 r_iso = 3 # Maximum satellite finding radius (in Mpc)
 
 # Import lens catalog
@@ -88,12 +88,12 @@ print('Isolated galaxies (percentage):', np.sum(satellite_fractions < 1.)/Nlense
 riso_name = str(r_iso).replace('.','p')
 filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_Msat-%sMpc_h%i'%(cat, riso_name, h*100.)
 
-outputnames = ['logmstar', 'logMsat%sMpc'%riso_name, 'fsat%sMpc'%riso_name]
-formats = ['D','D','D']
+outputnames = ['ID', 'logmstar', 'logMsat%sMpc'%riso_name, 'fsat%sMpc'%riso_name]
+formats = ['D']*4
 
 satellite_masses_cat[cat_index] = satellite_masses
 satellite_fractions_cat[cat_index] = satellite_fractions
-output = [logmstar_cat, satellite_masses_cat, satellite_fractions_cat]
+output = [galID, logmstar_cat, satellite_masses_cat, satellite_fractions_cat]
 
 utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
 

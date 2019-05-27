@@ -88,7 +88,7 @@ datatitles = [r'$0.1<Z<0.2$',r'$0.2<Z<0.3$',r'$0.3<Z<0.4$',r'$0.4<Z<0.5$']
 plotfilename = '%s/Plots/ESD_KiDS_GAMA_Zbins'%path_sheardata
 
 """
-# Isolation test: f_iso
+# Isolation test: f_iso (KiDS)
 
 params1 = ['KiDS']
 params2 = ['0p0', '0p1', '0p2', '0p3']
@@ -105,7 +105,26 @@ datatitles = params1
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest_fiso'%path_sheardata
 
+
+# Isolation test: f_iso (MICE)
+
+params1 = ['KiDS']
+params2 = ['0p0', '0p1', '0p2', '0p3']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_400deg2/dist%sperc_3_inf-logmstar_10p9_11p1-zcgal_0_0p5'%p for p in params2]])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$', r'$f_{\rm iso}=0.3$']
+datatitles = params1
+
+plotfilename = '%s/Plots/ESD_MICE_isotest_fiso'%path_sheardata
+
 """
+
 # Isolation test: r_iso (KiDS)
 
 params1 = ['0p1']

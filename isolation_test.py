@@ -41,7 +41,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 
 cat = 'kids' # Select the lens catalogue (kids/gama/mice)
-#rationame = 'perc'
+rationame = 'perc'
 massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
 massratio_names = [str(p).replace('.','p') for p in massratios]
 massratio_num = 4
@@ -53,8 +53,8 @@ if cat=='gama':
     magmax=19.8
 
 print()
-#print('Testing isolation criterion: D(perc>%g)>%g Mpc'%(massratios[massratio_num],distval))
-print('Testing isolation criterion: r_iso=%g Mpc'%distval)
+print('Testing isolation criterion: r_sat(f_M*>%g)>%g Mpc'%(massratios[massratio_num],distval))
+#print('Testing isolation criterion: r_iso=%g Mpc'%distval)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -68,14 +68,14 @@ lensRA, lensDEC, lensDc, logmstar, rmag = \
 
 
 # Import isolation catalog
-#isocatfile = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_%s_h%i.fits'%(cat, rationame, h*100.)
-isocatfile = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_h%i.fits'%(cat, h*100.)
+isocatfile = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_%s_h%i.fits'%(cat, rationame, h*100.)
+#isocatfile = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_h%i.fits'%(cat, h*100.)
 isocat = pyfits.open(isocatfile, memmap=True)[1].data
 print('Imported:', isocatfile)
 
 #distcat = np.array([ isocat['dist%s%s'%(p, rationame)] for p in massratio_names])
-#isodist = (isocat['dist%s%s'%(massratio_names[massratio_num], rationame)])[nanmask]
-isodist = (isocat['riso'])[nanmask]
+isodist = (isocat['dist%s%s'%(massratio_names[massratio_num], rationame)])[nanmask]
+#isodist = (isocat['riso'])[nanmask]
 isomask = isodist > distval # There are no galaxies within X pc
 
 # Define the galaxy mass bins
@@ -104,11 +104,11 @@ print('Testing: Perc:', massratios[massratio_num], ', Distance (Mpc):', distval)
 print('Maglim:', maglim, magmax-maglim)
 print()
 print('Isolated galaxies:')
-print('Ngal_bright:', Ngal_bright, Ngal_bright/Ngal_tot*100., '%')
-print('Niso_bright:', Niso_bright, Niso_bright/Ngal_bright*100., '%')
-print('Niso_faint:', Niso_faint, Niso_faint/Ngal_faint*100., '%')
-print('Niso_tot:', Niso_tot, Niso_tot/Ngal_tot*100., '%')
-print('Niso_false:', Niso_false, Niso_false/Niso_tot*100., '%')
+print('Ngal_bright:', Ngal_bright, Ngal_bright/Ngal_tot*100., '% of total sample')
+print('Niso_bright:', Niso_bright, Niso_bright/Ngal_bright*100., '% of bright sample')
+print('Niso_faint:', Niso_faint, Niso_faint/Ngal_faint*100., '% of faint sample')
+print('Niso_false:', Niso_false, Niso_false/Niso_tot*100., '% of isolated sample')
+print('Niso_tot:', Niso_tot, Niso_tot/Ngal_tot*100., '% of total sample')
 
 ## Plot the result
 
@@ -116,13 +116,14 @@ plt.figure(figsize=(4.7,3.7))
 plotscale = 1.e3 # Scale the number of galaxies
 
 plt.plot(rmagcenters, rmaghist/plotscale, color=colors[1], label=r'All galaxies')
-plt.plot(rmagcenters, isohist/plotscale, color=colors[2], label=r'Isolated (r$_{\rm iso}=%g$ Mpc)'%distval)
+plt.plot(rmagcenters, isohist/plotscale, color=colors[2], \
+    label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc'%(massratios[massratio_num], distval))
 plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction of isolated galaxies')
-plt.text(17.7, 3.e-2, r'f$_{\rm L}=0.1$', fontsize=12)
+plt.text(17.7, 5.e-2, r'f$_{\rm L}=%g$'%(massratios[massratio_num]), fontsize=12)
 
 #plt.plot(rmagcenters, np.cumsum(isohist)/np.cumsum(rmaghist))
 
-plt.axvline(x=magmax-maglim, color='black', ls='--')
+plt.axvline(x=magmax-maglim, color='grey', ls='--')
 #plt.axvline(x=magmax, color='black', ls='--')
 
 xlabel = r'Apparent magnitude $m_{\rm r}$'
@@ -132,21 +133,22 @@ plt.xlabel(xlabel, fontsize=12)
 plt.ylabel(ylabel, fontsize=12)
 
 plt.xlim([14., magmax])
-plt.ylim([1.e-2, 1.e2])
+plt.ylim([3.e-2, 3.e2])
 
 
 plt.yscale('log')
 
-plt.legend(loc='best', fontsize=10)
+plt.legend(loc='upper left', fontsize=10)
 plt.tight_layout()
 
 # Save plot
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%gMpc'%distval
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%s%s-%gMpc'\
+                                                %(rationame, massratio_names[massratio_num], distval)
 for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     
-print('Written: ESD profile plot:', plotname)
+print('Written plot:', plotname)
 
 plt.show()
 plt.clf

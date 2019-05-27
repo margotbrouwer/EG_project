@@ -119,12 +119,12 @@ print('dlogm:', dlogm)
 filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_perc_h%i'%(cat, h*100.)
 
 if 'faint' in cat:
-    outputnames = np.append(['logmstar'], ['dist%s%s_faint'%(n,rationame) for n in rationames])
+    outputnames = np.append(['ID', 'logmstar'], ['dist%s%s_faint'%(n,rationame) for n in rationames])
 else:
-    outputnames = np.append(['logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])
+    outputnames = np.append(['ID', 'logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])
 
-formats = np.append(['D'], ['D']*len(massratios))
-output = np.append([logmstarcat], satdistcat, axis=0)
+formats = np.append(['D']*2, ['D']*len(massratios))
+output = np.append([lensID, logmstarcat], satdistcat, axis=0)
 print(outputnames, formats, output)
 
 utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
