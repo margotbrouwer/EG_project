@@ -11,14 +11,15 @@ from astropy.cosmology import LambdaCDM
 import modules_EG as utils
 
 # Constants
-h = 0.7
+h = 1.0
 O_matter = 0.315
 O_lambda = 0.685
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Importing the GAMA catalogues
-path_gamacat = '/data/users/brouwer/LensCatalogues/GAMACatalogue_2.0.fits'
+path_lenscat = '/data/users/brouwer/LensCatalogues'
+path_gamacat = '%s/GAMACatalogue_2.0.fits'%path_lenscat
 gamacat = pyfits.open(path_gamacat, ignore_missing_end=True)[1].data
 
 print('Importing GAMA catalogue:', path_gamacat)
@@ -35,6 +36,7 @@ zlist = gamacat['Z']
 
 # Calculating galaxy distances
 Dcllist = cosmo.comoving_distance(zlist)
+Dallist = Dcllist/(1.+zlist)
 
 # Creating gama coordinates
 gamacoords = SkyCoord(ra=RAlist, dec=DEClist, distance=Dcllist)
@@ -90,13 +92,14 @@ Niso = [ float(np.sum(iso[i])) / float(len(galIDlist)) * 100. for i in range(len
 print(Niso, 'percent')
 
 # Plot the results to a fits table
-filename = 'gama_isolated_galaxies_h%i_Brouwer17'%(h*100.)
+filename = '%s/gama_isolated_galaxies_FoF_h%i'%(path_lenscat, h*100.)
 
-outputnames = ['logmstar', 'RankBCG', 'BCGdist', 'cendist', 'isoBCG2', 'isocen2', 'isoBCG3', 'isocen3', 'isoBCG4', 'isocen4']
-formats = ['D', 'J', 'D', 'D', 'J', 'J', 'J', 'J', 'J', 'J']
-output = [logmstarlist, ranklist, BCGdistlist, cendistlist, isoBCG2, isocen2, isoBCG3, isocen3, isoBCG4, isocen4]
+outputnames = ['ID', 'logmstar', 'RankBCG', 'BCGdist', 'cendist', 'isoBCG2', 'isocen2', 'isoBCG3', 'isocen3', 'isoBCG4', 'isocen4']
+formats = ['D']*len(outputnames)
+output = [galIDlist, logmstarlist, ranklist, BCGdistlist, cendistlist, isoBCG2, isocen2, isoBCG3, isocen3, isoBCG4, isocen4]
 
 utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
+
 
 """
 # For each GAMA galaxy...
@@ -104,7 +107,7 @@ for l in range(len(galIDlist)):
 #for l in range(2000):
     
     if l%1000 == 0:
-        print(l)
+        print l
 
     # Remove all neighbours that are far away from our galaxy
     #closemask = (RAlist[l]-Dmax[l] < RAlist) & (RAlist < RAlist[l]+Dmax[l]) & (DEClist[l]-Dmax[l] < DEClist) & (DEClist < DEClist[l]+Dmax[l])

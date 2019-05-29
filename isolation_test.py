@@ -47,10 +47,12 @@ massratio_names = [str(p).replace('.','p') for p in massratios]
 massratio_num = 4
 distval = 3 # in Mpc
 
-if cat=='kids':
-    magmax=20.
 if cat=='gama':
+    magmin=16.
     magmax=19.8
+else:
+    magmin=16.
+    magmax=20.
 
 print()
 print('Testing isolation criterion: r_sat(f_M*>%g)>%g Mpc'%(massratios[massratio_num],distval))
@@ -79,9 +81,9 @@ isodist = (isocat['dist%s%s'%(massratio_names[massratio_num], rationame)])[nanma
 isomask = isodist > distval # There are no galaxies within X pc
 
 # Define the galaxy mass bins
-rmag_min, rmag_max = [13., 20.]
+
 Nrmagbins = 100.
-rmagbins = np.linspace(rmag_min, rmag_max, Nrmagbins)
+rmagbins = np.linspace(magmin, magmax, Nrmagbins)
 rmagcenters = rmagbins[0:-1] + 0.5*np.diff(rmagbins)
 
 isohist, foo = np.histogram(rmag[isomask], rmagbins)
@@ -119,7 +121,7 @@ plt.plot(rmagcenters, rmaghist/plotscale, color=colors[1], label=r'All galaxies'
 plt.plot(rmagcenters, isohist/plotscale, color=colors[2], \
     label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc'%(massratios[massratio_num], distval))
 plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction of isolated galaxies')
-plt.text(17.7, 5.e-2, r'f$_{\rm L}=%g$'%(massratios[massratio_num]), fontsize=12)
+plt.text(17.6, 7.e-2, r'f$_{\rm L}=%g$'%(massratios[massratio_num]), fontsize=12)
 
 #plt.plot(rmagcenters, np.cumsum(isohist)/np.cumsum(rmaghist))
 
@@ -132,7 +134,7 @@ ylabel = r'Number of galaxies (x$%g$)'%plotscale
 plt.xlabel(xlabel, fontsize=12)
 plt.ylabel(ylabel, fontsize=12)
 
-plt.xlim([14., magmax])
+plt.xlim([magmin, magmax])
 plt.ylim([3.e-2, 3.e2])
 
 
@@ -142,8 +144,8 @@ plt.legend(loc='upper left', fontsize=10)
 plt.tight_layout()
 
 # Save plot
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%s%s-%gMpc'\
-                                                %(rationame, massratio_names[massratio_num], distval)
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%s_%s%s-%gMpc'\
+                                                %(cat, rationame, massratio_names[massratio_num], distval)
 for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')

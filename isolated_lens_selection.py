@@ -20,7 +20,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'kids' # Select the lens catalogue (kids/gama/mice)
+cat = 'mice' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -63,7 +63,7 @@ logmbins = logmlims[0:-1] + dlogm
 # The nearby galaxies should not be heavier than X times the galaxy
 rationame = 'perc'
 #massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
-massratios = [0.3, 0.2, 0.1, 0.]
+massratios = [0.2, 0.1, 0.]
 rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 """
 rationame = 'dex'

@@ -33,7 +33,7 @@ O_lambda = 0.685
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot=True
+plot=False
 
 ## Import GAMA catalogue
 
@@ -211,5 +211,8 @@ if plot:
 print('specZ GAMA:', np.mean(galZ_gama_matched))
 print('ANNZ KiDS:', np.mean(galZ_kids_matched))
 
-print('Diff. Fraction Z:', np.mean((galZ_kids_matched-galZ_gama_matched)/galZ_gama_matched))
+print('Diff. Fraction Z:', np.mean((galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)))
+print('Stand. Dev. Z:', np.std((galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)))
+
 print('Diff. Mstar:', np.mean((logmstar_kids_matched[massmask_matched*Zmask]-logmstar_gama_matched[massmask_matched*Zmask])))
+print('Stand. Dev. Mstar:', np.std((logmstar_kids_matched[massmask_matched*Zmask]-logmstar_gama_matched[massmask_matched*Zmask])))

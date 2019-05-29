@@ -60,9 +60,9 @@ replacelist = np.array([[3., 4.5, 6.]])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Test different fiso values
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_mice.config'
 findlist = np.array(['fiso'])
-replacelist = np.array([['0p1', '0p2', '0p3']])
+replacelist = np.array([['0p0', '0p1', '0p2']])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Test different fiso values - Msat

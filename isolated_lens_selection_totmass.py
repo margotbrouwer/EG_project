@@ -26,6 +26,7 @@ r_iso = 3 # Maximum satellite finding radius (in Mpc)
 # Import lens catalog
 fields, path_lenscat, lenscatname, galID, galRA, galDEC, galZ, galDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
+galDa = galDc/(1.+galZ)
 
 logmstar_cat = logmstar
 satellite_masses_cat = np.ones(len(galID))*-999
@@ -34,11 +35,11 @@ cat_index = np.arange(len(galID))
 
 # Remove all galaxies with logmstar=NAN
 nanmask = (np.isfinite(logmstar))&(logmstar>0.)
-galRA, galDEC, galDc, logmstar, rmag, cat_index = \
-[galRA[nanmask], galDEC[nanmask], galDc[nanmask], logmstar[nanmask], rmag[nanmask], cat_index[nanmask]]
+galRA, galDEC, galDa, logmstar, rmag, cat_index = \
+[galRA[nanmask], galDEC[nanmask], galDa[nanmask], logmstar[nanmask], rmag[nanmask], cat_index[nanmask]]
 
 # Creating the galaxy coordinates
-galcoords = SkyCoord(ra=galRA*u.deg, dec=galDEC*u.deg, distance=galDc)
+galcoords = SkyCoord(ra=galRA*u.deg, dec=galDEC*u.deg, distance=galDa)
 gal_index = np.arange(len(galcoords))
 
 # Creating the lens sample
