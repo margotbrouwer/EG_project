@@ -19,18 +19,19 @@ h = 0.7
 O_matter = 0.315
 O_lambda = 0.685
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
+
 cat = 'kids' # Select the lens catalogue (kids/gama/mice)
+Nrandoms = 10 # Number of randoms to be created
 
 # Path to the basic random tiles
 path_randoms = '/data/users/brouwer/MaskCatalogues/Randoms_K1000/'
 tilenames = np.array(os.listdir(path_randoms))
-print(tilenames)
 Ntiles = len(tilenames)
+print('Number of tiles:', Ntiles)
+
 
 for t in range(Ntiles):
-#for t in range(1):
-
-    print(t)
+#for t in range(100):
 
     # Full directory & name of the random tile
     randomfile = '%s/%s'%(path_randoms, tilenames[t])
@@ -44,36 +45,44 @@ for t in range(Ntiles):
     # 9-band no AW-r-band masks (used to create the WL mosaic catalogues):
     # 4,8,16,32,64,128,256,512,1024,2048,8192,16384 = 28668
     Mask = randomcat['MASK']
-    
-    Masked_index = (Mask & 28668) > 0. # 27676 the sum of the masks that you are interested in
-    Mask[Masked_index]=1. # If you want to change it to a binary mask
-    Mask[Mask>1.]=0.
-    tilemask = (Mask==0.)
-    
+    binarymask = np.zeros(len(Mask))
+    tilemask = np.logical_not((Mask & 28668) > 0.) # 27676 the sum of the masks that you are interested in
+   
     # Add the tile to the list
     RAlist = np.append(RAlist, tileRA[tilemask])
     DEClist = np.append(DEClist, tileDEC[tilemask])
 
-# The total number of random galaxies
-Nrandoms = len(RAlist)
-IDlist = np.arange(Nrandoms)
-print('Number of random galaxies:', Nrandoms)
+    print('Tile %i: %i galaxies (%i in total)'%(t+1, np.sum(tilemask), len(RAlist)))
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
-# Create redshifts for the randoms
-#Nmult = int(np.ceil(Nrandoms/len(lensZ))) # Multiplier to have enough redshift values
-#Zlist = np.array(random.sample(list(lensZ)*Nmult, Nrandoms))
-#print(Nrandoms/len(lensZ))
-#print(Nmult)
+# The total number of random galaxies
+Ngals = len(lensZ)
+IDcat = np.arange(Ngals)
 
-# Write everything to a catalogue
-outputnames = np.array(['ID', 'RA', 'DEC'])#, 'Z'])
-formats = np.array(['D']*len(outputnames))
-output = np.array([IDlist, RAlist, DEClist])#, Zlist])
-print(outputnames, formats, output)
+# Shuffle random galaxies for the catalogues
+shuffled = np.arange(len(RAlist))
+np.random.shuffle(shuffled)
 
-filename = '/data/users/brouwer/LensCatalogues/%s_basic_randoms'%cat
-utils.write_catalog('%s.fits'%filename, outputnames, formats, output)
+RAlist = RAlist[shuffled]
+DEClist = DEClist[shuffled]
+
+for r in range(Nrandoms):
+    
+    # Add the right number of galaxies to the catalogue
+    RAcat = RAlist[r*Ngals:(r+1)*Ngals]
+    DECcat = DEClist[r*Ngals:(r+1)*Ngals]
+    
+    # Add redshifts to the catalogue
+    np.random.shuffle(lensZ)
+    Zcat = lensZ
+    
+    # Write everything to a catalogue
+    outputnames = np.array(['ID', 'RA', 'DEC', 'Z'])
+    formats = np.array(['D']*len(outputnames))
+    output = np.array([IDcat, RAcat, DECcat, Zcat])
+
+    filename = '/data/users/brouwer/LensCatalogues/basic_randoms_%s_%i'%(cat, r+1)
+    utils.write_catalog('%s.fits'%filename, outputnames, formats, output)

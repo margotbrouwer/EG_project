@@ -149,7 +149,7 @@ def import_lenscat(cat, h, cosmo):
     
     if 'kids' in cat:
         fields = ['K1000']
-        lenscatname = 'photozs.DR4_GAMAequ_masses.fits'
+        lenscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_lenscat, lenscatname, h)
 

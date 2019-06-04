@@ -20,7 +20,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'mice' # Select the lens catalogue (kids/gama/mice)
+cat = 'mice-faint' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\

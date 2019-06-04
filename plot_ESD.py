@@ -104,7 +104,7 @@ datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$', 
 datatitles = params1
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest_fiso'%path_sheardata
-"""
+
 
 # Isolation test: f_iso (MICE)
 
@@ -118,11 +118,10 @@ path_lenssel = np.array([['No_bins_400deg2/dist%sperc_3_inf-logmstar_10p4_10p6-z
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
-datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$', r'$f_{\rm iso}=0.3$']
+datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$']#, r'$f_{\rm iso}=0.3$']
 datatitles = params1
 
 plotfilename = '%s/Plots/ESD_MICE_isotest_fiso'%path_sheardata
-"""
 
 
 # Isolation test: r_iso (KiDS)
@@ -171,7 +170,26 @@ N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/zANNz2ugri_0_0p5', 'No_bins/riso_3_inf-zANNz2ugri_0_0p5', \
+path_lenssel = np.array([['No_bins/zANNz2ugri_0_0p5', 'No_bins/dist0p1perc_3_inf-zANNz2ugri_0_0p5', \
+                            'No_bins/MAGAUTO_0_17p5-dist0p1perc_3_inf-zANNz2ugri_0_0p5']])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
+"""
+
+# Isolated vs. not isolated (KiDS, log(M_*)< 11.)
+
+params1 = ['KiDS']
+params2 = [r'All galaxies', r'Isolated ($r_{\rm iso}=3$ Mpc)', r'Isolated, bright (m$_{\rm r}<17.5$)']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/zANNz2ugri_0_0p5', 'No_bins/dist0p1perc_3_inf-zANNz2ugri_0_0p5', \
                             'No_bins/MAGAUTO_0_17p5-riso_3_inf-zANNz2ugri_0_0p5']])
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
@@ -181,7 +199,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 
-
+"""
 # Isolated vs. not isolated (GAMA)
 
 params1 = ['GAMA']
@@ -190,7 +208,7 @@ N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins_GAMAII/nQ_3_inf', 'No_bins_GAMAII/dist0p1perc_4p5_inf-nQ_3_inf', \
+path_lenssel = np.array([['No_bins_GAMAII/nQ_3_inf', 'No_bins_GAMAII/dist0p1perc_3_inf-nQ_3_inf', \
                             'No_bins_GAMAII/Rpetro_0_17p3-dist0p1perc_4p5_inf-nQ_3_inf']])
 path_cosmo = np.array([['ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
@@ -209,8 +227,8 @@ N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins_400deg2/zcgal_0_0p5', 'No_bins_400deg2/riso_3_inf-zcgal_0_0p5', \
-                            'No_bins_400deg2/risofaint_3_inf-zcgal_0_0p5']])
+path_lenssel = np.array([['No_bins_400deg2/zcgal_0_0p5', 'No_bins_400deg2/dist0p1perc_3_inf-logmstar_10p4_10p6-zcgal_0_0p5', \
+                            'No_bins_400deg2/dist0p1percfaint_3_inf-logmstar_10p4_10p6-zcgal_0_0p5']])
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
