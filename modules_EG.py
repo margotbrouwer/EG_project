@@ -228,9 +228,7 @@ def define_lensmask(paramnames, maskvals, path_lenscat, lenscatnames, h):
     paramlist = []
     
     for p in range(len(paramnames)):
-        
-        print(lenscatnames)
-        
+                
         # Import lens parameters
         lenscatfile = '%s/%s'%(path_lenscat, lenscatnames[p])
         lenscat = pyfits.open(lenscatfile, memmap=True)[1].data

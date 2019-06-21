@@ -20,6 +20,13 @@ from matplotlib import rc, rcParams
 
 from matplotlib import gridspec
 
+def bins_to_name(binlims):
+    binname = str(binlims).replace(', ', '_')
+    binname = str(binname).replace('[', '')
+    binname = str(binname).replace(']', '')
+    binname = str(binname).replace('.', 'p')
+    return(binname)
+
 # Constants
 h = 0.7
 O_matter = 0.315
@@ -179,7 +186,7 @@ datatitles = params1
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
-"""
+
 
 # Isolated vs. not isolated (KiDS, log(M_*)< 11.)
 
@@ -199,7 +206,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 
-"""
+
 # Isolated vs. not isolated (GAMA)
 
 params1 = ['GAMA']
@@ -237,13 +244,61 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
+
+# Stellar mass bins (KiDS)
+
+massbins = [8.5,10.3,10.6,10.8,11.]
+
+params1 = ['Isolated']
+params2 = ['$%g <$ log($M_*$) $< %g M_\odot$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['logmstar_GL_8p5_10p3_10p6_10p8_11p0/dist0p1perc_3_inf-zANNz2ugri_0_0p5']*N2]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2 for p2 in np.arange(N2)+1]*N1])
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
+
 """
 
+# Stellar mass bins (KiDS)
+
+#massbins = [8.5,10.5,10.7,10.9,11.]
+#massbins = [9.5,10.,10.5,10.75,11.]
+massbins = [8.5,10.3,10.6,10.8,11.]
+binname = bins_to_name(massbins)
+
+
+params1 = ['dist0p1perc_3_inf-']
+params2 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['logmstar_GL_%s/%szANNz2ugri_0_0p5'%(binname, p1)]*N2 for p1 in params1])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2 for p2 in np.arange(N2)+1]]*N1)
+
+datatitles = [r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/h$_{70}$)']
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
+
+"""
+"""
+
+
 ## Import measured ESD
+cat = 'kids'
+
 esdfiles = np.array([['%s/%s/%s/%s.txt'%\
 	(path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
 	for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
-print(esdfiles)
 
 Nbins = np.shape(esdfiles)
 Nsize = np.size(esdfiles)
@@ -253,10 +308,51 @@ print('Plots, profiles:', Nbins)
 
 # Importing the shearprofiles and lens IDs
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
-print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
+#print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
-print(data_y)
 
+## Find the mean galaxy mass
+IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
+lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])+1
+N_selected = [len(m) for m in lensIDs_selected]
+
+# Import the Lens catalogue
+fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
+utils.import_lenscat(cat, h, cosmo)
+
+
+# Import the mass catalogue
+path_masscat = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
+masscat = pyfits.open(path_masscat, memmap=True)[1].data
+
+logmstar = masscat['logmstar_GL']
+logmbar = masscat['logmbar_GL']
+
+# Calculate the galaxy masses
+mean_mstar, median_mstar, mean_mbar, median_mbar = \
+    [np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles))]
+for m in range(len(esdfiles)):
+    IDmask = np.in1d(lensID, lensIDs_selected[m])
+    
+    print(np.amax(logmstar[IDmask*np.isfinite(logmstar)]))
+    
+    mean_mstar[m] = np.log10(np.mean(10.**logmstar[IDmask*np.isfinite(logmstar)]))
+    median_mstar[m] = np.median(logmstar[IDmask*np.isfinite(logmstar)])
+
+    mean_mbar[m] = np.log10(np.mean(10.**logmbar[IDmask*np.isfinite(logmbar)]))
+    median_mbar[m] = np.median(logmbar[IDmask*np.isfinite(logmbar)])
+
+print()
+print('Number of galaxies:', N_selected) 
+print()
+print('mean logmstar:', mean_mstar)
+print('median logmstar:', median_mstar)
+print()
+print('mean logmbar:', mean_mbar)
+print('median logmbar:', median_mbar)
+print()
+
+"""
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
@@ -269,7 +365,7 @@ for n in range(len(data_y)-1):
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-
+"""
 
 ## Create the plot
 
@@ -344,9 +440,12 @@ for N1 in range(Nrows):
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.5, y = 0.9, fontsize=16)
 
+        plt.xlim([0.03, 3])
+        plt.ylim([1e-1, 1e2])
+
         plt.xscale('log')
         plt.yscale('log')
-
+        
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / {\rm h_{%g}}$)'%(Runit, h*100)
 ylabel = r'Excess Surface Density $\Delta\Sigma$ (${\rm h_{%g} M_{\odot} / {\rm pc^2}}$)'%(h*100)
@@ -355,15 +454,11 @@ ax.set_ylabel(ylabel, fontsize=16)
 
 handles, labels = ax_sub.get_legend_handles_labels()
 
-
-plt.xlim([0.03, 3])
-plt.ylim([2e-1, 2e2])
-
 # Plot the legend
 #plt.legend()
 
 if Nbins[0] > 1:
-    plt.legend(loc='best')
+    plt.legend(loc='lower left', fontsize=12)
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.5*Ncolumns, 0.7*Nrows)) # side
 #    plt.legend(handles[::-1], labels[::-1], loc='lower right')
 else:

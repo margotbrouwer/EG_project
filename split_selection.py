@@ -33,28 +33,36 @@ cosmo = LambdaCDM(H0=h*100, Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'gama' # Select the lens catalogue (kids/gama/mice)
+cat = 'kids' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
+# Lens selection
+isocatname = '%s_isolated_galaxies_perc_h70.fits'%cat
+masscatname = 'baryonic_mass_catalog_%s.fits'%cat
+
 # Binning parameter
-binname = 'logmstar'
-binvals = logmstar
+binname = 'logmstar_GL'
+bincatname = masscatname
 Nbins = 4
 
-# Lens selection
-isocatname = 'gama_isolated_galaxies_perc_h70.fits'
+if 'gama' in cat:
+    paramnames = np.array(['logmstar', 'nQ', 'dist0p1perc'])
+    maskvals = np.array([[8.5,12.], [3, inf], [4, inf]])
+    lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
-paramnames = np.array(['logmstar', 'nQ', 'dist0p2perc'])
-maskvals = np.array([ [8.5,12.], [3, inf], [4, inf] ])
-lenscatnames = np.array([lenscatname, lenscatname, isocatname])
+if 'kids' in cat:
+    paramnames = np.array(['zANNz2ugri', 'logmstar_GL', 'dist0p1perc'])
+    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf] ])
+    lenscatnames = np.array([lenscatname, masscatname, isocatname])
+
 
 # Path to shear catalog
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov18'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
 path_catalog = 'catalogs/results_shearcatalog'
-path_cosmo = 'shearcatalog_ZB_0p1_0p9-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins10_30_3000_kpc'
+path_cosmo = 'shearcatalog_ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc'
 path_filename = 'shearcatalog'
 
 shearcatname = '%s/%s/%s/%s.fits'%(path_sheardata, path_catalog, path_cosmo, path_filename)
@@ -63,10 +71,15 @@ shearcatname = '%s/%s/%s/%s.fits'%(path_sheardata, path_catalog, path_cosmo, pat
 
 ## Pipeline
 
+# Importing the binning values
 
+bincat = pyfits.open('%s/%s'%(path_lenscat, bincatname), memmap=True)[1].data
+binvals = bincat[binname]
+
+# Importing the shear catalogue
 shearcat = pyfits.open(shearcatname, memmap=True)[1].data
 
-gammat = (shearcat['gammat_A'])
+gammat = shearcat['gammat_A']
 wk2 = shearcat['lfweight_A*k^2']
 w2k2 = shearcat['lfweight_A^2*k^2']
 srcm = shearcat['bias_m_A']

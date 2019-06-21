@@ -33,7 +33,7 @@ O_lambda = 0.685
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot=False
+plot=True
 
 ## Import GAMA catalogue
 
@@ -56,7 +56,7 @@ logmstar_gama = logmstar_gama - 2.*np.log10(h/0.7)
 ## Import KiDS catalogue
 
 # Full directory & name of the corresponding KiDS catalogue
-kidscatname = 'photozs.DR4_GAMAequ_masses.fits'
+kidscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
 kidscatfile = '%s/%s'%(path_lenscat, kidscatname)
 kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
 

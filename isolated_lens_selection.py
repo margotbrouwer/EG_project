@@ -12,21 +12,33 @@ import modules_EG as utils
 
 # Constants
 h = 0.7
-O_matter = 0.315
-O_lambda = 0.685
+O_matter = 0.2793
+O_lambda = 0.7207
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 ## Configuration
 
 # Data selection
-cat = 'mice-faint' # Select the lens catalogue (kids/gama/mice)
+cat = 'mice-offset' # Select the lens catalogue (kids/gama/mice)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
-lensDa = lensDc/(1.+lensZ)
 logmstarcat = logmstar
+
+# Create normally distributed offsets for the redshifts
+if 'offset' in cat:
+    #Sigma = [0.026]*len(lensZ)
+    Sigma = 0.021*(1+lensZ)
+    
+    dZlist = np.random.normal(loc=0., scale=Sigma, size=len(Sigma))
+    print('Added offset to lens redshifts:', dZlist)
+    
+    lensZ = lensZ+dZlist
+    Dclist = utils.calc_Dc(lensZ, cosmo)
+
+lensDa = lensDc/(1.+lensZ)
 
 # Remove all galaxies with logmstar=NAN
 nanmask = np.isfinite(logmstar)

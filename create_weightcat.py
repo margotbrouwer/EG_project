@@ -21,13 +21,20 @@ O_lambda = 0.685
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
+# Calculate the total baryonic mass (stars + cold gas)
+def calc_logmbar(logmstar):
+    fcold = 10.**(-0.69*logmstar + 6.63)
+    mstar = 10.** logmstar
+    mbar = mstar * (1 + fcold)
+    logmbar = np.log10(mbar)
+    return logmbar
+
 # Import lens catalog
 cat = 'kids'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
-print(logmstar)
 
 # Calculate the total baryonic mass (stars + cold gas)
 fcold = 10.**(-0.69*logmstar + 6.63)
@@ -35,10 +42,28 @@ mstar = 10.** logmstar
 mbar = mstar * (1 + fcold)
 logmbar = np.log10(mbar)
 
+if 'kids' in cat:
+    # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
+    diff_GL = -0.10978165582547783
+    bias = 0.1
+    logmstar_GL = logmstar - diff_GL
+    logmstar_min = logmstar_GL-bias
+    logmstar_max = logmstar_GL+bias
+    
+    logmbar, logmbar_GL, logmbar_min, logmbar_max = \
+            [calc_logmbar(b) for b in [logmstar, logmstar_GL, logmstar_min, logmstar_max]]
+    
+    output = [lensID, logmstar, logmbar, logmstar_GL, logmbar_GL, \
+            logmstar_min, logmbar_min, logmstar_max, logmbar_max]
+    outputnames = ['ID', 'logmstar', 'logmbar', 'logmstar_GL', 'logmbar_GL', \
+            'logmstar_min', 'logmbar_min', 'logmstar_max', 'logmbar_max']
+
+else:
+    output = [lensID, logmstar, logmbar]
+    outputnames = ['ID', 'logmstar', 'logmbar']
+
 filename = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
 
-outputnames = ['logmstar', 'logmbar']
-formats = ['D', 'D']
-output = [logmstar, logmbar]
+formats = ['D']*len(outputnames)
 
 utils.write_catalog(filename, outputnames, formats, output)

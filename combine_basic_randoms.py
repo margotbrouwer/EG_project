@@ -6,7 +6,6 @@ import numpy as np
 import pyfits
 import os
 
-import random
 from astropy.cosmology import LambdaCDM
 import modules_EG as utils
 
@@ -45,7 +44,6 @@ for t in range(Ntiles):
     # 9-band no AW-r-band masks (used to create the WL mosaic catalogues):
     # 4,8,16,32,64,128,256,512,1024,2048,8192,16384 = 28668
     Mask = randomcat['MASK']
-    binarymask = np.zeros(len(Mask))
     tilemask = np.logical_not((Mask & 28668) > 0.) # 27676 the sum of the masks that you are interested in
    
     # Add the tile to the list
@@ -58,6 +56,14 @@ for t in range(Ntiles):
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
+# Mask the redshifts
+Zmask = (0.<lensZ)&(lensZ<0.5)
+lensZ = lensZ[Zmask]
+
+# Create the redshift histogram
+Zhist, Zbin_edges = np.histogram(lensZ, 100)
+Zbins = Zbin_edges[0:-1]+np.diff(Zbin_edges)
+
 # The total number of random galaxies
 Ngals = len(lensZ)
 IDcat = np.arange(Ngals)
@@ -65,7 +71,6 @@ IDcat = np.arange(Ngals)
 # Shuffle random galaxies for the catalogues
 shuffled = np.arange(len(RAlist))
 np.random.shuffle(shuffled)
-
 RAlist = RAlist[shuffled]
 DEClist = DEClist[shuffled]
 
@@ -76,13 +81,17 @@ for r in range(Nrandoms):
     DECcat = DEClist[r*Ngals:(r+1)*Ngals]
     
     # Add redshifts to the catalogue
-    np.random.shuffle(lensZ)
-    Zcat = lensZ
-    
+        
+    # Compute the random redshifts
+    Zcat = np.array([])
+    for z in range(len(Zbins)):
+        Zbin = np.random.uniform(Zbin_edges[z], Zbin_edges[z+1], Zhist[z])
+        Zcat = np.append(Zcat, Zbin)
+        
     # Write everything to a catalogue
     outputnames = np.array(['ID', 'RA', 'DEC', 'Z'])
     formats = np.array(['D']*len(outputnames))
     output = np.array([IDcat, RAcat, DECcat, Zcat])
 
-    filename = '/data/users/brouwer/LensCatalogues/basic_randoms_%s_%i'%(cat, r+1)
+    filename = '/data/users/brouwer/LensCatalogues/basic_randoms_%s_%i_randomZ'%(cat, r+1)
     utils.write_catalog('%s.fits'%filename, outputnames, formats, output)

@@ -42,14 +42,14 @@ h=0.7
 ## Define projected distance bins R
 
 # Creating the Rbins
-#Runit, Nbins, Rmin, Rmax = ['Mpc', 20, 0.03, 3.] # Fixed Rbins
-Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as r from PROFILES
+Runit, Nbins, Rmin, Rmax = ['Mpc', 15, 0.03, 3.] # Fixed Rbins
+#Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as r from PROFILES
 #Runit, Nbins, Rmin, Rmax = ['mps2', 20, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
 print('R-bins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 
-plotunit = 'mps2'
+plotunit = 'Mpc'
 method = 'SIS' # SIS or numerical
 
 gbar_mond = np.logspace(-16, -8, 40)
@@ -60,7 +60,7 @@ gbar_uni = np.logspace(-16, -8, 50)
 ## Import galaxy observables from Bahamas catalog
 
 # Define the list of 'used' galaxies
-catnum = 402 #1039
+catnum = 1039
 lenslist = np.arange(catnum)
 lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)

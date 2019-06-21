@@ -25,14 +25,17 @@ inf = np.inf
 h=0.7
 pc_to_meter = 3.08567758e16 # meters
 
+plot=False
+
 ## Import Bahamas file
 catnum = 1039 #402
 lenslist = np.arange(catnum)
-lenslist = np.delete(lenslist, [322,326,648,758,867])
+#lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
 print(catnum)
 
-path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+#path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_strong/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T[:,lenslist]
@@ -161,37 +164,34 @@ for c in range(catnum): # For every cluster/lens...
     DeltaSigma_bin = DeltaSigmatot_bin/N_bin # The average density in each Rbin
     ESD_list[c] = DeltaSigma_bin
 
-
-## Ploting the result
-
-for i in np.arange(catnum):
-    
-    Rbins_centers = (Rbins_list[i])[0:-1] + np.diff(Rbins_list[i])/2.
-    
-    plt.plot(Rbins_centers, Sigma_list[i], marker='.', ls=':')
-    plt.plot(profiles_centers[0:Nbins], Sigma_list[i], marker='.', ls=':')
-    
-    #print(Rbins_centers)
-    #print(Rbins_list[i])
-    
-# Define the labels for the plot
-xlabel = r'Radius R [$Mpc/h$]'
-ylabel = r'Surface Density $\Delta\Sigma$ [$M_\odot/(pc/h)^2$]'
-plt.xlabel(xlabel, fontsize=12)
-plt.ylabel(ylabel, fontsize=12)
-
-plt.xscale('log')
-plt.yscale('log')
-
-plt.show()
-plt.clf
-
-
-# Writing the result to a Fits file
-filename = '%s/ESD/ESD_profiles_Rbins-%i_%g-%g%s_with_Sigma.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
+## Writing the result to a Fits file
+filename = '%s/ESD/Bahamas_ESD_profiles_Rbins-%i_%g-%g%s_isolated.fits'%(path_cat, Nbins, Rmin, Rmax, Runit)
 outputnames = ['cluster', 'Rbins', 'Sigma', 'ESD']
 formats = ['I', '%iD'%(Nbins+1), '%iD'%Nbins, '%iD'%Nbins]
 output = [lenslist, Rbins_list, Sigma_list, ESD_list]
 
 utils.write_catalog(filename, outputnames, formats, output)
 
+## Ploting the result
+if plot: 
+    for i in np.arange(catnum):
+        
+        Rbins_centers = (Rbins_list[i])[0:-1] + np.diff(Rbins_list[i])/2.
+        
+        plt.plot(Rbins_centers, Sigma_list[i], marker='.', ls=':')
+        plt.plot(profiles_centers[0:Nbins], Sigma_list[i], marker='.', ls=':')
+        
+        #print(Rbins_centers)
+        #print(Rbins_list[i])
+        
+    # Define the labels for the plot
+    xlabel = r'Radius R [$Mpc/h$]'
+    ylabel = r'Surface Density $\Delta\Sigma$ [$M_\odot/(pc/h)^2$]'
+    plt.xlabel(xlabel, fontsize=12)
+    plt.ylabel(ylabel, fontsize=12)
+
+    plt.xscale('log')
+    plt.yscale('log')
+
+    plt.show()
+    plt.clf

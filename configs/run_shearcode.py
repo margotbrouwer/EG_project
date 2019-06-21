@@ -58,13 +58,13 @@ replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace
 findlist = np.array(['riso'])
 replacelist = np.array([[3., 4.5, 6.]])
 config_files = create_config(replacefile, findlist, replacelist)
-"""
+
 # Test different fiso values
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_mice.config'
 findlist = np.array(['fiso'])
 replacelist = np.array([['0p0', '0p1', '0p2']])
 config_files = create_config(replacefile, findlist, replacelist)
-"""
+
 # Test different fiso values - Msat
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 findlist = np.array(['fiso'])
@@ -75,6 +75,13 @@ replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mice_test.con
 findlist = np.array(['percvalue', 'distmin'])
 replacelist = np.array([['0p3', '0p2', '0p1'], [3,4.5]])
 config_files = create_config(replacefile, findlist, replacelist)
+"""
+# Run the three stellar mass limits
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
+findlist = np.array(['masslim'])
+replacelist = np.array([['GL', 'min', 'max']])
+config_files = create_config(replacefile, findlist, replacelist)
+"""
 """
 
 
