@@ -265,7 +265,24 @@ datalabels = params2
 plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
 
 """
+# Lens photoz errors versus no photoz errors
 
+params1 = ['GAMA']
+params2 = ['Without lens photo-z errors', 'With lens photo-z errors']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_gamatest/Z_0p1_0p2', 'No_bins_gamatest_withsigma/Z_0p1_0p2']]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
+
+"""
 # Stellar mass bins (KiDS)
 
 #massbins = [8.5,10.5,10.7,10.9,11.]
@@ -289,7 +306,6 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 
-"""
 """
 
 
@@ -352,20 +368,25 @@ print('mean logmbar:', mean_mbar)
 print('median logmbar:', median_mbar)
 print()
 
-"""
+#"""
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
     dof = len(data_y[0])
     prob = 1. - stats.chi2.cdf(chisquared, dof)
 
+    diff = (data_y[n] - data_y[n+1])/((data_y[n] + data_y[n+1])/2.)
+    diff_error = (error_h[n] - error_h[n+1])/((error_h[n] + error_h[n+1])/2.)
+    
     print()
+    print('Difference:', np.mean(diff))
+    print('Difference, error:', np.mean(diff_error))
     print(params2[n], 'vs.', params2[n+1])
     print('Chi2:', chisquared)
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-"""
+#"""
 
 ## Create the plot
 

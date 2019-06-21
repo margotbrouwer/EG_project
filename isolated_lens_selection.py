@@ -30,7 +30,7 @@ logmstarcat = logmstar
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
     #Sigma = [0.026]*len(lensZ)
-    Sigma = 0.021*(1+lensZ)
+    Sigma = 0.018*(1+lensZ)
     
     dZlist = np.random.normal(loc=0., scale=Sigma, size=len(Sigma))
     print('Added offset to lens redshifts:', dZlist)
@@ -75,7 +75,7 @@ logmbins = logmlims[0:-1] + dlogm
 # The nearby galaxies should not be heavier than X times the galaxy
 rationame = 'perc'
 #massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
-massratios = [0.2, 0.1, 0.]
+massratios = [0.1]
 rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 """
 rationame = 'dex'
@@ -130,8 +130,9 @@ print('dlogm:', dlogm)
 # Write the results to a fits table
 filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_perc_h%i'%(cat, h*100.)
 
-if 'faint' in cat:
-    outputnames = np.append(['ID', 'logmstar'], ['dist%s%s_faint'%(n,rationame) for n in rationames])
+if '-' in cat:
+    name = cat.split('-')[-1]
+    outputnames = np.append(['ID', 'logmstar'], ['dist%s%s_%s'%(n,rationame,name) for n in rationames])
 else:
     outputnames = np.append(['ID', 'logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])
 
