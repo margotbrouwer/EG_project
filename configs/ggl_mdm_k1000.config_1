@@ -41,15 +41,15 @@ h                   0.7                                         # Reduced Hubble
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
 
  lens_weights       None
-#lens_weights       logmbar_max        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits       # Weight name and path to fits file
+#lens_weights       logmbar_GL        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits       # Weight name and path to fits file
 
 #lens_binning       None
 #lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.5,10.7,10.9,11.   # Equal S/N (isolated)
-lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
+lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
 #lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 9.5,10.,10.5,10.75,11.   # Equal S/N (isolated)
 
  lens_limits1     zANNz2ugri             self               0.,0.5
- lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
+#lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
 
 
 # Source selection

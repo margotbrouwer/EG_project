@@ -49,7 +49,7 @@ lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_cata
 #lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 9.5,10.,10.5,10.75,11.   # Equal S/N (isolated)
 
  lens_limits1     zANNz2ugri             self               0.,0.5
- lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
+#lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
 
 
 # Source selection

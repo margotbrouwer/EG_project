@@ -59,7 +59,7 @@ Runit = 'Mpc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jun19'
 
 """
 # KiDS vs. GAMA comparison
@@ -264,7 +264,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
 
-"""
+
 # Lens photoz errors versus no photoz errors
 
 params1 = ['GAMA']
@@ -290,24 +290,23 @@ plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
-
-params1 = ['dist0p1perc_3_inf-']
+params1 = ['', 'dist0p1perc_3_inf-']
 params2 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
 path_lenssel = np.array([['logmstar_GL_%s/%szANNz2ugri_0_0p5'%(binname, p1)]*N2 for p1 in params1])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2 for p2 in np.arange(N2)+1]]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%p2 for p2 in np.arange(N2)+1]]*N1)
 
-datatitles = [r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/h$_{70}$)']
+datatitles = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/h$_{70}$)']
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
-
 """
-
+"""
+#/data/users/brouwer/Lensing_results/EG_results_Jun19/No_bins_#/zcgal_0_0p5/zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc/shearcatalog/No_bins_A.txt
 
 ## Import measured ESD
 cat = 'kids'
@@ -329,7 +328,7 @@ data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 
 ## Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
-lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])+1
+lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1
 N_selected = [len(m) for m in lensIDs_selected]
 
 # Import the Lens catalogue
@@ -359,6 +358,7 @@ for m in range(len(esdfiles)):
     median_mbar[m] = np.median(logmbar[IDmask*np.isfinite(logmbar)])
 
 print()
+print('Bin limits:', massbins)
 print('Number of galaxies:', N_selected) 
 print()
 print('mean logmstar:', mean_mstar)
@@ -368,7 +368,7 @@ print('mean logmbar:', mean_mbar)
 print('median logmbar:', median_mbar)
 print()
 
-#"""
+"""
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
@@ -386,7 +386,7 @@ for n in range(len(data_y)-1):
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-#"""
+"""
 
 ## Create the plot
 
