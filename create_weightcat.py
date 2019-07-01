@@ -14,10 +14,17 @@ import modules_EG as utils
 from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 
+# Import lens catalog
+cat = 'gama'
+
 # Constants
 h = 0.7
-O_matter = 0.315
-O_lambda = 0.685
+if 'mice' in cat:
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    O_matter = 0.2793
+    O_lambda = 0.7207
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
@@ -28,9 +35,6 @@ def calc_logmbar(logmstar):
     mbar = mstar * (1 + fcold)
     logmbar = np.log10(mbar)
     return logmbar
-
-# Import lens catalog
-cat = 'kids'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -45,7 +49,7 @@ logmbar = np.log10(mbar)
 if 'kids' in cat:
     # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
     diff_GL = -0.10978165582547783
-    bias = 0.1
+    bias = 0.2
     logmstar_GL = logmstar - diff_GL
     logmstar_min = logmstar_GL-bias
     logmstar_max = logmstar_GL+bias

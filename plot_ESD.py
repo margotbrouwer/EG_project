@@ -27,13 +27,6 @@ def bins_to_name(binlims):
     binname = str(binname).replace('.', 'p')
     return(binname)
 
-# Constants
-h = 0.7
-O_matter = 0.315
-O_lambda = 0.685
-
-cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
-
 # Make use of TeX
 rc('text',usetex=True)
 
@@ -244,6 +237,27 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
+"""
+# True vs. offset redshifts (MICE)
+
+params1 = ['MICE']
+params2 = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$, log$(M_*)<11\,{\rm M_\odot}/h_{70}^2$', \
+            r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.022$, $\sigma_{\rm M_*}=0.25$ dex']
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_mice/zcgal_0_0p5', 'No_bins_mice/dist0p1perc_3_inf-logmstar_0_11-zcgal_0_0p5', \
+                            'No_bins_mice/dist0p1percoffset_3_inf-logmstaroffset_0_11-zcgal_0_0p5']])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = params2
+
+plotfilename = '%s/Plots/ESD_MICE_isotest_offset'%path_sheardata
+
+"""
 
 # Stellar mass bins (KiDS)
 
@@ -282,7 +296,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 
-"""
+
 # Stellar mass bins (KiDS)
 
 #massbins = [8.5,10.5,10.7,10.9,11.]
@@ -290,7 +304,7 @@ plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
-params1 = ['', 'dist0p1perc_3_inf-']
+params1 = ['']#, 'dist0p1perc_3_inf-']
 params2 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
 N1 = len(params1)
 N2 = len(params2)
@@ -300,16 +314,30 @@ path_lenssel = np.array([['logmstar_GL_%s/%szANNz2ugri_0_0p5'%(binname, p1)]*N2 
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%p2 for p2 in np.arange(N2)+1]]*N1)
 
-datatitles = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/h$_{70}$)']
+datatitles = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$']
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
-"""
+
 """
 #/data/users/brouwer/Lensing_results/EG_results_Jun19/No_bins_#/zcgal_0_0p5/zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc/shearcatalog/No_bins_A.txt
 
 ## Import measured ESD
-cat = 'kids'
+cat = 'mice'
+h = 0.7
+
+if 'mice' in cat:
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    O_matter = 0.2793
+    O_lambda = 0.7207
+
+cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
+
+# Import the Lens catalogue
+fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
+utils.import_lenscat(cat, h, cosmo)
 
 esdfiles = np.array([['%s/%s/%s/%s.txt'%\
 	(path_sheardata, path_lenssel[i,j], path_cosmo[i,j], path_filename[i,j]) \
@@ -325,16 +353,11 @@ print('Plots, profiles:', Nbins)
 data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
 #print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
-
+"""
 ## Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
 lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1
 N_selected = [len(m) for m in lensIDs_selected]
-
-# Import the Lens catalogue
-fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
-utils.import_lenscat(cat, h, cosmo)
-
 
 # Import the mass catalogue
 path_masscat = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
@@ -379,15 +402,22 @@ for n in range(len(data_y)-1):
     diff_error = (error_h[n] - error_h[n+1])/((error_h[n] + error_h[n+1])/2.)
     
     print()
-    print('Difference:', np.mean(diff))
+    print('Difference:', np.mean(diff[8:-1]))
     print('Difference, error:', np.mean(diff_error))
     print(params2[n], 'vs.', params2[n+1])
     print('Chi2:', chisquared)
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-"""
 
+
+if 'mice' in cat:
+    z_mice = np.mean(lensZ)
+    Da_mice = utils.calc_Dc(z_mice, cosmo)/(1.+z_mice)
+    Da_mice = Da_mice.to(Runit).value
+    micelim = 0.43/60. * np.pi/180. * Da_mice
+    print('MICE limit:', micelim, Runit)
+    
 ## Create the plot
 
 Ncolumns = int(Nbins[0]/Nrows)
@@ -427,15 +457,25 @@ for N1 in range(Nrows):
                 data_x_plot = data_x[Ndata] * (1.-dx/2.+dx*Nplot)
             else:
                 data_x_plot = data_x[Ndata]
-            
+
             # Plot data
-            if Nsize==Nbins:
-                ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Nplot], ls='', marker='.', zorder=4)
+            if 'mice' not in cat:
+                if Nsize==Nbins:
+                    ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
+                    color=colors[Nplot], ls='', marker='.', zorder=4)
+                else:
+                    ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
+                    color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
             else:
-                ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
-     
+                if Nsize==Nbins:
+                    ax_sub.plot(data_x_plot, data_y[Ndata], \
+                    color=colors[Nplot], ls='-', marker='.', zorder=4)
+                else:
+                    ax_sub.plot(data_x_plot, data_y[Ndata], \
+                    color=colors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=4)
+        
+        if 'mice' in cat:
+            ax_sub.axvline(x=micelim, ls='--', color='grey')
         
         # Plot the axes and title
         
@@ -468,8 +508,8 @@ for N1 in range(Nrows):
         plt.yscale('log')
         
 # Define the labels for the plot
-xlabel = r'Radius R (${\rm %s} / {\rm h_{%g}}$)'%(Runit, h*100)
-ylabel = r'Excess Surface Density $\Delta\Sigma$ (${\rm h_{%g} M_{\odot} / {\rm pc^2}}$)'%(h*100)
+xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
+ylabel = r'Excess Surface Density $\Delta\Sigma$ ($h_{%g} {\rm M_{\odot} / {\rm pc^2}}$)'%(h*100)
 ax.set_xlabel(xlabel, fontsize=16)
 ax.set_ylabel(ylabel, fontsize=16)
 
