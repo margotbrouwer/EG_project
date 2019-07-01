@@ -108,7 +108,7 @@ path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jun19'
 
 ## Input lens selections
 
-"""
+
 # Isolated galaxies in 4 stellar mass bins, including systematic stellar mass difference
 param1 = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(param1)
@@ -132,7 +132,7 @@ datalabels = param2
 #datatitles = [r'$%g < \log(M_*) < %g \, {\rm M_\odot}/h_{%g}^{2}$'%(param1[p1], param1[p1+1], h*100) for p1 in range(N1)]
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_isolated'%path_sheardata
 
-
+"""
 
 # All galaxies in 4 stellar mass bins, including systematic stellar mass difference
 param1 = [8.5,10.3,10.6,10.8,11.]
@@ -157,7 +157,7 @@ datalabels = param2
 #datatitles = [r'$%g < \log(M_*) < %g \, {\rm M_\odot}/h_{%g}^{2}$'%(param1[p1], param1[p1+1], h*100) for p1 in range(N1)]
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_all'%path_sheardata
 
-"""
+
 
 # All galaxies in 4 stellar mass bins, including systematic stellar mass difference
 param1 = []
@@ -178,7 +178,7 @@ mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
 
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_isolated'%path_sheardata
 
-
+"""
 
 
 ## Measured ESD
