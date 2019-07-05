@@ -27,13 +27,13 @@ rc('font',**{'family':'serif','serif':['DejaVu Sans']})
 
 # Constants
 h = 0.7
-O_matter = 0.315
-O_lambda = 0.685
+O_matter = 0.2793
+O_lambda = 0.7207
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot=True
+plot=False
 
 ## Import GAMA catalogue
 
@@ -108,12 +108,12 @@ Zmask_matched = (0.0<galZ_kids_matched)&(galZ_kids_matched<0.5)& \
 
 Zmask = (0.0<galZ_kids_matched)
 
-
+# Masking the data
 logmstar_gama = logmstar_gama[gamamask]
 logmstar_kids = logmstar_kids[kidsmask]
 
-#logmstar_gama_matched = logmstar_gama_matched[massmask_matched]
-#logmstar_kids_matched = logmstar_kids_matched[massmask_matched]
+logmstar_gama_matched = logmstar_gama_matched[massmask_matched*Zmask]
+logmstar_kids_matched = logmstar_kids_matched[massmask_matched*Zmask]
 
 galZ_gama_matched = galZ_gama_matched[Zmask_matched]
 galZ_kids_matched = galZ_kids_matched[Zmask_matched]
@@ -123,7 +123,7 @@ if plot:
     plt.hist(logmstar_gama_matched[massmask_matched*Zmask], label=r'GAMA (matched)', bins=50, histtype='step')
     #plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step')
     plt.hist(logmstar_kids_matched[massmask_matched], label=r'KiDS (matched)', bins=50, histtype='step')
-    plt.hist(logmstar_kids_matched[massmask_matched*Zmask], label=r'KiDS (Z$>$0.1)', bins=50, histtype='step')
+    plt.hist(logmstar_kids_matched[massmask_matched*Zmask], label=r'KiDS', bins=50, histtype='step')
     #plt.hist(logmstar_massmed, label=r'KiDS (MASS$_{\rm MED}>0$)', bins=50, histtype='step', normed=1)
 
     # Define the labels for the plot
@@ -207,12 +207,15 @@ if plot:
     plt.show()
     plt.clf
 
+# Calculate the differences between the GAMA and KiDS redshifts/masses
+diff_Z = (galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)
+diff_logmstar = logmstar_kids_matched - logmstar_gama_matched
 
 print('specZ GAMA:', np.mean(galZ_gama_matched))
 print('ANNZ KiDS:', np.mean(galZ_kids_matched))
 
-print('Diff. Fraction Z:', np.mean((galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)))
-print('Stand. Dev. Z:', np.std((galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)))
+print('Diff. Fraction Z:', np.mean(diff_Z))
+print('Stand. Dev. Z:', np.std(diff_Z))
 
-print('Diff. Mstar:', np.mean((logmstar_kids_matched[massmask_matched*Zmask]-logmstar_gama_matched[massmask_matched*Zmask])))
-print('Stand. Dev. Mstar:', np.std((logmstar_kids_matched[massmask_matched*Zmask]-logmstar_gama_matched[massmask_matched*Zmask])))
+print('Diff. Mstar:', np.mean(diff_logmstar))
+print('Stand. Dev. Mstar:', np.std(diff_logmstar))

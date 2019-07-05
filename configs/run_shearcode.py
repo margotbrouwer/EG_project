@@ -77,8 +77,8 @@ replacelist = np.array([['0p3', '0p2', '0p1'], [3,4.5]])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Run the three stellar mass limits
-#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
+#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
 findlist = np.array(['masslim'])
 replacelist = np.array([['GL', 'min', 'max']])
 config_files = create_config(replacefile, findlist, replacelist)

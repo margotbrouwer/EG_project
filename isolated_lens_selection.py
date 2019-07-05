@@ -25,22 +25,26 @@ cat = 'mice-offset' # Select the lens catalogue (kids/gama/mice)
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
-logmstarcat = logmstar
 
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
     #Sigma = [0.026]*len(lensZ)
-    Sigma = 0.018*(1+lensZ)
+    Sigma_Z = 0.022*(1+lensZ)
+    Sigma_M = [0.25]*len(logmstar)
     
-    dZlist = np.random.normal(loc=0., scale=Sigma, size=len(Sigma))
-    print('Added offset to lens redshifts:', dZlist)
+    dZlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_Z))
+    dMlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_M))
+    print('Added offset to lens redshifts and masses')
+    print(dZlist)
+    print(dMlist)
     
+    logmstar = logmstar+dMlist
     lensZ = lensZ+dZlist
     Dclist = utils.calc_Dc(lensZ, cosmo)
-
 lensDa = lensDc/(1.+lensZ)
 
 # Remove all galaxies with logmstar=NAN
+logmstarcat = logmstar
 nanmask = np.isfinite(logmstar)
 lensRA, lensDEC, lensDa, logmstar = [lensRA[nanmask], lensDEC[nanmask], lensDa[nanmask], logmstar[nanmask]]
 
@@ -132,7 +136,7 @@ filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_perc_h%i'%(c
 
 if '-' in cat:
     name = cat.split('-')[-1]
-    outputnames = np.append(['ID', 'logmstar'], ['dist%s%s_%s'%(n,rationame,name) for n in rationames])
+    outputnames = np.append(['ID', 'logmstar_%s'%name], ['dist%s%s_%s'%(n,rationame,name) for n in rationames])
 else:
     outputnames = np.append(['ID', 'logmstar'], ['dist%s%s'%(n,rationame) for n in rationames])
 
