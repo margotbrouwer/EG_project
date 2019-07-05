@@ -237,7 +237,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
-"""
+
 # True vs. offset redshifts (MICE)
 
 params1 = ['MICE']
@@ -258,7 +258,28 @@ datalabels = params2
 plotfilename = '%s/Plots/ESD_MICE_isotest_offset'%path_sheardata
 
 """
+# True vs. offset redshifts (MICE), strong isolation test
+sigmas = ['0.001', '0.005', '0.01', '0.018']
 
+params1 = ['', 'offset']
+params2 = [s.replace('.', 'p') for s in sigmas]
+print(params2)
+
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 2
+
+path_lenssel = np.array([['No_bins_mice/fsatsigma%s%s_0_0p1-logmstar_0_11-zcgal_0_0p5'%(p2,p1) \
+                            for p1 in params1] for p2 in params2])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
+path_filename = np.array([['shearcatalog/No_bins_A']*N1]*N2)
+
+datatitles = ['Isolated, $\sigma=%s$'%s for s in sigmas]
+datalabels = ['MICE', 'MICE-offset']
+
+plotfilename = '%s/Plots/ESD_MICE_isotest-sigma_offset'%path_sheardata
+
+"""
 # Stellar mass bins (KiDS)
 
 massbins = [8.5,10.3,10.6,10.8,11.]
@@ -319,8 +340,9 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 
-"""
+
 #/data/users/brouwer/Lensing_results/EG_results_Jun19/No_bins_#/zcgal_0_0p5/zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc/shearcatalog/No_bins_A.txt
+"""
 
 ## Import measured ESD
 cat = 'mice'
@@ -404,7 +426,7 @@ for n in range(len(data_y)-1):
     print()
     print('Difference:', np.mean(diff[8:-1]))
     print('Difference, error:', np.mean(diff_error))
-    print(params2[n], 'vs.', params2[n+1])
+    #print(params2[n], 'vs.', params2[n+1])
     print('Chi2:', chisquared)
     print('DoF:', dof)
     print('P-value:', prob)

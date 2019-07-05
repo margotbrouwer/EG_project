@@ -45,11 +45,12 @@ lensID_file        None                                                         
 
 lens_binning       None
 #lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.5,10.7,10.9,11.   # Equal S/N (isolated)
-#lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
+#lens_binning logmstar_masslim  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
 #lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 9.5,10.,10.5,10.75,11.   # Equal S/N (isolated)
 
  lens_limits1     zANNz2ugri             self               0.,0.5
- lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
+#lens_limits2     dist0p1perc         /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
+ lens_limits2     fsat_sigma0p018     /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_2D_h70.fits     0,0.1
  lens_limits3     logmstar_GL    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
 
 # Source selection

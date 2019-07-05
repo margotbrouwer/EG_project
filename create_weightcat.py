@@ -46,9 +46,12 @@ mstar = 10.** logmstar
 mbar = mstar * (1 + fcold)
 logmbar = np.log10(mbar)
 
-if 'kids' in cat:
+if 'mice' not in cat:
     # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
-    diff_GL = -0.10978165582547783
+    if 'kids' in cat:
+        diff_GL = -0.10978165582547783
+    if 'gama' in cat:
+        diff_GL = 0.
     bias = 0.2
     logmstar_GL = logmstar - diff_GL
     logmstar_min = logmstar_GL-bias
