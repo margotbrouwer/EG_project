@@ -13,7 +13,7 @@ import modules_EG as utils
 
 ## Define the location and shape of the text file
 
-#"""
+"""
 # KiDS1000 ANNZ redshift catalogue
 filename = '/data/users/brouwer/LensCatalogues/photozs.DR4_GAMAequ_ugri_beta_100ANNs'
 outputnames = ['ID','MAG_AUTO','MAGERR_AUTO','RAJ2000','DECJ2000','A_WORLD','B_WORLD',\
@@ -28,17 +28,18 @@ outputnames = ['ID','MAG_AUTO','MAGERR_AUTO','RAJ2000','DECJ2000','A_WORLD','B_W
 formats = np.array(['D']*len(outputnames))
 
 """
-# KiDS1000 mass catalogue
-filename = '/data/users/brouwer/LensCatalogues/photozs.DR4_GAMAequ_ugri_beta_100ANNs_LPoutput'
+
+# KiDS DR4 bright mass catalogue
+#filename = '/data/users/brouwer/LensCatalogues/photozs.DR4_GAMAequ_ugri_beta_100ANNs_LPoutput'
+filename = '/data/users/brouwer/LensCatalogues/photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_LPoutput'
 outputnames = ['IDENT', 'K_COR_u', 'K_COR_g', 'K_COR_r','K_COR_i','K_COR_Z','K_COR_Y','K_COR_J',\
     'K_COR_H','K_COR_Ks','MAG_ABS_u','MAG_ABS_g','MAG_ABS_r','MAG_ABS_i','MAG_ABS_Z','MAG_ABS_Y',\
     'MAG_ABS_J','MAG_ABS_H','MAG_ABS_Ks','MABS_FILTu','MABS_FILTg','MABS_FILTr','MABS_FILTi','MABS_FILTZ',\
     'MABS_FILTY','MABS_FILTJ','MABS_FILTH','MABS_FILTKs','CONTEXT','ZSPEC','MASS_MED','MASS_INF','MASS_SUP',\
     'MASS_BEST','SFR_MED','SFR_INF','SFR_SUP','SFR_BEST']
 formats = np.array(['D']*len(outputnames))
-"""
 
 ## Import the data and write it to a fits catalogue
 data = np.genfromtxt('%s.csv'%filename, delimiter=',').T
-data[0] = np.arange(len(data[0]))+1. # Use an array of integers as IDs
+#data[0] = np.arange(len(data[0]))+1. # Use an array of integers as IDs
 utils.write_catalog('%s.fits'%filename, outputnames, formats, data)

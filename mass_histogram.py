@@ -32,8 +32,9 @@ O_lambda = 0.7207
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
-plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot=False
+#plot_path = 'Users/users/brouwer/Documents/scp_files'
+plot_path = '/data/users/brouwer/Lensing_results/EG_results_Sep19'
+plot=True
 
 ## Import GAMA catalogue
 
@@ -47,6 +48,7 @@ galZ_gama = gamacat['Z']
 rmag_gama = gamacat['Rpetro']
 rmag_abs_gama = gamacat['absmag_r']
 logmstar_gama = gamacat['logmstar']
+nQ_gama = gamacat['nQ']
 
 # Fluxscale, needed for absolute magnitude and stellar mass correction
 fluxscale = gamacat['fluxscale']
@@ -56,57 +58,65 @@ logmstar_gama = logmstar_gama - 2.*np.log10(h/0.7)
 ## Import KiDS catalogue
 
 # Full directory & name of the corresponding KiDS catalogue
-kidscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
+#kidscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
+kidscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_masses.fits'
 kidscatfile = '%s/%s'%(path_lenscat, kidscatname)
 kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
 
 # List of the observables of all sources in the KiDS catalogue
-galZ_kids = kidscat['zANNz2ugri']
+#galZ_kids = kidscat['zANNz2ugri']
+galZ_kids = kidscat['Z_ANNZ_KV']
 
-rmag_kids = kidscat['MAG_AUTO']
+rmag_kids = kidscat['MAG_AUTO_CALIB']
 rmag_gaap_kids = kidscat['MAG_GAAP_r']
 rmag_abs_kids = kidscat['MAG_ABS_r']
 
 logmstar_kids = kidscat['MASS_BEST']
 logmstar_kids = logmstar_kids + (rmag_gaap_kids-rmag_kids)/2.5
 mass_med = kidscat['MASS_MED']
+masked_kids = kidscat['masked']
 
+
+print(np.sum(masked_kids==0)/len(masked_kids))
 
 ## Import matched catalogue
 
 # Full directory & name of the corresponding GAMA catalogue
-matchcatname = 'Matched_gama_kids_mass_catalogue.fits'
+#matchcatname = 'Matched_gama_kids_mass_catalogue.fits'
+matchcatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_matched.fits'
 matchcatfile = '%s/%s'%(path_lenscat, matchcatname)
 matchcat = pyfits.open(matchcatfile, memmap=True)[1].data
 
 # Matched redshifts
 galZ_gama_matched = matchcat['Z']
-galZ_kids_matched = matchcat['zANNz2ugri']
+galZ_kids_matched = matchcat['Z_ANNZ_KV']
 
 # Matched masses
 logmstar_gama_matched = matchcat['logmstar']
 fluxscale_matched = matchcat['fluxscale']
 logmstar_gama_matched = logmstar_gama_matched - 2.*np.log10(h/0.7)
+masked_matched = matchcat['masked']
+nQ_matched = matchcat['nQ']
 
 logmstar_kids_matched = matchcat['MASS_BEST']
-rmag_kids_matched = matchcat['MAG_AUTO']
+rmag_kids_matched = matchcat['MAG_AUTO_CALIB']
 rmag_gaap_kids_matched = matchcat['MAG_GAAP_r']
 logmstar_kids_matched = logmstar_kids_matched + (rmag_gaap_kids_matched-rmag_kids_matched)/2.5
 
 
 ## Select data for plotting
 
-gamamask = (8.<logmstar_gama)&(logmstar_gama<12.)
-kidsmask = (8.<logmstar_kids)&(logmstar_kids<12.)
+kidsmask = (8.<logmstar_kids)&(logmstar_kids<12.)&(masked_kids==0.)
+gamamask = (8.<logmstar_gama)&(logmstar_gama<12.)&(nQ_gama<3.)
 massmedmask = (mass_med>0.)
 
-massmask_matched = (8.<logmstar_kids_matched)&(logmstar_kids_matched<12.)& \
-                (8.<logmstar_gama_matched)&(logmstar_gama_matched<12.)
+massmask_matched = (8.<logmstar_kids_matched)&(logmstar_kids_matched<12.)&(masked_matched==0)& \
+                (8.<logmstar_gama_matched)&(logmstar_gama_matched<12.)&(nQ_matched>=3.)
 
-Zmask_matched = (0.0<galZ_kids_matched)&(galZ_kids_matched<0.5)& \
-                (0.0<galZ_gama_matched)&(galZ_gama_matched<0.5)
+Zmask_matched = (0.0<galZ_kids_matched)&(galZ_kids_matched<0.5)&(masked_matched==0)& \
+                (0.0<galZ_gama_matched)&(galZ_gama_matched<0.5)&(nQ_matched>=3.)
 
-Zmask = (0.0<galZ_kids_matched)
+Zmask = (0.<galZ_kids_matched)
 
 # Masking the data
 logmstar_gama = logmstar_gama[gamamask]
@@ -120,10 +130,10 @@ galZ_kids_matched = galZ_kids_matched[Zmask_matched]
 
 if plot:
     ## Plot mass histograms
-    plt.hist(logmstar_gama_matched[massmask_matched*Zmask], label=r'GAMA (matched)', bins=50, histtype='step')
+    plt.hist(logmstar_gama_matched, label=r'GAMA (matched)', bins=50, histtype='step', normed=1)
     #plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step')
-    plt.hist(logmstar_kids_matched[massmask_matched], label=r'KiDS (matched)', bins=50, histtype='step')
-    plt.hist(logmstar_kids_matched[massmask_matched*Zmask], label=r'KiDS', bins=50, histtype='step')
+    plt.hist(logmstar_kids_matched, label=r'KiDS (matched)', bins=50, histtype='step', normed=1)
+    plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step', normed=1)
     #plt.hist(logmstar_massmed, label=r'KiDS (MASS$_{\rm MED}>0$)', bins=50, histtype='step', normed=1)
 
     # Define the labels for the plot
@@ -155,7 +165,7 @@ if plot:
     ## Plot 2D histogram
     massline = np.linspace(8, 12, 50)
 
-    plt.hist2d(logmstar_gama_matched[massmask_matched*Zmask], logmstar_kids_matched[massmask_matched*Zmask], bins=100)#, cmin=1, cmap='Blues')
+    plt.hist2d(logmstar_gama_matched, logmstar_kids_matched, bins=100)#, cmin=1, cmap='Blues')
     plt.plot(massline, massline, color='black', ls='--')
     plt.plot(massline, massline+0.2, color='grey', ls='--')
     plt.plot(massline, massline-0.2, color='grey', ls='--')
@@ -211,8 +221,8 @@ if plot:
 diff_Z = (galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)
 diff_logmstar = logmstar_kids_matched - logmstar_gama_matched
 
-print('specZ GAMA:', np.mean(galZ_gama_matched))
-print('ANNZ KiDS:', np.mean(galZ_kids_matched))
+print('specZ GAMA (mean):', np.mean(galZ_gama_matched))
+print('ANNZ KiDS (mean):', np.mean(galZ_kids_matched))
 
 print('Diff. Fraction Z:', np.mean(diff_Z))
 print('Stand. Dev. Z:', np.std(diff_Z))

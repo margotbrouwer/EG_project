@@ -25,14 +25,14 @@ h                   0.7                                         # Reduced Hubble
  ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jun19            # Path to ESD output folder.
 #ESD_output_filename    EG_pipeline                             # This flag will be appended to the filenames (optional).
 
-#ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
- ESD_purpose            shearcovariance
+ ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
+#ESD_purpose            shearcovariance
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
 
-#Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
-#Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
- Rbins                  15,1e-15,5e-12
- Runit                  mps2
+ Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
+ Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
+#Rbins                  15,1e-15,5e-12
+#Runit                  mps2
 
  ncores                 6                                # Any number of cores your machine can use to run the code.
  com                sigmaz_0.021
@@ -40,17 +40,18 @@ h                   0.7                                         # Reduced Hubble
 # Lens selection
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
 
-#lens_weights       None
- lens_weights       logmbar_max     /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits       # Weight name and path to fits file
+ lens_weights       None
+#lens_weights       logmbar_GL     /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits       # Weight name and path to fits file
 
 lens_binning       None
 #lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.5,10.7,10.9,11.   # Equal S/N (isolated)
-#lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
+#lens_binning logmstar_masslim  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
 #lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 9.5,10.,10.5,10.75,11.   # Equal S/N (isolated)
 
  lens_limits1     zANNz2ugri             self               0.,0.5
- lens_limits2     dist0p1perc         /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
- lens_limits3     logmstar_max    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
+ lens_limits2     dist0p1perc         /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits     5.0,inf
+#lens_limits2     fsat_sigmalim     /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_2D_test_h70.fits     0,0.1
+ lens_limits3     logmstar_GL    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
 
 # Source selection
  src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or

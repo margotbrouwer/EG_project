@@ -20,7 +20,9 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'mice-offset' # Select the lens catalogue (kids/gama/mice)
+#cat = 'mice' # Select the lens catalogue (kids/gama/mice)
+#cat = 'gama-offsetZ'
+cat = 'kids'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -28,24 +30,29 @@ utils.import_lenscat(cat, h, cosmo)
 
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
+    
     #Sigma = [0.026]*len(lensZ)
     Sigma_Z = 0.022*(1+lensZ)
-    Sigma_M = [0.25]*len(logmstar)
+    Sigma_M = [0.21]*len(logmstar)
     
-    dZlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_Z))
-    dMlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_M))
-    print('Added offset to lens redshifts and masses')
-    print(dZlist)
-    print(dMlist)
+    if 'Z' in cat:
+        dZlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_Z))
+        lensZ = lensZ+dZlist
+        print('Added offset to lens redshifts')
+        print(dZlist)
+
+    if 'M' in cat:
+        dMlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_M))
+        logmstar = logmstar+dMlist
+        print('Added offset to lens masses')
+        print(dMlist)
     
-    logmstar = logmstar+dMlist
-    lensZ = lensZ+dZlist
-    Dclist = utils.calc_Dc(lensZ, cosmo)
+    lensDc = utils.calc_Dc(lensZ, cosmo)
 lensDa = lensDc/(1.+lensZ)
 
-# Remove all galaxies with logmstar=NAN
+# Remove all galaxies with logmstar=NAN or Z<0
 logmstarcat = logmstar
-nanmask = np.isfinite(logmstar)
+nanmask = np.isfinite(logmstar) & (0.<lensZ)&(lensZ<0.5)
 lensRA, lensDEC, lensDa, logmstar = [lensRA[nanmask], lensDEC[nanmask], lensDa[nanmask], logmstar[nanmask]]
 
 # Import the faint MICE catalogue
@@ -66,6 +73,7 @@ if 'faint' in cat:
 else:
     satcoords = lenscoords
     logmstar_sat = logmstar
+
 
 # Define the lens mass bins
 logm_min = 7.
@@ -102,16 +110,20 @@ for d in range(len(massratios)):
     for m in np.arange(Nlogmbins):
     
         print('Mass bin %g/%g: %g percent'%(m, Nlogmbins, m/Nlogmbins*100.))
-    
+        
         # Masking the lenses according to the stellar mass bin
         massmask_lens = (logmlims[m] < logmstar) & (logmstar <= logmlims[m+1])
+        massmax_lens = np.mean(10**logmstar[massmask_lens])
+        #print('Lens mass: %g'%massmax_lens)
         
         # Masking the satelites according to the lens mass
-        massmax_sat = np.log10(np.mean(10**logmstar[massmask_lens]) * massratios[d]) # Satellites with X times the mean lens mass
+        massmax_sat = np.log10(massmax_lens * massratios[d]) # Satellites with X times the mean lens mass
         massmask_sat = (logmstar_sat > massmax_sat) # ... are "too heavy" for these lenses
         
         lenscoords_bin, satcoords_bin = [lenscoords[massmask_lens], satcoords[massmask_sat]]
         
+        #print('Lenses:', len(lenscoords_bin), '/', len(lenscoords))
+        #print('Satellites:', len(satcoords_bin), '/', len(satcoords))
         #print('%g < logmstar < %g: %i galaxies'%(logmlims[m], logmlims[m+1], len(lenscoords_bin)))
         #print('Max(logm) satellite: %g'%massmax_sat)
         #print('%g percent of satellites selected'%(np.sum(massmask_sat)/float(len(massmask_sat))*100.))
@@ -123,10 +135,10 @@ for d in range(len(massratios)):
             # Calculate the distance to the nearest satellite that is too heavy
             idx, sep2d, satdist3d = lenscoords_bin.match_to_catalog_3d(satcoords_bin, nthneighbor=2)
             satdistlist[massmask_lens] = satdist3d
-            #print(satdist3d)
-    
+
     # Add the result to the catalogue
     (satdistcat[d])[nanmask] = satdistlist
+
 
 print('logmbins:', logmlims)
 print('dlogm:', dlogm)

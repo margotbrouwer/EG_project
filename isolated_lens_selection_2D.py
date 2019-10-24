@@ -23,7 +23,7 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 cat = 'kids' # Select the lens catalogue (kids/gama/mice)
 
 # Redshift distances: the satellite should not be closer in redshift than X
-sigmas = [0.0007, 0.001, 0.005, 0.01, 0.018]
+sigmas = [0.001, 0.002, 0.003, 0.004]
 sigmanames = [('%s'%d).replace('.', 'p') for d in sigmas]
 
 
@@ -141,7 +141,7 @@ for d in range(len(sigmas)):
     (fsat_cat[d])[nanmask] = fsat_list # Add the fsat list to the total list for the catalogue
 
 # Write the results to a fits table
-filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_2D_h%i'%(cat, h*100.)
+filename = '/data/users/brouwer/LensCatalogues/%s_isolated_galaxies_2D_test_h%i'%(cat, h*100.)
 
 if '-' in cat:
     name = cat.split('-')[-1]

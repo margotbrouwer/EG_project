@@ -15,7 +15,7 @@ from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 
 # Import lens catalog
-cat = 'gama'
+cat = 'kids'
 
 # Constants
 h = 0.7
@@ -49,7 +49,8 @@ logmbar = np.log10(mbar)
 if 'mice' not in cat:
     # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
     if 'kids' in cat:
-        diff_GL = -0.10978165582547783
+        #diff_GL = -0.10978165582547783
+        diff_GL = -0.05640601480271284
     if 'gama' in cat:
         diff_GL = 0.
     bias = 0.2

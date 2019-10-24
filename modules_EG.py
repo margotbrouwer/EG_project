@@ -32,12 +32,13 @@ def import_kidscat(path_kidscat, kidscatname, h):
     kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
     
     # List of the observables of all sources in the KiDS catalogue
-    galID =  kidscat['ID']
+    galID =  kidscat['IDENT']
     galRA = kidscat['RAJ2000']
     galDEC = kidscat['DECJ2000']
-    galZ = kidscat['zANNz2ugri']
+    galZ = kidscat['Z_ANNZ_KV']
+    #galZ = kidscat['zANNz2ugri']
     
-    rmag = kidscat['MAG_AUTO']
+    rmag = kidscat['MAG_AUTO_CALIB']
     rmag_gaap = kidscat['MAG_GAAP_r']
     rmag_abs = kidscat['MAG_ABS_r']
     
@@ -47,7 +48,7 @@ def import_kidscat(path_kidscat, kidscatname, h):
     #gmag = kidscat['MAG_GAAP_g']
     #imag = kidscat['MAG_GAAP_i']
     #logML = -0.68 + 0.70*(gmag - imag)
-    
+
     return galID, galRA, galDEC, galZ, rmag, rmag_abs, logmstar
 
 def import_gamacat(path_gamacat, gamacatname, h):
@@ -123,15 +124,15 @@ def import_lepharecat(path_lepharecat, lepharecatname, h):
     lepharecat = pyfits.open(lepharecatfile, memmap=True)[1].data
     
     # List of the observables of all galaxies in the mice catalogue
-    galID =  lepharecat['ID']
+    galID =  lepharecat['IDENT']
     galRA = lepharecat['ALPHA_J2000']
     galDEC = lepharecat['DELTA_J2000']
     
-    galZ = lepharecat['Z_B']
+    galZ = lepharecat['SPECZ']
     
     rmag = lepharecat['MAG_AUTO']
     rmag_abs = lepharecat['MAG_ABS_r']
-    logmstar = lepharecat['MASS_MED']
+    logmstar = lepharecat['MASS_BEST']
     
     return galID, galRA, galDEC, galZ, rmag, rmag_abs, logmstar
 
@@ -149,7 +150,8 @@ def import_lenscat(cat, h, cosmo):
     
     if 'kids' in cat:
         fields = ['K1000']
-        lenscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
+        #lenscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
+        lenscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_masses.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_lenscat, lenscatname, h)
 
@@ -164,7 +166,7 @@ def import_lenscat(cat, h, cosmo):
         lenscatname = 'mice2_gama_catalog_400deg2.fits'
         lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
-
+    
     # Calculating galaxy distances (in Mpc)
     if 'mice' not in cat:
         lensDc = calc_Dc(lensZ, cosmo)
@@ -312,7 +314,7 @@ def calc_Dc(Z, cosmo):
     
     # Calculate the corresponding distances
     Dcbins = cosmo.comoving_distance(Zbins)
-    
+
     # Assign the appropriate distances to all lens redshifts
     Dc = Dcbins[np.digitize(Z, Zbins)-1]
     
@@ -420,6 +422,8 @@ def read_esdfiles(esdfiles):
     data_y = []
     error_h = []
     error_l = []
+    R_src = []
+    N_src = []
     
     print('Imported ESD profiles: %i'%len(esdfiles))
     print(esdfiles)
@@ -430,8 +434,9 @@ def read_esdfiles(esdfiles):
     
         bias = data[4]
         bias[bias==-999] = 1
-    
+        
         datax = data[0]
+       
         datay = data[1]/bias
         datay[datay==-999] = np.nan
     
@@ -439,15 +444,21 @@ def read_esdfiles(esdfiles):
         errorl = (data[3])/bias # covariance error
         errorh[errorh==-999] = np.nan
         errorl[errorl==-999] = np.nan
+
+        Rsrc = np.ones(len(bias))
+        Nsrc = data[8]
         
         data_x.append(datax)     
         data_y.append(datay) 
         error_h.append(errorh) 
-        error_l.append(errorl) 
+        error_l.append(errorl)
+        R_src.append(Rsrc)
+        N_src.append(Nsrc)
     
-    data_x, data_y, error_h, error_l = np.array(data_x), np.array(data_y), np.array(error_h), np.array(error_l)
+    data_x, R_src, data_y, error_h, error_l, N_src = \
+    np.array(data_x), np.array(R_src), np.array(data_y), np.array(error_h), np.array(error_l), np.array(N_src)
     
-    return data_x, data_y, error_h, error_l
+    return data_x, R_src, data_y, error_h, error_l, N_src
 
 
 # Printing stacked ESD profile to a text file
@@ -455,7 +466,8 @@ def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
     error_tot, bias, h, Nsrc):
 
     if 'pc' in Runit:
-        filehead = '# Radius(%s)    ESD_t(h%g*M_sun/pc^2)    ESD_x(h%g*M_sun/pc^2)    error(h%g*M_sun/pc^2)^2    bias(1+K)    Nsources'%(Runit, h*100, h*100, h*100)
+        filehead = '# Radius(%s)    ESD_t(h%g*M_sun/pc^2)    ESD_x(h%g*M_sun/pc^2)    error(h%g*M_sun/pc^2)^2    bias(1+K)    Nsources'\
+            %(Runit, h*100, h*100, h*100)
     else:
         filehead = '# Radius(%s)    gamma_t    gamma_x    error    bias(1+K)    Nsources'%(Runit)
 

@@ -52,7 +52,7 @@ Runit = 'Mpc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jun19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Sep19'
 
 """
 # KiDS vs. GAMA comparison
@@ -127,18 +127,18 @@ plotfilename = '%s/Plots/ESD_MICE_isotest_fiso'%path_sheardata
 # Isolation test: r_iso (KiDS)
 
 params1 = ['0p1']
-params2 = ['3', '4p5', '6']
+params2 = ['3', '4', '5', '6']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/dist%sperc_%s_inf-logmstar_10p9_11p1-zANNz2ugri_0_0p5'%(p1,p2) \
+path_lenssel = np.array([['No_bins/dist%sperc_%s_inf-logmstarGL_0_11-zANNz2ugri_0_0p5'%(p1,p2) \
                                                             for p2 in params2] for p1 in params1])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
 datatitles = ['']
-datalabels = ['3 Mpc', '4.5 Mpc', '6 Mpc']
+datalabels = [r'$r_{\rm sat} = %s$ Mpc/h'%p for p in params2]
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest_riso'%path_sheardata
 
@@ -184,14 +184,13 @@ plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 # Isolated vs. not isolated (KiDS, log(M_*)< 11.)
 
 params1 = ['KiDS']
-params2 = [r'All galaxies', r'Isolated ($r_{\rm iso}=3$ Mpc)', r'Isolated, bright (m$_{\rm r}<17.5$)']
+params2 = [r'All galaxies', r'Isolated ($r_{\rm iso}=3$ Mpc)']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/zANNz2ugri_0_0p5', 'No_bins/dist0p1perc_3_inf-zANNz2ugri_0_0p5', \
-                            'No_bins/MAGAUTO_0_17p5-riso_3_inf-zANNz2ugri_0_0p5']])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_lenssel = np.array([['No_bins/logmstarGL_0_11-zANNZKV_0_0p5', 'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0_0p5']])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
 datatitles = params1
@@ -242,13 +241,13 @@ plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
 params1 = ['MICE']
 params2 = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$, log$(M_*)<11\,{\rm M_\odot}/h_{70}^2$', \
-            r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.022$, $\sigma_{\rm M_*}=0.25$ dex']
+            r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.022$, $\sigma_{\rm M_*}=0.21$ dex']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins_mice/zcgal_0_0p5', 'No_bins_mice/dist0p1perc_3_inf-logmstar_0_11-zcgal_0_0p5', \
-                            'No_bins_mice/dist0p1percoffset_3_inf-logmstaroffset_0_11-zcgal_0_0p5']])
+path_lenssel = np.array([['No_bins/zcgal_0_0p5', 'No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0_0p5', \
+                            'No_bins/dist0p1percoffsetZM_3_inf-logmstaroffsetZM_0_11-zcgal_0_0p5']])
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 
@@ -257,12 +256,13 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest_offset'%path_sheardata
 
-"""
-# True vs. offset redshifts (MICE), strong isolation test
-sigmas = ['0.001', '0.005', '0.01', '0.018']
+
+
+# 2D isolation test (MICE): True vs. offset redshifts 
+dz = [0.001, 0.005, 0.01, 0.018]
 
 params1 = ['', 'offset']
-params2 = [s.replace('.', 'p') for s in sigmas]
+params2 = [str(s).replace('.', 'p') for s in dz]
 print(params2)
 
 N1 = len(params1)
@@ -274,10 +274,32 @@ path_lenssel = np.array([['No_bins_mice/fsatsigma%s%s_0_0p1-logmstar_0_11-zcgal_
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
 path_filename = np.array([['shearcatalog/No_bins_A']*N1]*N2)
 
-datatitles = ['Isolated, $\sigma=%s$'%s for s in sigmas]
+datatitles = ['Isolated, $\delta z=%s$'%s for s in dz]
 datalabels = ['MICE', 'MICE-offset']
 
 plotfilename = '%s/Plots/ESD_MICE_isotest-sigma_offset'%path_sheardata
+
+
+# 2D isolation test (KiDS)
+#dz = [0.001, 0.005, 0.01, 0.018]
+dz = [0.001, 0.002, 0.003, 0.004, 0.005]
+
+params1 = ['KiDS-1000']
+params2 = [str(s).replace('.', 'p') for s in dz]
+print(params2)
+
+N1 = len(params1)
+N2 = len(params2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/fsatsigma%s_0_0p1-logmstarGL_0_11-zANNz2ugri_0_0p5'%(p2) for p2 in params2]]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+datatitles = params1
+datalabels = ['Isolated, $\delta z=%s$'%s for s in dz]
+
+plotfilename = '%s/Plots/ESD_KiDS_isotest_dz-0p001-0p005'%path_sheardata
 
 """
 # Stellar mass bins (KiDS)
@@ -290,15 +312,15 @@ N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
 
-path_lenssel = np.array([['logmstar_GL_8p5_10p3_10p6_10p8_11p0/dist0p1perc_3_inf-zANNz2ugri_0_0p5']*N2]*N1)
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2 for p2 in np.arange(N2)+1]*N1])
+path_lenssel = np.array([['logmstar_GL_8p5_10p3_10p6_10p8_11p0/dist0p1perc_3_inf-zANNZKV_0_0p5']*N2]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%p2 for p2 in np.arange(N2)+1]*N1])
 
 datatitles = params1
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
-
+"""
 
 # Lens photoz errors versus no photoz errors
 
@@ -345,7 +367,7 @@ plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 """
 
 ## Import measured ESD
-cat = 'mice'
+cat = 'kids'
 h = 0.7
 
 if 'mice' in cat:
@@ -372,10 +394,10 @@ esdfiles = np.reshape(esdfiles, [Nsize])
 print('Plots, profiles:', Nbins)
 
 # Importing the shearprofiles and lens IDs
-data_x, data_y, error_h, error_l = utils.read_esdfiles(esdfiles)
+data_x, R_src, data_y, error_h, error_l, N_src = utils.read_esdfiles(esdfiles)
 #print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
-"""
+
 ## Find the mean galaxy mass
 IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
 lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1
@@ -413,15 +435,16 @@ print('mean logmbar:', mean_mbar)
 print('median logmbar:', median_mbar)
 print()
 
-"""
+
+
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
     dof = len(data_y[0])
     prob = 1. - stats.chi2.cdf(chisquared, dof)
 
-    diff = (data_y[n] - data_y[n+1])/((data_y[n] + data_y[n+1])/2.)
-    diff_error = (error_h[n] - error_h[n+1])/((error_h[n] + error_h[n+1])/2.)
+    diff = (data_y[n+1] - data_y[n])/((data_y[n+1] + data_y[n])/2.)
+    diff_error = (error_h[n+1] - error_h[n])/((error_h[n+1] + error_h[n])/2.)
     
     print()
     print('Difference:', np.mean(diff[8:-1]))
