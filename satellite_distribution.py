@@ -25,9 +25,9 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 ## Configuration
 
-cat = 'mice' # Data selection: select the lens catalogue (kids/gama/mice)
-purpose = 'mstarbins' # Purpose of this run (isolated or mstar)
-plot = True # To plot or not to plot
+cat = 'kids' # Data selection: select the lens catalogue (kids/gama/mice)
+purpose = 'isolated' # Purpose of this run (isolated or mstar)
+plot = False # To plot or not to plot
 
 
 # Import lens catalog

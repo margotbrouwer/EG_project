@@ -568,3 +568,28 @@ def calc_chi2(data, model, covariance, nbins):
     chi2_tot = np.dot(chi2_cov, (model-data))[0,0]
     
     return chi2_tot
+
+# Calculating the mean of profiles with different binning in x
+def mean_profile(data_x, data_y, Nbins, log):
+    
+    # Flattening the x- and y-data
+    data_x = np.ndarray.flatten(data_x)
+    data_y = np.ndarray.flatten(data_y)
+
+    binmin, binmax = [np.amin(data_x), np.amax(data_x)] # Minimum and maximum bin values
+    
+    # Defining the bins in the x-axis
+    if log:
+        binedges = np.logspace(np.log10(binmin), np.log10(binmax), Nbins+1)
+    else:
+        binedges = np.linspace(binmin, binmax, Nbins+1)
+    
+    inds = np.digitize(data_x, binedges) # Indices indicated the bin of each values
+    
+    # Calculating the mean (x and y) and standard deviation (y) in each x-bin
+    data_x_mean = np.array([np.mean(data_x[inds==x]) for x in range(Nbins)])
+    data_y_mean = np.array([np.mean(data_y[inds==x]) for x in range(Nbins)])
+    data_y_std = np.array([np.std(data_y[inds==x]) for x in range(Nbins)])
+        
+    return data_x_mean, data_y_mean, data_y_std
+

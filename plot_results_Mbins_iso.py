@@ -9,13 +9,13 @@ import os
 from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 import scipy.optimize as optimization
+import scipy.stats as stats
 import modules_EG as utils
 
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
 from matplotlib import gridspec
 from matplotlib import rc, rcParams
-
 from matplotlib import gridspec
 
 def bins_to_name(binlims):
@@ -53,26 +53,28 @@ colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 # Defining the paths to the data
 blind = 'A'
 logplot = False
-massbias = True
+massbias = False
 miceoffset = True
 
 #Import constants
+h=0.7
 pi = np.pi
 G = const.G.to('pc3 / (M_sun s2)').value
-c = const.c.to('pc/s').value
-H0 = 100 * (u.km/u.s)/u.Mpc
+c = const.c.to('m/s').value
+H0 = h * 100 * (u.km/u.s)/u.Mpc
 H0 = H0.to('s-1').value
 
 pc_to_m = 3.08567758e16
-h=0.7
 
+print('c H0/6', np.sqrt((c*H0)/6))
 
 def gobs_mond(gbar, g0=1.2e-10):
     gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
     return gobs
 
 def gobs_verlinde(gbar):
-    gobs = gbar + np.sqrt((c*H0)/6) * np.sqrt(gbar)
+    gobs = gbar + np.sqrt(gbar) * np.sqrt((c*H0)/6)
+    print('c H0/6', np.sqrt((c*H0)/6))
     return gobs
 
 # rho = const
@@ -99,6 +101,7 @@ def calc_Md(Mb_r, r):
 gbar_mond = np.logspace(-12, -8, 50)
 gbar_ext = np.logspace(-15, -12, 30)
 gbar_uni = np.logspace(-15, -8, 50)
+gbar_log = gbar_uni
 
 gobs_mond_M16 = gobs_mond(gbar_mond)
 gobs_mond_ext = gobs_mond(gbar_ext)
@@ -117,7 +120,7 @@ Runit = 'pc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Sep19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jun19'
 
 ## Input lens selections
 
@@ -151,7 +154,6 @@ miceoffset = True
 #datatitles = [r'$%g < \log(M_*) < %g \, {\rm M_\odot}/h_{%g}^{2}$'%(param1[p1], param1[p1+1], h*100) for p1 in range(N1)]
 plotfilename = '%s/Plots/RAR_KiDS+Navarro_4-massbins_isolated'%path_sheardata
 
-"""
 
 # All galaxies, in 4 stellar mass bins (including systematic stellar mass difference)
 param1 = [8.5,10.3,10.6,10.8,11.]
@@ -178,7 +180,7 @@ miceoffset = True
 datalabels = param2
 #datatitles = [r'$%g < \log(M_*) < %g \, {\rm M_\odot}/h_{%g}^{2}$'%(param1[p1], param1[p1+1], h*100) for p1 in range(N1)]
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_all'%path_sheardata
-"""
+
 
 # Isolated galaxies, without stellar mass bins (including systematic stellar mass difference)
 
@@ -204,9 +206,9 @@ masses_navarro = ['4.4E10'] # No mass bins (in Msun)
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+MICE_No_Nobins_isolated_zoomout'%path_sheardata
 
+"""
 
-
-# GAMA
+# GAMA + BAHAMAS
 
 param1 = ['']
 param2 = [r'GAMA data (isolated galaxies)']#: $r_{\rm sat}(f_{\rm M_*}>0.1)>3$ Mpc/$h_{%g}$)'%(h*100)]
@@ -219,16 +221,20 @@ path_lenssel = np.array([['No_bins/Z_0_0p5-dist0p1perc_3_inf-logmstarGL_0_11_lw-
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
 
-path_mocksel =  np.array([['No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0_0p5_lw-logmbar']*N2]*N1)
-path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
-path_mockfilename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
-mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
+#path_mocksel =  np.array([['No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0_0p5_lw-logmbar']*N2]*N1)
+#path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
+#path_mockfilename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
+#mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
 
-masses_navarro = ['4.4E10'] # No mass bins (in Msun)
+mocklabels = np.array(['BAHAMAS mocks (isolated galaxies)'])
+Nmocks = [1, 1]
+
+#masses_navarro = ['4.4E10'] # No mass bins (in Msun)
 
 datalabels = param2
-plotfilename = '%s/Plots/RAR_GAMA+MICE_Nobins_isolated'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_Bahamas_Nobins_isolated_zoomout'%path_sheardata
 
+"""
 
 # Strongly isolated galaxies, without stellar mass bins (including systematic stellar mass difference)
 
@@ -389,11 +395,7 @@ if ('massbins' in plotfilename) and ('all' in plotfilename):
     
     if not logplot:
         gb_all, gb_point, gtot_all = [np.log10(gb_all), np.log10(gb_point), np.log10(gtot_all)]
-    
-    print(rcenters)
-    print(gb_all)
-    print(gb_point)
-    print(gtot_all)
+
 
 # Import McGaugh data
 data_mcgaugh = np.loadtxt('RAR_profiles/mcgaugh2016_RAR.txt').T
@@ -420,24 +422,26 @@ hqmask = (hqsample==1)
 """
 
 ## Mocks
-print()
-print('Import mock signal:')
 
-# Defining the mock profiles
-esdfiles_mock = np.array([['%s/%s/%s/%s.txt'%\
-    (path_sheardata, path_mocksel[i,j], path_mockcosmo[i,j], path_mockfilename[i,j]) \
-    for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
-
-Nmocks = np.shape(esdfiles_mock)
-esdfiles_mock = np.reshape(esdfiles_mock, [Nsize])
-
-if miceoffset:
-    esdfiles_mock_offset = [f.replace('perc', 'percoffset') for f in esdfiles_mock]
-    esdfiles_mock_offset = [f.replace('logmstar', 'logmstar_offset') for f in esdfiles_mock_offset]
-    foo, foo, data_y_mock_offset, foo, foo, foo = utils.read_esdfiles(esdfiles_mock_offset)
-    data_y_mock_offset = 4. * G * 3.08567758e16 * data_y_mock_offset
-    
+# MICE mocks
 if 'MICE' in plotfilename:
+
+    print()
+    print('Import mock signal:')
+
+    # Defining the mock profiles
+    esdfiles_mock = np.array([['%s/%s/%s/%s.txt'%\
+        (path_sheardata, path_mocksel[i,j], path_mockcosmo[i,j], path_mockfilename[i,j]) \
+        for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
+
+    Nmocks = np.shape(esdfiles_mock)
+    esdfiles_mock = np.reshape(esdfiles_mock, [Nsize])
+
+    if miceoffset:
+        esdfiles_mock_offset = [f.replace('perc', 'percoffset') for f in esdfiles_mock]
+        esdfiles_mock_offset = [f.replace('logmstar', 'logmstar_offset') for f in esdfiles_mock_offset]
+        foo, foo, data_y_mock_offset, foo, foo, foo = utils.read_esdfiles(esdfiles_mock_offset)
+        data_y_mock_offset = 4. * G * 3.08567758e16 * data_y_mock_offset
 
     if Nmocks[1] > 5:
         valpha = 0.3
@@ -486,6 +490,53 @@ if 'MICE' in plotfilename:
 else:
     print('No mock signal imported!')
     pass
+
+# BAHAMAS mocks
+
+if 'Bahamas' in plotfilename:
+
+    if Nmocks[1] > 5:
+        valpha = 0.3
+    else:
+        valpha = 1.
+
+    ## Import true enclosed mass profiles
+    profbins = 40
+    catnum = 515
+    lenslist = np.arange(catnum)
+    
+    path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_new/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+    catname = '%s/catalog.dat'%path_cat
+    catalog = np.loadtxt(catname).T[:,lenslist]
+
+    # Import galaxy observables (M200, r200, logmstar)
+    M200list = 10.**catalog[3] # M200 of each galaxy
+    r200list = catalog[4] * 1e6 # r200 of each galaxy (in Xpc)
+    logmstarlist = catalog[5] # Stellar mass of each lens galaxy
+    mstarlist = np.reshape(10.**logmstarlist[0:catnum], [catnum,1])
+    
+    profiles_radius = np.zeros([catnum, profbins])
+    profiles_Menclosed = np.zeros([catnum, profbins])
+    for x in range(catnum):
+        profname = '%s/PROFILES/cluster_%i_Menclosed_profile_types.dat'%(path_cat, lenslist[x])
+        profile_c = np.loadtxt(profname).T
+        profiles_radius[x] = profile_c[0] * 1e6 # * r200list[x] # in pc # profile_c[0,0:Nbins]
+        profiles_Menclosed[x] = profile_c[1]# * M200list[x] # in Msun # profile_c[1,0:Nbins]
+
+    # Calculate true gbar and gobs from enclosed mass profiles
+    profiles_gbar = (G * mstarlist) / (profiles_radius)**2. * pc_to_m # in m/s^2
+    profiles_gobs = (G * profiles_Menclosed) / (profiles_radius)**2. * pc_to_m # in m/s^2
+    
+    profiles_gbar, profiles_gobs = [profiles_gbar[logmstarlist<11.], profiles_gobs[logmstarlist<11.]]
+    
+    #data_x_mock = np.mean(profiles_gbar, 0)
+    #data_y_mock = np.mean(profiles_gobs, 0)
+    
+    data_x_mock, data_y_mock, mock_y_std = utils.mean_profile(profiles_gbar, profiles_gobs, profbins, True)
+
+    if not logplot:
+        mock_y_std = 1./np.log(10.) * mock_y_std/data_y_mock
+        data_x_mock, data_y_mock = np.log10(np.array([data_x_mock, data_y_mock]))
 
 ## Randoms
 path_randoms = np.array([ [''] ])
@@ -554,6 +605,20 @@ for N1 in range(Nrows):
         ax_sub.plot(gbar_ext, gobs_mond_ext, label = r'McGaugh+16 fitting function (extrapolated)', \
             color='grey', ls='--', marker='', zorder=1)
 
+        # Plot Verlinde slopes
+        #gD_0, gobs_0 = calc_gobs_0(gbar_uni)
+        #gD_2, gobs_2 = calc_gobs_2(gbar_uni)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=6)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
+        ax_sub.plot(gbar_uni, np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde+16 theory (point mass)', zorder=6) #: ${\rm M_b}(r)$=const.)'
+
+        # Plot Verlinde prediction including full satellite distribution
+        if ('massbins' in plotfilename) and ('all' in plotfilename):
+            
+            ax_sub.plot(gb_point[Ndata], gtot_all[Ndata], ls='-', marker='', color=colors[3], \
+            label=r'Verlinde (full mass distribution)',  zorder=5)
+            
+            
         
         for Nplot in range(Nbins[1]):
             
@@ -589,7 +654,7 @@ for N1 in range(Nrows):
                 label=r'Navarro+2017 prediction (based on $\langle M_* \rangle$)',  zorder=5) #($M_*=%s} h_{70}^{-2} M_\odot$)'%masses_navarro[Ndata].replace('E','\cdot10^{'))
         
         if 'MICE' in plotfilename:
-            # Plot mock shearprofiles
+            # Plot MICE mock shearprofiles
             for Nmock in range(Nmocks[1]):
 
                 Ndata = Nplot + N*(Nmocks[1])
@@ -603,7 +668,19 @@ for N1 in range(Nrows):
                 else:
                     ax_sub.plot(data_x_plot[gbar_mask], (data_y_mock[Ndata])[gbar_mask], \
                     marker='', ls='-', color=colors[3], label=mocklabels[0], alpha=valpha, zorder=1)
-            
+                    
+        if 'Bahamas' in plotfilename:
+            # Plot BAHAMAS mock shearprofiles
+            for Nmock in range(Nmocks[1]):
+
+                Ndata = Nplot + N*(Nmocks[1])
+                
+                ax_sub.plot(data_x_mock, data_y_mock, \
+                marker='', ls='-', color=colors[3], label=mocklabels[0], alpha=valpha, zorder=1)
+                
+                ax_sub.fill_between(data_x_mock, data_y_mock-0.5*mock_y_std, \
+                    data_y_mock+0.5*mock_y_std, color=colors[3], alpha=0.5, zorder=1)
+        
         
         ## Plot McGaugh observations
         
@@ -634,21 +711,10 @@ for N1 in range(Nrows):
         
         # Plot Crescenzo's data
         #ax_sub.errorbar(gbar_cres, gobs_cres, yerr=[errorl_cres, errorh_cres], ls='', marker='.', label="Tortora+2017 (Early Type Galaxies)", zorder=4)
-
-        # Plot Verlinde slopes
-        #gD_0, gobs_0 = calc_gobs_0(gbar_log)
-        #gD_2, gobs_2 = calc_gobs_2(gbar_log)
-        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=6)
-        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=6)
-        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[0], label = r'Verlinde (Point mass: ${\rm M_b}(r)$=const.)', zorder=6)
-
-        # Plot Verlinde prediction including full satellite distribution
-        if ('massbins' in plotfilename) and ('all' in plotfilename):
-            
-            ax_sub.plot(gb_point[Ndata], gtot_all[Ndata], ls='-', marker='', color=colors[3], \
-            label=r'Verlinde (full mass distribution)',  zorder=5)
-            
-            
+        
+        print('gbar_log', gbar_log)
+        print('gobs_verlinde', gobs_verlinde(gbar_log))
+        
         
         ## Plot the axes and title
         

@@ -23,19 +23,20 @@ G = const.G.to('m3/Msun s2')
 c = const.c.to('m/s')
 inf = np.inf
 h=0.7
-pc_to_meter = 3.08567758e16 # meters
+pc_to_m = 3.08567758e16 # meters
 
 plot=False
 
 ## Import Bahamas file
-catnum = 1039 #402
+catnum = 515
 lenslist = np.arange(catnum)
 #lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
 print(catnum)
 
-path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_all/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+#path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_all/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 #path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_strong/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_new/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T[:,lenslist]
@@ -45,8 +46,8 @@ logmstarlist = catalog[5] # Stellar mass of each lens galaxy
 
 # Bahamas simulation variables
 Zlens = 0.25 # The redshift of the galaxies
-Npix = 2000 # The number of pixels on each side
-dpix = 1.5e4 / (1.+Zlens)/h # The pixel size of the grid (in physical pc/h70)
+Npix = 400 # The number of pixels on each side
+dpix = 15e3 / (1.+Zlens)/h # The pixel size of the grid (in physical pc/h70)
 Lpix = Npix * dpix # The length of the grid (in physical pc/h70)
 
 ## Define projected distance bins R
@@ -82,9 +83,9 @@ for c in range(catnum): # For every cluster/lens...
         mstar = 10.**logmstarlist[c]
         print('    log10[Mstar/Msun]: %g'%np.log10(mstar))
         
-        Rdist_c = (G.value * mstar)/(pixdist*xvalue*pc_to_meter)**2 # the distance to the pixels (in m/s^2)
+        Rdist_c = (G.value * mstar)/(pixdist*xvalue*pc_to_m)**2 # the distance to the pixels (in m/s^2)
         Rmask = (Rdist_c>Rmin) # Defining the Rmax mask for the pixels
-        Rbins_list[c] = np.sqrt((G.value * mstar)/Rbins) / pc_to_meter # in pc
+        Rbins_list[c] = np.sqrt((G.value * mstar)/Rbins) / pc_to_m # in pc
         
     else: # Keep pixel distances in Xpc
         Rdist_c = pixdist # The distance to the pixels (in Xpc)
