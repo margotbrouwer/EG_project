@@ -57,7 +57,6 @@ massbias = False
 miceoffset = True
 
 #Import constants
-h=0.7
 pi = np.pi
 G = const.G.to('pc3 / (M_sun s2)').value
 c = const.c.to('m/s').value
@@ -232,7 +231,7 @@ Nmocks = [1, 1]
 #masses_navarro = ['4.4E10'] # No mass bins (in Msun)
 
 datalabels = param2
-plotfilename = '%s/Plots/RAR_GAMA_Bahamas_Nobins_isolated_zoomout'%path_sheardata
+plotfilename = '%s/Plots/RAR_GAMA_Nobins_isolated_zoomout'%path_sheardata
 
 """
 
@@ -467,23 +466,24 @@ if 'MICE' in plotfilename:
     lensIDs_selected_mock = np.array([np.loadtxt(m) for m in IDfiles_mock])
 
     # Import mock lens catalog
-    fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
-    utils.import_lenscat('mice', h, cosmo)
-    lensDc = lensDc.to('pc').value
-    lensDa = lensDc/(1.+lensZ)
+    fields, path_mockcat, mockcatname, lensID_mock, lensRA_mock, lensDEC_mock, \
+        lensZ_mock, lensDc_mock, rmag_mock, rmag_abs_mock, logmstar_mock =\
+        utils.import_lenscat('mice', h, cosmo)
+    lensDc_mock = lensDc_mock.to('pc').value
+    lensDa_mock = lensDc_mock/(1.+lensZ_mock)
 
     max_gbar = np.zeros(len(esdfiles_mock))
     for m in range(len(esdfiles_mock)):
-        IDmask = np.in1d(lensID, lensIDs_selected_mock[m])
-        Da_max = np.amax(lensDa[IDmask*np.isfinite(lensDa)])
-        mstar_mean = np.mean(10.**logmstar[IDmask*np.isfinite(logmstar)])
+        IDmask = np.in1d(lensID_mock, lensIDs_selected_mock[m])
+        Da_max = np.amax(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
+        mstar_mean_mock = np.mean(10.**logmstar_mock[IDmask*np.isfinite(logmstar)])
             
         pixelsize = 0.43 / 60. * pi/180. # arcmin to radian
         min_R = pixelsize * Da_max
-        max_gbar[m] = np.log10((G*3.08567758e16 * mstar_mean)/min_R**2.)
+        max_gbar[m] = np.log10((G*3.08567758e16 * mstar_mean_mock)/min_R**2.)
 
     #    print('Da_max:', Da_max)
-    #    print('mstar_mean:', mstar_mean)
+    #    print('mstar_mean_mock:', mstar_mean_mock)
     #    print('min_R:', min_R)
     print('max_gbar:', max_gbar)
 
@@ -512,8 +512,14 @@ if 'Bahamas' in plotfilename:
     # Import galaxy observables (M200, r200, logmstar)
     M200list = 10.**catalog[3] # M200 of each galaxy
     r200list = catalog[4] * 1e6 # r200 of each galaxy (in Xpc)
-    logmstarlist = catalog[5] # Stellar mass of each lens galaxy
-    mstarlist = np.reshape(10.**logmstarlist[0:catnum], [catnum,1])
+    logmstar_mock = catalog[5] # Stellar mass of each lens galaxy
+    
+    # Calculate baryonic galaxy mass
+    fcold_mock = 10.**(-0.69*logmstar_mock + 6.63)
+    mstar_mock = 10.**logmstar_mock
+    mbar_mock = mstar_mock * (1 + fcold_mock)
+    mstar_mock = np.reshape(mstar_mock[0:catnum], [catnum,1])
+    mbar_mock = np.reshape(mbar_mock[0:catnum], [catnum,1])
     
     profiles_radius = np.zeros([catnum, profbins])
     profiles_Menclosed = np.zeros([catnum, profbins])
@@ -524,15 +530,16 @@ if 'Bahamas' in plotfilename:
         profiles_Menclosed[x] = profile_c[1]# * M200list[x] # in Msun # profile_c[1,0:Nbins]
 
     # Calculate true gbar and gobs from enclosed mass profiles
-    profiles_gbar = (G * mstarlist) / (profiles_radius)**2. * pc_to_m # in m/s^2
+    profiles_gbar = (G * mstar_mock*2.) / (profiles_radius)**2. * pc_to_m # in m/s^2
     profiles_gobs = (G * profiles_Menclosed) / (profiles_radius)**2. * pc_to_m # in m/s^2
     
-    profiles_gbar, profiles_gobs = [profiles_gbar[logmstarlist<11.], profiles_gobs[logmstarlist<11.]]
+    profiles_gbar, profiles_gobs = [profiles_gbar[logmstar_mock<11.], profiles_gobs[logmstar_mock<11.]]
     
     #data_x_mock = np.mean(profiles_gbar, 0)
     #data_y_mock = np.mean(profiles_gobs, 0)
     
-    data_x_mock, data_y_mock, mock_y_std = utils.mean_profile(profiles_gbar, profiles_gobs, profbins, True)
+    data_x_mock, data_y_mock, mock_y_std = utils.mean_profile(profiles_gbar, profiles_gobs, \
+        0, 0, profbins, True)
 
     if not logplot:
         mock_y_std = 1./np.log(10.) * mock_y_std/data_y_mock
@@ -678,8 +685,8 @@ for N1 in range(Nrows):
                 ax_sub.plot(data_x_mock, data_y_mock, \
                 marker='', ls='-', color=colors[3], label=mocklabels[0], alpha=valpha, zorder=1)
                 
-                ax_sub.fill_between(data_x_mock, data_y_mock-0.5*mock_y_std, \
-                    data_y_mock+0.5*mock_y_std, color=colors[3], alpha=0.5, zorder=1)
+                ax_sub.fill_between(data_x_mock, (data_y_mock-0.5*mock_y_std), \
+                    (data_y_mock+0.5*mock_y_std), color=colors[3], alpha=0.5, zorder=1)
         
         
         ## Plot McGaugh observations

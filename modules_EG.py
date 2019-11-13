@@ -570,13 +570,16 @@ def calc_chi2(data, model, covariance, nbins):
     return chi2_tot
 
 # Calculating the mean of profiles with different binning in x
-def mean_profile(data_x, data_y, Nbins, log):
+def mean_profile(data_x, data_y, binmin, binmax, Nbins, log):
     
     # Flattening the x- and y-data
     data_x = np.ndarray.flatten(data_x)
     data_y = np.ndarray.flatten(data_y)
-
-    binmin, binmax = [np.amin(data_x), np.amax(data_x)] # Minimum and maximum bin values
+    
+    if (binmin==0) and (binmax==0):
+        binmin, binmax = [np.amin(data_x), np.amax(data_x)] # Minimum and maximum bin values
+    else:
+        pass
     
     # Defining the bins in the x-axis
     if log:
