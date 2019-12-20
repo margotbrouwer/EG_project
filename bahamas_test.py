@@ -53,9 +53,9 @@ Lpix = Npix * dpix # The length of the grid (in physical pc/h70)
 ## Define projected distance bins R
 
 # Creating the Rbins
-#Runit, Nbins, Rmin, Rmax = ['Mpc', 15, 0.03, 3.] # Fixed Rbins
+Runit, Nbins, Rmin, Rmax = ['Mpc', 15, 0.03, 3.] # Fixed Rbins
 #Runit, Nbins, Rmin, Rmax = ['Mpc', 16, -999, 999] # Same R-bins as PROFILES
-Runit, Nbins, Rmin, Rmax = ['mps2', 15, 1e-15, 5e-12] # gbar-bins
+#Runit, Nbins, Rmin, Rmax = ['mps2', 15, 1e-15, 5e-12] # gbar-bins
 
 Rbins, Rcenters, Rmin_pc, Rmax_pc, xvalue = utils.define_Rbins(Runit, Rmin, Rmax, Nbins, True)
 print('Rbins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
