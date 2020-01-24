@@ -15,7 +15,7 @@ from astropy import constants as const, units as u
 from astropy.cosmology import LambdaCDM
 
 # Import lens catalog
-cat = 'kids'
+cat = 'mice'
 
 # Constants
 h = 0.7

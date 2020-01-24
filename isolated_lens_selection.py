@@ -20,19 +20,20 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-#cat = 'mice' # Select the lens catalogue (kids/gama/mice)
+cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice)
 #cat = 'gama-offsetZ'
-cat = 'kids'
+#cat = 'kids'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
+print('Lens catalogue:', lenscatname)
+
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
     
-    #Sigma = [0.026]*len(lensZ)
-    Sigma_Z = 0.022*(1+lensZ)
+    Sigma_Z = 0.018*(1+lensZ)
     Sigma_M = [0.21]*len(logmstar)
     
     if 'Z' in cat:
@@ -58,7 +59,7 @@ lensRA, lensDEC, lensDa, logmstar = [lensRA[nanmask], lensDEC[nanmask], lensDa[n
 # Import the faint MICE catalogue
 if 'faint' in cat:
     faintID, faintRA, faintDEC, faintZ, faintDc, faint_rmag, faint_rmag_abs, faint_e1, faint_e2, faint_logmstar =\
-    utils.import_micecat('/data/users/brouwer/LensCatalogues', 'mice2_faint_catalog_400deg2.fits', h)
+    utils.import_micecat('/data/users/brouwer/LensCatalogues', 'mice2_faint_catalog_1000deg2.fits', h)
     
     faintmask = (faint_rmag<22.5)
     faintRA, faintDEC, faintZ, faintDc, faint_logmstar = \

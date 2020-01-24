@@ -52,7 +52,7 @@ Runit = 'Mpc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Sep19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
 
 """
 # KiDS vs. GAMA comparison
@@ -236,12 +236,13 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
+"""
 
 # True vs. offset redshifts (MICE)
 
 params1 = ['MICE']
 params2 = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$, log$(M_*)<11\,{\rm M_\odot}/h_{70}^2$', \
-            r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.022$, $\sigma_{\rm M_*}=0.21$ dex']
+            r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.018$, $\sigma_{\rm M_*}=0.21$ dex']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 1
@@ -256,6 +257,7 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest_offset'%path_sheardata
 
+"""
 
 
 # 2D isolation test (MICE): True vs. offset redshifts 
@@ -301,7 +303,7 @@ datalabels = ['Isolated, $\delta z=%s$'%s for s in dz]
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest_dz-0p001-0p005'%path_sheardata
 
-"""
+
 # Stellar mass bins (KiDS)
 
 massbins = [8.5,10.3,10.6,10.8,11.]
@@ -320,7 +322,7 @@ datatitles = params1
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
-"""
+
 
 # Lens photoz errors versus no photoz errors
 
@@ -367,7 +369,7 @@ plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 """
 
 ## Import measured ESD
-cat = 'kids'
+cat = 'mice'
 h = 0.7
 
 if 'mice' in cat:
@@ -407,6 +409,7 @@ N_selected = [len(m) for m in lensIDs_selected]
 path_masscat = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
 masscat = pyfits.open(path_masscat, memmap=True)[1].data
 
+"""
 logmstar = masscat['logmstar_GL']
 logmbar = masscat['logmbar_GL']
 
@@ -434,7 +437,7 @@ print()
 print('mean logmbar:', mean_mbar)
 print('median logmbar:', median_mbar)
 print()
-
+"""
 
 
 # Calculate the difference between subsequent bins

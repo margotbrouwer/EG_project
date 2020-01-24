@@ -33,7 +33,7 @@ O_lambda = 0.7207
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 #plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot_path = '/data/users/brouwer/Lensing_results/EG_results_Sep19'
+plot_path = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
 plot=True
 
 ## Import GAMA catalogue
@@ -223,9 +223,9 @@ diff_logmstar = logmstar_kids_matched - logmstar_gama_matched
 
 print('specZ GAMA (mean):', np.mean(galZ_gama_matched))
 print('ANNZ KiDS (mean):', np.mean(galZ_kids_matched))
-
+print()
 print('Diff. Fraction Z:', np.mean(diff_Z))
 print('Stand. Dev. Z:', np.std(diff_Z))
-
+print()
 print('Diff. Mstar:', np.mean(diff_logmstar))
 print('Stand. Dev. Mstar:', np.std(diff_logmstar))

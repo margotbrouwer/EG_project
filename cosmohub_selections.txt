@@ -1,0 +1,8 @@
+Cosmohub selections
+
+Source catalogue
+
+SELECT 'unique_gal_id', 'ra_gal', 'dec_gal', 'z_cgal', 'cgal', 'sdss_r_abs_mag', 'sdss_r_true', 'gamma1', 'gamma2'
+FROM micecatv2_0_view
+WHERE 'z_cgal' > 0.1 AND 'z_cgal' < 1.2 AND 'sdss_r_true' > 20. AND 'sdss_r_abs_mag' > -18.5 AND 0. < 'ra_gal' AND 'ra_gal' < 20. AND 0. < 'dec_gal' AND 'dec_gal' < 20.
+
