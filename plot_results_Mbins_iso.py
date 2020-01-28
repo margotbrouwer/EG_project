@@ -122,6 +122,7 @@ path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
 ## Input lens selections
 
 """
+"""
 
 # KiDS + GAMA + Verlinde (isolated)
 
@@ -174,7 +175,7 @@ masses_navarro = ['4.4E10'] # No mass bins (in Msun)
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
-"""
+
 
 # KiDS + Verlinde / MICE (isolated, 4 stellar mass bins)
 
