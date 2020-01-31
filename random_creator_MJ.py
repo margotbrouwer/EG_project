@@ -54,11 +54,20 @@ lenscatfile = '%s/photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9.fits'%(path_
 lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
 
 lensZ = lenscat['z_ANNZ_KV']
-lensmask = lenscat['masked']
+masked = lenscat['masked']
+
+masscatfile = '%s/baryonic_mass_catalog_kids.fits'%(path_lenscat)
+masscat = pyfits.open(masscatfile, memmap=True)[1].data
+
+logmstar = masscat['logmstar_GL']
+logmbar = masscat['logmbar_GL']
 
 # Mask the redshifts
-Zmask = (0.<lensZ)&(lensZ<0.5)&(lensmask==0)
-lensZ = lensZ[Zmask]
+lensmask = (0.<lensZ)&(lensZ<0.5)&(0.<logmstar)&(logmstar<11.)&(masked==0)
+
+lensZ = lensZ[lensmask]
+logmstar = logmstar[lensmask]
+logmbar = logmbar[lensmask]
 
 # Define the number of galaxies per catalogue, and ID's
 Ngals = len(lensZ)
@@ -78,21 +87,28 @@ DEClist = randomcat['DEC']
 #randomJK = randomcat['JK_LABEL']
 
 
-## Create the random redshifts
+## Create the random redshifts and stellar masses
 
 # Create the redshift histogram
 Zhist, Zbin_edges = np.histogram(lensZ, int(1e3))
 Zbins = Zbin_edges[0:-1]+np.diff(Zbin_edges)
 
-# Compute the random redshifts
+# Create the stellar mass histogram
+Mhist, Mbin_edges = np.histogram(logmbar, int(1e3))
+Mbins = Mbin_edges[0:-1]+np.diff(Mbin_edges)
+
+# Compute the random values
 Nmult = int(np.ceil(Ngals/len(lensZ))) # Multiplier to have enough redshift values
 
-# This list will contain a long list of random redshifts, to be selected from
+# This list will contain a long list of random values, to be selected from
 Zlist = np.array([])
-for z in range(len(Zbins)):
-    Zbin = np.random.uniform(Zbin_edges[z], Zbin_edges[z+1], Nmult*Zhist[z])
+Mlist = np.array([])
+for b in range(len(Zbins)):
+    Zbin = np.random.uniform(Zbin_edges[b], Zbin_edges[b+1], Nmult*Zhist[b])
     Zlist = np.append(Zlist, Zbin)
-
+    
+    Mbin = np.random.uniform(Mbin_edges[b], Mbin_edges[b+1], Nmult*Mhist[b])
+    Mlist = np.append(Mlist, Mbin)
 
 ## Create the random catalogues
 
@@ -104,11 +120,12 @@ for r in range(Nrandoms):
     
     # Select redshifts for the catalogue
     Zcat = np.random.choice(Zlist, Ngals, replace=False)
+    Mcat = np.random.choice(Mlist, Ngals, replace=False)
     
     # Write everything to a catalogue
-    outputnames = np.array(['ID', 'RA', 'DEC', 'Z'])
+    outputnames = np.array(['ID', 'RA', 'DEC', 'Z', 'logmbar'])
     formats = np.array(['D']*len(outputnames))
-    output = np.array([IDcat, RAcat, DECcat, Zcat])
+    output = np.array([IDcat, RAcat, DECcat, Zcat, Mcat])
 
     filename = '%s/Randoms/randoms-MJ_%s-Z_%i'%(path_lenscat, cat, r)
     utils.write_catalog('%s.fits'%filename, outputnames, formats, output)

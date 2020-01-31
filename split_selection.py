@@ -27,7 +27,7 @@ G = const.G.to('pc3/Msun s2')
 c = const.c.to('pc/s')
 inf = np.inf
    
-h, O_matter, O_lambda = [0.7, 0.325, 0.685]
+h, O_matter, O_lambda = [0.7, 0.2793, 0.7207]
 cosmo = LambdaCDM(H0=h*100, Om0=O_matter, Ode0=O_lambda)
 
 ## Configuration
@@ -42,10 +42,11 @@ utils.import_lenscat(cat, h, cosmo)
 # Lens selection
 isocatname = '%s_isolated_galaxies_perc_h70.fits'%cat
 masscatname = 'baryonic_mass_catalog_%s.fits'%cat
+structcatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
 
 # Binning parameter
-binname = 'logmstar_GL'
-bincatname = masscatname
+binname = 'mu0_2dphot' #'logmstar_GL'
+bincatname = structcatname # masscatname
 Nbins = 4
 
 if 'gama' in cat:
@@ -54,20 +55,17 @@ if 'gama' in cat:
     lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
 if 'kids' in cat:
-    paramnames = np.array(['zANNz2ugri', 'logmstar_GL', 'dist0p1perc'])
-    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf] ])
-    lenscatnames = np.array([lenscatname, masscatname, isocatname])
-
+    paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'mu0_2dphot'])
+    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [13.,20.] ])
+    lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])
 
 # Path to shear catalog
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Mar19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
 path_catalog = 'catalogs/results_shearcatalog'
-path_cosmo = 'shearcatalog_ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc'
+path_cosmo = 'shearcatalog_ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc'
 path_filename = 'shearcatalog'
 
 shearcatname = '%s/%s/%s/%s.fits'%(path_sheardata, path_catalog, path_cosmo, path_filename)
-
-
 
 ## Pipeline
 

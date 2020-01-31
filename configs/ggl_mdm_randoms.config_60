@@ -1,0 +1,54 @@
+### General settings ###
+
+# Source and lens catalogues
+ KiDS_path           /data/users/brouwer/SourceCatalogues/KiDS1000/       # Path to folder that contains the KiDS catalogs (optional - supersedes KiDS_version).
+ KiDS_version        3
+
+ specz_file           /data/users/brouwer/SourceCatalogues/IMSIM_Gall30th_2016-01-14_deepspecz_photoz_1000_4_specweight.cat
+ m_corr_file         /data/users/brouwer/SourceCatalogues/m_corr_kids_450.txt # NEW! This entry is required. It is a file with m-bias corrections in thin redhshift slices. See the same file in the demo folder for structure.
+ kids_columns        SeqNr,ALPHA_J2000,DELTA_J2000,Z_B,model_SNratio,MASK,THELI_NAME,weight,m_cor,e1,e2
+
+ GAMA_path           /data/users/brouwer/LensCatalogues/Randoms/randoms-MJ_kids-Z_59.fits         # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog).
+ lens_columns        ID,RA,DEC,Z
+
+
+# cosmology
+Om                  0.2793                                       # Omega matter.
+Ol                  0.7207                                       # Omega Lambda.
+Ok                  0                                           # Omega curvature. (Not yet working, please use: 0)
+h                   0.7                                         # Reduced Hubble constant. (h = H0/(100 km/s/Mpc))
+
+
+### ESD Production ###
+
+# Algorithm
+ ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jan20            # Path to ESD output folder.
+ ESD_output_filename    random_59                 # This flag will be appended to the filenames (optional).
+
+#ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
+ ESD_purpose            shearcovariance
+#ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
+
+#Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
+#Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
+ Rbins                  15,1e-15,5e-12
+ Runit                  mps2
+
+ ncores                 6                                # Any number of cores your machine can use to run the code.
+ com                sigmaz_0.018
+
+# Lens selection
+lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
+
+#lens_weights       None
+ lens_weights       logmbar        /data/users/brouwer/LensCatalogues/Randoms/randoms-MJ_kids-Z_59.fits       # Weight name and path to fits file
+
+ lens_binning       None
+
+ lens_limits1       Z             self               0.,0.5
+
+# Source selection
+ src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or
+#src_limits2                                          #     two comma separated limits between -inf and inf.
+
+kids_blinds           A

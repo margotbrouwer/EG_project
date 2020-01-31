@@ -205,7 +205,7 @@ To apply the aforementioned redshift limit, and more importantly to use the GL-K
 
 In order to measure the expected baryonic acceleration $g\un{bar}$, we compute stellar masses $M\un{*,ANN}$ based on these ANNz2 redshifts and the 9-band GAaP photometry. This is achieved using the \textsc{LePhare} algorithm \cite[]{arnouts1999, ilbert2006} to perform SPS model fits on the stellar component of the galaxy SED. The used SPS model is \cite{bruzual2003}, with the IMF from \cite{chabrier2003} (equal to those used for the GAMA stellar masses). LePhare provides both the best-fit $M_*$ value `MASS\_BEST' of the galaxy template PDF, and the $68\%$ confidence level upper and lower limits. Because the GAaP photometry only measures the galaxy magnitude within a specific aperture size, this stellar mass is corrected using a `fluxscale' parameter, such that: $M_*$ = M\_BEST + (MAG\_GAAP\_r - MAG\_AUTO\_CALIB) / 2.5.
 
-When comparing $M\un{*,ANN}$ with the GAMA stellar masses $M\un{*,G}$ of matched galaxies we find that its distribution is very similar, with a standard deviation of $0.25$ dex. Nevertheless there exists a systematic of-sett of $\log(M\un{*,ANN}) - \log(M\un{*,G}) = -0.11$ dex, which is caused by the different stellar mass estimation methods used on the two surveys. In general, it has been found impossible to constrain stellar masses within a systematic uncertainty of $\Delta M_* \sim 0.2$ dex  when applying different methods, even when the same SPS, IMF and data are used \cite[]{taylor2011,wright2017}. We therefore normalize the $M\un{*,ANN}$ values of our GL-KiDS sample to the mean $M\un{*,G}$ of GAMA, while indicating throughout our results the range of possible bias due to a $\Delta M_*=0.2$ dex systematic shift in $M_*$. We estimate the effect of this bias by computing the RAR with $\log(M_*)\pm\Delta M_*$ as upper/lower limits.
+When comparing $M\un{*,ANN}$ with the GAMA stellar masses $M\un{*,G}$ of matched galaxies we find that its distribution is very similar, with a standard deviation of $0.21$ dex. Nevertheless there exists a systematic of-sett of $\log(M\un{*,ANN}) - \log(M\un{*,G}) = -0.06$ dex, which is caused by the different stellar mass estimation methods used on the two surveys. In general, it has been found impossible to constrain stellar masses within a systematic uncertainty of $\Delta M_* \sim 0.2$ dex  when applying different methods, even when the same SPS, IMF and data are used \cite[]{taylor2011,wright2017}. We therefore normalize the $M\un{*,ANN}$ values of our GL-KiDS sample to the mean $M\un{*,G}$ of GAMA, while indicating throughout our results the range of possible bias due to a $\Delta M_*=0.2$ dex systematic shift in $M_*$. We estimate the effect of this bias by computing the RAR with $\log(M_*)\pm\Delta M_*$ as upper/lower limits.
 
 
 \subsection{MICE mock galaxies}
@@ -298,7 +298,7 @@ Applying this magnitude cut provides us with an isolated lens sample that is rel
 
 Nevertheless, we use the MICE simulations to perform one additional test. We select the isolated sample of GL-MICE lenses using a sample of galaxies that extends to $m\un{r}<22.5 \magn$, such that all satellites with $f\un{L}>0.1$ can be observed. This paints a similar picture as the bright KiDS sample, i.e.: although the much smaller sample of isolated galaxies selected using the faint satellites greatly increases the scatter, we find no consistent decrease in the lensing signal at $>1\hMpc$ scales compared to the original sample of isolated GL-MICE galaxies. These tests demonstrate the overall robustness of our isolation criterion. In addition, we note that this issue is only relevant when comparing our observations to the theoretical models (EG, MOND and N17). When comparing to the N-body simulations (BAHAMAS and MICE), applying the same isolation criterion to both data and mocks ensures that any issues with the isolated galaxy selection are mimicked.
 
-The major difference between the isolated galaxy selection of the GAMA and mock galaxies compared to GL-KiDS, is that for GAMA and the mocks the true redshift values are known, whereas the ANNz photometric redshifts of GL-KiDS are only known within a certain standard deviation $\sigma\un{z}$ (see Sect. \ref{sec:gamalike_kids}). This affects the observed spherical distances $r$ between the galaxies, a key ingredient of the isolation criterion. The redshift uncertainty also affects the GL-KiDS stellar mass estimates, which influences both the isolation criterion (through $f\un{M_*}$) and the application of the stellar mass limit: $\log(M_*) < 11 \hmsun$. We assess the effect of these uncertainties on the isolated galaxy selection by adding a normally distributed random offset with $\sigma\un{z}/(1+z) = 0.018$ to the MICE redshifts, and $\sigma\un{M_*} = 0.21$ dex to its stellar masses. We find that the effect of the mass uncertainty is negligible, but that of redshift uncertainty is significant. Because the random redshift offset decreases the galaxy clustering, it increases the number of galaxies selected by the isolation criterion, adding galaxies which are not truly isolated to the lens sample (as well as excluding some truly isolated galaxies). As a result, only $23\%$ our isolated sample selected using the `offset' MICE data is truly isolated. The ESD profile of the `offset' isolated MICE sample is shown in Fig. \ref{fig:isolation_test_offset}, compared to the ESD profiles of all MICE galaxies (without any isolation criterion) and the truly isolated MICE sample. At scales $R > 0.3 \hMpc$ the ESD of the isolated sample selected using the `offset' MICE data is $\sim 30\%$ higher than that of the truly isolated MICE galaxies. When comparing our GL-KiDS lensing measurements to the MICE simulation, this effect can easily be taken into account by mimicking the redshift offset in the simulation. However, for our comparison with the analytical models (MOND, EG) and the BAHAMAS simulation, this process is much more difficult. We conclude that we can only use the ESD profile of isolated GL-KiDS lenses within $R < 0.5 \hMpc$. For the mean stellar mass of the isolated GL-KiDS sample ($\log(M_*) = 10.67 \hmsun$) this corresponds to a baryonic acceleration of $g\un{bar}>0.73\E{-13}$. For each RAR measurement resulting from isolated GL-KiDS lenses we will indicate the range in $g\un{bar}$ where the measurement is reliable, based on the mean $M_*$ of the lenses. For the region extending this limit, we use the lensing results from the spectroscopic GAMA survey.
+The major difference between the isolated galaxy selection of the GAMA and mock galaxies compared to GL-KiDS, is that for GAMA and the mocks the true redshift values are known, whereas the ANNz photometric redshifts of GL-KiDS are only known within a certain standard deviation $\sigma\un{z}$ (see Sect. \ref{sec:gamalike_kids}). This affects the observed spherical distances $r$ between the galaxies, a key ingredient of the isolation criterion. The redshift uncertainty also affects the GL-KiDS stellar mass estimates, which influences both the isolation criterion (through $f\un{M_*}$) and the application of the stellar mass limit: $\log(M_*) < 11 \hmsun$. We assess the effect of these uncertainties on the isolated galaxy selection by adding a normally distributed random offset with $\sigma\un{z}/(1+z) = 0.018$ to the MICE redshifts, and $\sigma\un{M_*} = 0.21$ dex to its stellar masses. We find that the effect of the mass uncertainty is negligible, but that of redshift uncertainty is significant. Because the random redshift offset decreases the galaxy clustering, it increases the number of galaxies selected by the isolation criterion, adding galaxies which are not truly isolated to the lens sample (as well as excluding some truly isolated galaxies). As a result, only $23\%$ our isolated sample selected using the `offset' MICE data is truly isolated. The ESD profile of the `offset' isolated MICE sample is shown in Fig. \ref{fig:isolation_test_offset}, compared to the ESD profiles of all MICE galaxies (without any isolation criterion) and the truly isolated MICE sample. At scales $R > 0.3 \hMpc$ the ESD of the isolated sample selected using the `offset' MICE data is $\sim 30\%$ higher than that of the truly isolated MICE galaxies. When comparing our GL-KiDS lensing measurements to the MICE simulation, this effect can easily be taken into account by mimicking the redshift offset in the simulation. However, for our comparison with the analytical models (MOND, EG) and the BAHAMAS simulation, this process is much more difficult. We conclude that we can only use the ESD profile of isolated GL-KiDS lenses within $R < 0.5 \hMpc$. For the mean stellar mass of the isolated GL-KiDS sample ($\log(M_*) = 10.67 \hmsun$) this corresponds to a baryonic acceleration of $g\un{bar}>0.73\E{-13}$. For each RAR measurement resulting from isolated GL-KiDS lenses we will indicate the range in $g\un{bar}$ where the measurement is reliable, based on the mean $M_*$ of the lenses. For the accelerations exceeding this limit, we use the lensing results from the spectroscopic GAMA survey.
 % We also find that, beyond this radius, the total stellar mass of satellites exceeds that of the lens.
 
 \begin{figure}
@@ -472,42 +472,61 @@ To help guide an intuitive interpretation of the lensing RAR within the framewor
 
 \section{Results}
 \label{sec:results}
-Write when the results are ready.
 
-\subsection{Isolated galaxies}
+We apply the isolation criterion to the lens galaxy samples (\mbox{$r\un{sat}(f\un{M_*}>0.1)>3\hMpc$}, see Sect. \ref{sec:isolation}), measure their ESD profiles (Sect. \ref{sec:lensing}) and convert these into the RAR (Sect. \ref{sec:conversion}). The same procedure is applied to the mock lens samples from MICE and BAHAMAS in order to obtain the prediction from $\lcdm$ simulations, while the predictions from MOND, EG and the N17 CDM model are calculated analytically based on the average baryonic mass of each galaxy sample. In this section we show the results of the lensing RAR measurements, and compare these to the respective predictions. As a reference, we always show the M16 RAR measurement from galaxy rotation curves.
 
-Plot: GAMA + MICE + BAHAMAS \\
-Plot: KiDS + MICE + BAHAMAS
+\subsection{Comparison to analytical models}
 
-\subsection{Galaxies in 4 stellar mass bins}
+We first compare our results to the analytical predictions: the modified gravity models MOND and EG (Sect. \ref{sec:analytical} and \ref{sec:MOND}), and the N17 analytical CDM model (Sect. \ref{sec:EG}). In Fig. \ref{fig:RAR_kids_gama_iso} we show the lensing RAR measured using the GAMA and GL-KiDS isolated lens samples, compared to the two modified gravity models. Due to its smaller survey area ($180$ vs. $1006 \deg^2$), the error bars using GAMA lenses are $\sim\sqrt{5}$ larger than those using GL-KiDS lenses. However, as explained in Sect. \ref{sec:isolation}, the spectroscopic redshifts of the GAMA survey allow for a much more reliable selection of the isolated lenses compared to KiDS, which measures photometric redshifts with a $\sigma\un{z}=0.018$ uncertainty. The effect of this uncertainty on the measured lensing profiles is modelled in Fig. \ref{fig:isolation_test_offset}, which shows that the ESD profile of the `offset' MICE sample diverges from the truly isolated MICE galaxies at radius $R > 0.3 \hMpc$. We translate this radius into a gravitational acceleration value using Eq. \ref{eq:grav}, based on the average $M\un{bar}$ of the galaxy sample. For the isolated GL-KiDS galaxies, this estimate shows that the isolation criterion is reliable within $g\un{bar} \gtrapprox 10^{-13}$, shown by the dotted vertical line. The grey band shows the range of possible bias due to a $\Delta M_*=0.2$ dex systematic shift in the stellar mass of all lens galaxies. We only show this band once, for the GL-KiDS result, but note that this bias equally effects both the GAMA and GL-KiDS galaxies. 
 
-Plot: KiDS + MICE
+%Within these large uncertainties, all predictions perform reasonably well at the low acceleration scales ($g\un{bar}<10^{-12}$) measured by large-scale weak lensing. At the higher acceleration scales ($g\un{bar}>10^{-12}$), there appears a large discrepancy between the BAHAMAS prediction and the measurements, both by galaxy rotation curves (M16) and small-scale lensing. This is likely caused by the general mismatch found between 
 
-\subsection{Isolated galaxies in 4 stellar mass bins}
-
-Plot: KiDS + MICE + BAHAMAS
-
-\begin{figure}
-	\includegraphics[width=1.0\columnwidth]{Figures/RAR_KiDS+MICE+Bahamas_No_Nobins_isolated.pdf}
-	\caption{TBW}
-	%\label{fig:}
-\end{figure}
-
-\subsection{Stellar mass bins}
+Plot: GAMA + KiDS + EG (isolated) \\
+Plot: KiDS + EG (isolated, 4 stellar mass bins)
 
 \begin{figure*}
-	\includegraphics[width=1.0\textwidth]{Figures/RAR_GAMA+MICE+Bahamas_Nobins_isolated_zoomout.pdf}
+	\includegraphics[width=0.8\textwidth]{Figures/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout.pdf}
 	\caption{TBW}
-	%\label{fig:}
+	\label{fig:RAR_kids_gama_iso}
 \end{figure*}
+
+\subsection{Comparison to $\lcdm$ simulations}
+
+The same procedure is applied to the mock lens samples from the MICE and BAHAMAS in order to obtain the prediction from $\lcdm$ simulations (Sect. \ref{sec:mice_mocks} and \ref{sec:bahamas_mocks}).
+
+Plot: KiDS + BAHAMAS + MICE (isolated)
+Plot: KiDS + MICE (4 mass bins)
+Plot: KiDS + MICE (isolated, 4 mass bins)
 
 \begin{comment}
+Stellar to halo mass relation: 
+
+On the mass mismatch between simulations and weak-lensing
+measurements
+https://arxiv.org/abs/1906.00975
+
+Lensing is Low: Cosmology, Galaxy Formation, or New Physics?
+https://arxiv.org/abs/1611.08606
+
+Galaxy-Galaxy Lensing in EAGLE: comparison with data from 180 square degrees of the KiDS and GAMA surveys
+https://arxiv.org/pdf/1612.04825.pdf
+\end{comment}
+
+
+\begin{comment}
+\begin{figure*}
+	\includegraphics[width=0.8\textwidth]{Figures/RAR_KiDS+MICE+Bahamas_No_Nobins_isolated.pdf}
+	\caption{TBW}
+	\label{fig:RAR_kids_iso}
+\end{figure*}
+
 
 \begin{figure*}
-	\includegraphics[width=1.0\textwidth]{Figures/RAR_GAMA+MICE_4-massbins_isolated_strong.pdf}
+	\includegraphics[width=1.0\textwidth]{Figures/RAR_KiDS+MICE+Bahamas_4-massbins_isolated.pdf}
 	\caption{TBW}
-	%\label{fig:}
+	\label{fig:}
 \end{figure*}
+
 
 \begin{figure*}
 	\includegraphics[width=1.0\textwidth]{Figures/RAR_KiDS+MICE_massbins-8p5_10p5_10p8_11p1_12p0_transverse.pdf}

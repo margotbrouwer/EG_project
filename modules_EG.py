@@ -444,7 +444,7 @@ def read_esdfiles(esdfiles):
         errorl = (data[3])/bias # covariance error
         errorh[errorh==-999] = np.nan
         errorl[errorl==-999] = np.nan
-
+        
         Rsrc = np.ones(len(bias))
         Nsrc = data[8]
         
@@ -463,32 +463,44 @@ def read_esdfiles(esdfiles):
 
 # Printing stacked ESD profile to a text file
 def write_stack(filename, Rcenters, Runit, ESDt_tot, ESDx_tot, \
-    error_tot, bias, h, Nsrc):
-
-    if 'pc' in Runit:
-        filehead = '# Radius(%s)    ESD_t(h%g*M_sun/pc^2)    ESD_x(h%g*M_sun/pc^2)    error(h%g*M_sun/pc^2)^2    bias(1+K)    Nsources'\
-            %(Runit, h*100, h*100, h*100)
+    error_tot, bias_tot, wk2_tot, w2k2_tot, Nsrc, variance, h):
+    
+    if ('pc' in Runit) or ('mps2' in Runit):
+        filehead = '# Radius({0})	ESD_t(h{1:g}*M_sun/pc^2)' \
+                   '   ESD_x(h{1:g}*M_sun/pc^2)' \
+                   '    error(h{1:g}*M_sun/pc^2)^2	bias(1+K)' \
+                   '    variance(e_s)     wk2     w2k2' \
+                   '     Nsources'.format(Runit, h*100)
     else:
-        filehead = '# Radius(%s)    gamma_t    gamma_x    error    bias(1+K)    Nsources'%(Runit)
-
-    index = np.where(np.logical_not((0 <= error_tot) & (error_tot < np.inf)))
+        filehead = '# Radius({0})    gamma_t    gamma_x    error' \
+                   '    bias(1+K)    variance(e_s)    wk2    w2k2' \
+                   '    Nsources'.format(Runit)
+    
+    index = np.where(np.logical_not((0.0 < error_tot) & (error_tot < inf)))
     ESDt_tot.setflags(write=True)
     ESDx_tot.setflags(write=True)
     error_tot.setflags(write=True)
-    bias.setflags(write=True)
+    bias_tot.setflags(write=True)
+    wk2_tot.setflags(write=True)
+    w2k2_tot.setflags(write=True)
     Nsrc.setflags(write=True)
     
     ESDt_tot[index] = int(-999)
     ESDx_tot[index] = int(-999)
     error_tot[index] = int(-999)
-    bias[index] = int(-999)
+    bias_tot[index] = int(-999)
+    wk2_tot[index] = int(-999)
+    w2k2_tot[index] = int(-999)
     Nsrc[index] = int(-999)
 
-    data_out = np.vstack((Rcenters.T, ESDt_tot.T, ESDx_tot.T, error_tot.T, bias.T, Nsrc.T)).T
+    data_out = np.vstack((Rcenters.T, ESDt_tot.T, ESDx_tot.T, error_tot.T, \
+                          bias_tot.T, variance*np.ones(bias_tot.shape).T, \
+                          wk2_tot.T, w2k2_tot.T, Nsrc.T)).T
+    
     np.savetxt(filename, data_out, delimiter='\t', header=filehead)
-
+    
     print('Written: ESD profile data:', filename)
-
+    
     return
 
 def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output, Runit, Rlog, plot, h):
@@ -562,7 +574,7 @@ def calc_chi2(data, model, covariance, nbins):
     ind = np.lexsort((covariance[3,:], covariance[1,:], covariance[2,:], covariance[0,:]))
     covariance = np.reshape(covariance[4][ind], [len(data)*nbins, len(data)*nbins])
     covariance = np.matrix(covariance)
-
+        
     # Calculating chi2 from the matrices
     chi2_cov = np.dot((model-data).T, np.linalg.inv(covariance))
     chi2_tot = np.dot(chi2_cov, (model-data))[0,0]
