@@ -370,7 +370,7 @@ is generally able to describe WL measurements around galaxies and clusters (refe
 	M\un{SIS}(<r) = 4 \pi \int_{0}^{r}\rho\un{SIS}(r') r'^2 {\rm d} r' = \frac{2\sigma^2 r}{G} \, .
 \end{equation}
 
-Now, for each measured value of $\Delta\Sigma\un{obs}$ at its projected radius $R$, we assume that the entire density profile is described by a SIS with $\sigma$ normalized such that $\Delta\Sigma\un{SIS}(R)$ goes through $\Delta\Sigma\un{obs}$. We also assume that the considered lens is flat, in order to approximate the spherical distance $r$ with the measured transverse distance $R$. Using these assumptions, we can combine Eq. \ref{eq:ESD_SIS} and \ref{eq:mass_SIS} to compute the observed enclosed mass distribution corresponding to that measurement:
+Now, for each measured value of $\Delta\Sigma\un{obs}$ at its projected radius $R$, we assume that the entire density profile is described by a SIS with $\sigma$ normalized such that $\Delta\Sigma\un{SIS}(R)$ goes through $\Delta\Sigma\un{obs}$. We also assume that the considered lens is flat [Kyle: why is this assumption necessary?], in order to approximate the spherical distance $r$ with the measured transverse distance $R$. Using these assumptions, we can combine Eq. \ref{eq:ESD_SIS} and \ref{eq:mass_SIS} to compute the observed enclosed mass distribution corresponding to that measurement:
 \begin{equation}
 	M\un{obs} = \frac{2 (2 G R \, \Delta\Sigma) r}{G} = 4 \Delta\Sigma \, r^2 \, .
 \end{equation}
@@ -400,13 +400,21 @@ b_n &= \log(\rho_n) - a_n\log(r_n)\\
 
 In order to invert $\Delta\Sigma_m(\rho_n)$, we take as constant the values $\{R_m\}$, $\{\Delta\Sigma_m\}_{\rm obs}$ and $\{r_n\}$. We then propose an initial guess $\{\rho_n\}$ which we perturb iteratively, calculating the corresponding $\{\Delta\Sigma_m\}$ at each iteration and comparing with $\{\Delta\Sigma_m\}_{\rm obs}$ via the likelihood function:
 \begin{align}
-\log\mathcal{L} &\propto -\frac{1}{2}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)^{\rm T}\Sigma^{-1}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)
+\log\mathcal{L} &\propto -\frac{1}{2}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)^{\rm T}C^{-1}(\Delta\Sigma_{\rm obs}-\Delta\Sigma)
 \end{align}
-Note that $\Sigma$ is the covariance matrix for the $\Delta\Sigma_{\rm obs}$, not to be confused with the surface density. We use the package {\sc emcee} \citep{foreman-mackey13} to estimate the posterior probability distribution of $\{\rho_n\}$, and subsequently of the corresponding $\{g_{{\rm obs},n}\}$ via integration of the volume density profile.
+where $C$ is the covariance matrix for the $\Delta\Sigma_{\rm obs}$. We use the package {\sc emcee} \citep{foreman-mackey13} to estimate the posterior probability distribution of $\{\rho_n\}$, and subsequently of the corresponding $\{g_{{\rm obs},n}\}$ via integration of the volume density profile.
 
 
 \subsection{Testing the RAR conversion with BAHAMAS}
 \label{sec:conversion_test}
+
+[This section just notes so far, proper write-up to follow.] The PPL method underestimates the enclosed mass within all radii, in this example. Part of the offset is due to the difference between the $\Delta\Sigma$ profile as determined from spherical shells (red line in Fig.~\ref{fig:compare_method}, left panel) and that determined from the mock convergence maps (yellow line in Fig.~\ref{fig:compare_method}, left panel). The difference is nearly constant with radius and so enters as an overall normalization constant, and the same constant appears in both the expression for the excess surface density and that for the enclosed mass: therefore the $-\sim0.05\,{\rm dex}$ offset in the $\Delta\Sigma$ accounts for $\sim0.05\,{\rm dex}$ of the offset in enclosed mass, i.e. most of the offset at large radii. The additional missing mass at small radii is because the slope inside the innermost measured radius is very difficult to constrain. In this case, the preferred power law slope for $\rho(r)$ -- which gets extrapolated to $r=0$ -- is $-1.4$. An inner slope of $-2.1$ would increase the central mass up to a deficit of $0.05\,{\rm dex}$, i.e. enough to be consistent with the offset of the outermost points. But note that the method does a good job of reflecting the difficulty in constraining the inner slope in the error estimates, which increased significantly toward the centre.
+
+The SIS method appears to do better at the innermost radius. This success is explained by the fact that the `effective power law slope' (given the correct normalization) of $\rho(r)$ inside the innermost radius is $-2.1$, as explained above -- thus assuming a slope of $-2.0$ turns out to be a pretty good approximation. The slight deficit at the innermost radius is accounted for by the slight underestimate of the slope and once again by the difference between the $\Delta\Sigma$ profile obtained from the mock convergence maps and that obtained from spherical shells. The success continues while the slope remains close to $-2$ -- until about $300\,{\rm kpc}$. Beyond this the estimate gradually increases relative to the truth, as the slope estimate is increasingly an overestimate. The visually good agreement is actually a happy coincidence, resulting from an approximate cancellation between the $\Delta\Sigma$ normalization offset and the slope overestimate.
+
+The offset between the mock convergence map-derived $\Delta\Sigma$ and the one derived from spherical shells seems to be systematic -- it persists in any BAHAMAS mock sample I choose. The magnitude of the offset seems to vary between about $-0.05\,{\rm dex}$ and $-0.10\,{\rm dex}$. I think this depends on the amount of substructure. Imagine a spherically symmetric system and its corresponding surface density map. Now remove a bit of mass from the spherical average and instead put it into a localized substructure at the same radius. The surface density of a few pixels at the location of the substructure will go up a lot, while the surface density of many pixels everywhere else at the same radius will go down a little bit. Depending on how the pixels are combined (more like a median? more like a mean?) it's plausible that the case with substructure results in a systematic underestimate of the surface density profile, and therefore the ESD profile.
+
+The poor match with the M16 result in the right panel of Fig.~\ref{fig:compare_method} is most likely due to the limited spatial resolution of BAHAMAS -- need to look into this further. Should highlight that the plot here is $g_\star$ and not $g_{\rm bar}$.
 
 \begin{figure*}
   \includegraphics[width=1.\textwidth]{Figures/compare_method}
@@ -619,7 +627,7 @@ The mean enclosed surface density is:
     \frac{\sqrt{\pi}}{2}\frac{\Gamma\left(-\frac{a+1}{2}\right)}{\Gamma\left(-\frac{a}{2}\right)}\frac{R^{a+3}}{a+3} & {\rm if}\ r=\infty
   \end{cases}
 \end{align}
-where ${}_2{\rm F}_1(\cdot,\cdot;\cdot;\cdot)$ is the Gaussian hypergeometric function and $\Gamma(\cdot)$ is the Gamma function.
+where ${}_2{\rm F}_1(\cdot,\cdot;\cdot;\cdot)$ is the Gaussian hypergeometric function and $\Gamma(\cdot)$ is the Gamma function. We assume that the power law slope in the innermost bin continues to $r=0$, and that that in the outermost bin continues to $r\rightarrow\infty$. When inverting $\Delta\Sigma(\rho)$, we impose uninformative priors on the power law slopes except those constraints required to guarantee that the total mass is finite and the calculation is numerically stable.
 
 % Don't change these lines
 \bsp	% typesetting comment
