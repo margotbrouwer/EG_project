@@ -44,6 +44,26 @@ reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
 #colors = ['#0571b0', '#92c5de', '#d7191c']*2#, '#fdae61']
 colors = ['#d7191c', '#0571b0', '#92c5de', '#fdae61']*2
 
+# Import constants
+cat = 'kids'
+
+h = 0.7
+if 'mice' in cat:
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    O_matter = 0.2793
+    O_lambda = 0.7207
+
+cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
+
+pi = np.pi
+G = const.G.to('pc3 / (M_sun s2)').value
+c = const.c.to('m/s').value
+H0 = h * 100 * (u.km/u.s)/u.Mpc
+H0 = H0.to('s-1').value
+pc_to_m = 3.08567758e16
+
 
 ## Define paths of ESD profiles
 
@@ -52,7 +72,7 @@ Runit = 'Mpc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
 
 """
 # KiDS vs. GAMA comparison
@@ -236,7 +256,6 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest'%path_sheardata
 
-"""
 
 # True vs. offset redshifts (MICE)
 
@@ -256,8 +275,6 @@ datatitles = params1
 datalabels = params2
 
 plotfilename = '%s/Plots/ESD_MICE_isotest_offset'%path_sheardata
-
-"""
 
 
 # 2D isolation test (MICE): True vs. offset redshifts 
@@ -364,22 +381,41 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 
+"""
 
-#/data/users/brouwer/Lensing_results/EG_results_Jun19/No_bins_#/zcgal_0_0p5/zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc/shearcatalog/No_bins_A.txt
+# Lensing rotation curve KiDS + GAMA
+
+vrot = True
+
+param1 = ['']
+param2 = [r'GAMA data (isolated galaxies)', 'KiDS-1000 data (isolated galaxies)']
+
+N1 = 1
+N2 = len(param2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_gama/Z_0_0p5-dist0p1perc_3_inf-logmstarGL_0_11', 'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0_0p5']]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
+
+path_mocksel =  np.array([['']*N2]*N1)
+path_mockcosmo = np.array([['']*N2]*N1)
+path_mockfilename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
+mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
+
+bahlabels = np.array(['BAHAMAS mocks (isolated galaxies)'])
+Nmocks = [1, 1]
+
+#masses_navarro = ['4.4E10'] # No mass bins (in Msun)
+
+datalabels = param2
+plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
+
+"""
 """
 
 ## Import measured ESD
-cat = 'mice'
-h = 0.7
 
-if 'mice' in cat:
-    O_matter = 0.25
-    O_lambda = 0.75
-else:
-    O_matter = 0.2793
-    O_lambda = 0.7207
-
-cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Import the Lens catalogue
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -482,6 +518,33 @@ gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subpl
 ax = fig.add_subplot(gs_full[0,0])
 
 
+if vrot:
+    
+    data_y_vrot =  np.sqrt(4 * G * data_x*1e6 * data_y) * pc_to_m
+    error_l_vrot, error_h_vrot = [ np.sqrt(4 * G * data_x*1e6) * 0.5 * (d/data_y) * pc_to_m for d in [error_l, error_h] ]
+    
+    data_lelli = np.loadtxt('Lelli_rotation_curves.txt', usecols=[2,3]).T
+    name_data = np.array(list(np.genfromtxt('Lelli_rotation_curves.txt', dtype=None, usecols=[0])))
+
+    R_lelli = data_lelli[0] / 1e3 # R in Mpc.
+    Vobs_lelli = data_lelli[1] * 1e3 # Vobs in m/s
+    
+    info_lelli = np.loadtxt('Lelli_galaxy_info.txt', usecols=[13]).T
+    name_info = np.array(list(np.genfromtxt('Lelli_galaxy_info.txt', dtype=None, usecols=[0])))
+    
+    Mstar_lelli = info_lelli * 1e9
+    name_mask = (1e10 < Mstar_lelli) & (Mstar_lelli < 1e11)
+    
+    print(name_mask)
+    print(name_info[name_mask])
+    
+    info_mask = np.in1d(name_data, name_info[name_mask])
+    
+    print(R_lelli)
+    print(Vobs_lelli)
+    
+    
+    
 for N1 in range(Nrows):
     for N2 in range(Ncolumns):
     
@@ -509,10 +572,10 @@ for N1 in range(Nrows):
             # Plot data
             if 'mice' not in cat:
                 if Nsize==Nbins:
-                    ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
+                    ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
                     color=colors[Nplot], ls='', marker='.', zorder=4)
                 else:
-                    ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
+                    ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
                     color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
             else:
                 if Nsize==Nbins:
@@ -521,6 +584,9 @@ for N1 in range(Nrows):
                 else:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
                     color=colors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=4)
+        
+            if vrot:
+                ax_sub.plot(R_lelli[info_mask], Vobs_lelli[info_mask], marker='.', ls='')
         
         if 'mice' in cat:
             ax_sub.axvline(x=micelim, ls='--', color='grey')
@@ -549,8 +615,8 @@ for N1 in range(Nrows):
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.5, y = 0.9, fontsize=16)
 
-        plt.xlim([0.03, 3])
-        plt.ylim([1e-1, 1e2])
+        plt.xlim([3e-4, 3.])
+        #plt.ylim([1e-1, 1e2])
 
         plt.xscale('log')
         plt.yscale('log')
@@ -558,6 +624,9 @@ for N1 in range(Nrows):
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
 ylabel = r'Excess Surface Density $\Delta\Sigma$ ($h_{%g} {\rm M_{\odot} / {\rm pc^2}}$)'%(h*100)
+if vrot:
+    ylabel = r'Rotational velocity $(m/s)$)'
+    
 ax.set_xlabel(xlabel, fontsize=16)
 ax.set_ylabel(ylabel, fontsize=16)
 

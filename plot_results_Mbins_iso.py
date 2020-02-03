@@ -58,7 +58,7 @@ logplot = False
 massbias = True
 miceoffset = True
 
-#Import constants
+# Import constants
 pi = np.pi
 G = const.G.to('pc3 / (M_sun s2)').value
 c = const.c.to('m/s').value
