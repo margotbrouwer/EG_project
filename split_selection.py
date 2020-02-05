@@ -56,11 +56,11 @@ if 'gama' in cat:
 
 if 'kids' in cat:
     paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'mu0_2dphot'])
-    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [13.,20.] ])
+    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [0.,23.] ])
     lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])
 
 # Path to shear catalog
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
 path_catalog = 'catalogs/results_shearcatalog'
 path_cosmo = 'shearcatalog_ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc'
 path_filename = 'shearcatalog'

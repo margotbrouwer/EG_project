@@ -564,17 +564,27 @@ def write_plot(Rcenters, gamma_t, gamma_x, gamma_error, labels, filename_output,
     plt.clf
 
 
-def calc_chi2(data, model, covariance, nbins):
+def calc_chi2(data, model, covariance, masked=[]):
+
+    Nbins = len(data)
+    Rbins = len(data[0])
     
-    # Turning the data and the model into matrices
-    data, model = [np.reshape(x, [len(data)*nbins, 1]) for x in [data, model]]
-    data, model = np.matrix(data), np.matrix(model)
+    # Reshaping the data and the model
+    data, model = [np.reshape(x, [Nbins*Rbins, 1]) for x in [data, model]]
     
     # Sorting the covariance [Rbin1, Obsbin1, Rbin2, Obsbin2] and turning it into a matrix
     ind = np.lexsort((covariance[3,:], covariance[1,:], covariance[2,:], covariance[0,:]))
-    covariance = np.reshape(covariance[4][ind], [len(data)*nbins, len(data)*nbins])
+    covariance = np.reshape(covariance[4][ind], [Nbins*Rbins, Nbins*Rbins])
+    
+    # Applying the mask to data, model and covariance matrix
+    if len(masked) > 0:
+        data, model = [np.delete(y, masked, 0) for y in [data, model]]
+        covariance = np.delete( np.delete(covariance, masked, 0) , masked, 1)
+    
+    # Turning the data, model and covariance into matrices    
+    data, model = np.matrix(data), np.matrix(model)
     covariance = np.matrix(covariance)
-        
+    
     # Calculating chi2 from the matrices
     chi2_cov = np.dot((model-data).T, np.linalg.inv(covariance))
     chi2_tot = np.dot(chi2_cov, (model-data))[0,0]

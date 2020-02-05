@@ -1,31 +1,34 @@
-Chi2 analysis results:
+Results:
 
-GAMA data (isolated galaxies)
+# KiDS + GAMA + Verlinde (isolated)
 
-RAR, MOND relation:
-    Chi-squared (Full covariance): 17.246955746760847 1.1497970497840564
-    Chi-squared (Error bars): 16.756892935478895 1.117126195698593
+Number of galaxies: [335230, 19342]
 
-Verlinde:
-    Chi-squared (Full covariance): 17.495730814506903 1.1663820543004602
-    Chi-squared (Error bars): 16.996428608760677 1.133095240584045
+mean logmstar: [10.59849387 11.19236215]
+median logmstar: [10.55490731 10.57020842]
 
-KiDS-1000 data (isolated galaxies)
-Removing data beyond the isolation limit
+mean logmbar: [10.67424372 11.21430591]
+median logmbar: [10.64211686 10.6555162 ]
 
-RAR, MOND relation:
-    Chi-squared (Full covariance): 136.42333245394013 9.094888830262676
-    Chi-squared (Error bars): 63.84270246696936 4.256180164464624 (isolim)
+Isolated KiDS signal reliability limit: [7.31495661e-14 2.53672826e-13]
 
-    Choosing min/max mass bias:
-    Chi-squared (Error bars): 239.84251493544596 15.989500995696398 (min)
-    Chi-squared (Error bars): 19.13251752124698 1.275501168083132 (max)
+Chi2 analysis:
 
-Verlinde:
-    Chi-squared (Full covariance): 148.84432101208824 9.922954734139216
-    Chi-squared (Error bars): 67.64689566236875 4.509793044157917 (isolim)
+** KiDS-1000 data (isolated galaxies) **
+dof: 15
 
-    Choosing min/max mass bias:
-    Chi-squared (Error bars): 240.49062134901854 16.03270808993457 (min)
-    Chi-squared (Error bars): 24.10314218462618 1.6068761456417453 (max)
+MOND: 9.09489 (136.423)
+Verlinde: 9.92295 (148.844)
+
+MOND (isolation mask): 4.32353 (64.8529)
+Verlinde (isolation mask): 4.58492 (68.7738)
+
+MOND (mask + mass_min): 16.0572 (240.858)
+MOND (mask + mass_max): 1.31303 (19.6954)
+
+** GAMA data (isolated galaxies) **
+dof: 15
+
+MOND: 1.1498 (17.247)
+Verlinde: 1.16638 (17.4957)
 
