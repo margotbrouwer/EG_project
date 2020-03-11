@@ -151,7 +151,7 @@ def import_lenscat(cat, h, cosmo):
     if 'kids' in cat:
         fields = ['K1000']
         #lenscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
-        lenscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_masses.fits'
+        lenscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_lenscat, lenscatname, h)
 
@@ -612,8 +612,8 @@ def mean_profile(data_x, data_y, binmin, binmax, Nbins, log):
     inds = np.digitize(data_x, binedges) # Indices indicated the bin of each values
     
     # Calculating the mean (x and y) and standard deviation (y) in each x-bin
-    data_x_mean = np.array([np.mean(data_x[inds==x]) for x in range(Nbins)])
-    data_y_mean = np.array([np.mean(data_y[inds==x]) for x in range(Nbins)])
+    data_x_mean = np.array([np.median(data_x[inds==x]) for x in range(Nbins)])
+    data_y_mean = np.array([np.median(data_y[inds==x]) for x in range(Nbins)])
     data_y_std = np.array([np.std(data_y[inds==x]) for x in range(Nbins)])
         
     return data_x_mean, data_y_mean, data_y_std

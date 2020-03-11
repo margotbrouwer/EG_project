@@ -39,10 +39,11 @@ blues = ['#332288', '#44AA99', '#117733', '#88CCEE']
 
 # Light red, Red, light pink, pink
 reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
-#colors = np.array([reds,blues])
 
-#colors = ['#0571b0', '#92c5de', '#d7191c']*2#, '#fdae61']
-colors = ['#d7191c', '#0571b0', '#92c5de', '#fdae61']*2
+blacks = ['black', '#0571b0']
+
+# Dark blue, light blue, red, orange
+colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
 # Import constants
 cat = 'kids'
@@ -72,7 +73,7 @@ Runit = 'Mpc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
 
 """
 # KiDS vs. GAMA comparison
@@ -358,6 +359,8 @@ datalabels = params2
 
 plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 
+"""
+vrot = True
 
 # Stellar mass bins (KiDS)
 
@@ -366,20 +369,27 @@ plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
-params1 = ['']#, 'dist0p1perc_3_inf-']
-params2 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
+params1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
+params2 = ['Isolated KiDS lenses (1000 deg$^2$)']
 N1 = len(params1)
 N2 = len(params2)
-Nrows = 1
+Nrows = 2
 
-path_lenssel = np.array([['logmstar_GL_%s/%szANNz2ugri_0_0p5'%(binname, p1)]*N2 for p1 in params1])
+path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0_0p5'%(binname)]*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%p2 for p2 in np.arange(N2)+1]]*N1)
+path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p1]*N2 for p1 in np.arange(N1)+1])
 
-datatitles = ['All galaxies', r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$']
+path_mocksel =  np.array([['logmstar_%s/dist0p1perc_3_inf-zcgal_0_0p5'%(binname)]*N2]*N1)
+path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_mockfilename =  np.array([['shearcatalog/shearcatalog_bin_%i_A'%p1]*N2 for p1 in np.arange(N1)+1])
+mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
+
+miceoffset = True
+
+datatitles = params1
 datalabels = params2
 
-plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
+plotfilename = '%s/Plots/ESD_KiDS_MICE_NFW_Mstarbins-%s_iso'%(path_sheardata, binname)
 
 """
 
@@ -388,7 +398,7 @@ plotfilename = '%s/Plots/ESD_Mstarbins-%s_iso'%(path_sheardata, binname)
 vrot = True
 
 param1 = ['']
-param2 = [r'GAMA data (isolated galaxies)', 'KiDS-1000 data (isolated galaxies)']
+param2 = [r'Isolated GAMA lenses (180 deg$^2$)', 'Isolated KiDS lenses (1000 deg$^2$)']
 
 N1 = 1
 N2 = len(param2)
@@ -411,7 +421,7 @@ Nmocks = [1, 1]
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
 
-"""
+
 """
 
 ## Import measured ESD
@@ -501,16 +511,76 @@ if 'mice' in cat:
     Da_mice = Da_mice.to(Runit).value
     micelim = 0.43/60. * np.pi/180. * Da_mice
     print('MICE limit:', micelim, Runit)
+
+if 'MICE' in plotfilename:
+
+    print()
+    print('Import mock signal:')
+
+    # Defining the mock profiles
+    esdfiles_mock = np.array([['%s/%s/%s/%s.txt'%\
+        (path_sheardata, path_mocksel[i,j], path_mockcosmo[i,j], path_mockfilename[i,j]) \
+        for j in np.arange(np.shape(path_lenssel)[1])] for i in np.arange(np.shape(path_lenssel)[0]) ])
+
+    Nmocks = np.shape(esdfiles_mock)
+    esdfiles_mock = np.reshape(esdfiles_mock, [Nsize])
+
+    if Nmocks[1] > 5:
+        valpha = 0.3
+    else:
+        valpha = 0.6
+
+    # Importing the mock shearprofiles
+    esdfiles_mock = np.reshape(esdfiles_mock, [Nsize])
+
+    data_x_mock, R_src_mock, data_y_mock, error_h_mock, error_l_mock, N_src_mock = utils.read_esdfiles(esdfiles_mock)
     
+    if vrot:
+        data_y_mock = np.sqrt(4 * G * data_x_mock*1e6 * data_y_mock) * pc_to_m/1e3 # Convert ESD (Msun/pc^2) to acceleration (km/s^2)
+
+    IDfiles_mock = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles_mock])
+    lensIDs_selected_mock = np.array([np.loadtxt(m) for m in IDfiles_mock])
+
+    if miceoffset and ('KiDS' in plotfilename):
+        esdfiles_mock_offset = [f.replace('perc', 'percoffsetZM') for f in esdfiles_mock]
+        if 'No_bins' in esdfiles_mock[0]:
+            esdfiles_mock_offset = [f.replace('logmstar', 'logmstaroffsetZM') for f in esdfiles_mock_offset]        
+        else:        
+            esdfiles_mock_offset = [f.replace('logmstar', 'logmstar_offsetZM') for f in esdfiles_mock_offset]
+        foo, foo, data_y_mock_offset, foo, foo, foo = utils.read_esdfiles(esdfiles_mock_offset)
+        
+        if vrot:
+            data_y_mock_offset = np.sqrt(4 * G * data_x_mock*1e6 * data_y_mock_offset) * pc_to_m/1e3 # Convert ESD (Msun/pc^2) to acceleration (km/s^2)
+
+    # Import mock lens catalog
+    fields, path_mockcat, mockcatname, lensID_mock, lensRA_mock, lensDEC_mock, \
+        lensZ_mock, lensDc_mock, rmag_mock, rmag_abs_mock, logmstar_mock =\
+        utils.import_lenscat('mice', h, cosmo)
+    lensDc_mock = lensDc_mock.to('pc').value
+    lensDa_mock = lensDc_mock/(1.+lensZ_mock)
+
+    Rmin = np.zeros(len(esdfiles_mock))
+    for m in range(len(esdfiles_mock)):
+        IDmask = np.in1d(lensID_mock, lensIDs_selected_mock[m])
+        Da_max = np.amax(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
+        #mstar_mean_mock = np.mean(10.**logmstar_mock[IDmask*np.isfinite(logmstar_mock)])
+        pixelsize = 2. * 0.43 / 60. * pi/180. # arcmin to radian
+        Rmin[m] = pixelsize * Da_max / 1e6 # Minimum R due to MICE resolution (in Mpc)
+    print('Rmin:', Rmin)
+
+else:
+    print('No mock signal imported!')
+    pass
+
 ## Create the plot
 
 Ncolumns = int(Nbins[0]/Nrows)
 
 # Plotting the ueber matrix
 if Nbins[0] > 1:
-    fig = plt.figure(figsize=(Ncolumns*5.,Nrows*4))
+    fig = plt.figure(figsize=(Ncolumns*6.,Nrows*4))
 else:
-    fig = plt.figure(figsize=(7,5))
+    fig = plt.figure(figsize=(10.,5.))
 
 gs_full = gridspec.GridSpec(1,1)
 gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subplot_spec=gs_full[0,0])
@@ -520,37 +590,53 @@ ax = fig.add_subplot(gs_full[0,0])
 
 if vrot:
     
-    data_y_vrot =  np.sqrt(4 * G * data_x*1e6 * data_y) * pc_to_m
-    error_l_vrot, error_h_vrot = [ np.sqrt(4 * G * data_x*1e6) * 0.5 * (d/data_y) * pc_to_m for d in [error_l, error_h] ]
+    ## Convert the ESD into the rotation velocity
+    data_y_vrot = np.sqrt(4 * G * data_x*1e6 * data_y) * pc_to_m/1e3
+    error_l_vrot, error_h_vrot = [ data_y_vrot * 0.5 * (d / data_y) for d in [error_l, error_h] ]
+    
+    ## Import Lelli's rotation curve data
     
     data_lelli = np.loadtxt('Lelli_rotation_curves.txt', usecols=[2,3]).T
     name_data = np.array(list(np.genfromtxt('Lelli_rotation_curves.txt', dtype=None, usecols=[0])))
 
     R_lelli = data_lelli[0] / 1e3 # R in Mpc.
-    Vobs_lelli = data_lelli[1] * 1e3 # Vobs in m/s
+    Vobs_lelli = data_lelli[1] # Vobs in km/s
     
-    info_lelli = np.loadtxt('Lelli_galaxy_info.txt', usecols=[13]).T
+    info_lelli = np.loadtxt('Lelli_galaxy_info.txt', usecols=[7]).T
     name_info = np.array(list(np.genfromtxt('Lelli_galaxy_info.txt', dtype=None, usecols=[0])))
     
-    Mstar_lelli = info_lelli * 1e9
-    name_mask = (1e10 < Mstar_lelli) & (Mstar_lelli < 1e11)
+    Mstar_lelli = info_lelli * 1e9 * 0.5
+   
     
-    print(name_mask)
-    print(name_info[name_mask])
+    ## NWF rotation curves
     
-    info_mask = np.in1d(name_data, name_info[name_mask])
+    C200 = 12.
+    M200 = 1e12 # Msun
     
-    print(R_lelli)
-    print(Vobs_lelli)
+    R = np.logspace(1, 7, 40) # in pc
+    Rs = (1 / C200) * ((G * M200) / (100 * H0**2.))**(1./3.)
+
+    x = R / Rs
     
+    print('Rs', Rs)
+    print('x', x)
     
+    M_NFW = ( M200 / (np.log(1+C200) - C200 / (1+C200) )) * ( np.log(1+x) - x/(1+x) )
+    Vrot_NFW = np.sqrt( (G * M_NFW) / R ) * pc_to_m / 1e3
     
-for N1 in range(Nrows):
-    for N2 in range(Ncolumns):
+    #V200 = np.exp( (1./3.)*(np.log(M200) + np.log(10.*G*H0)) )
     
-        ax_sub = fig.add_subplot(gs[N1, N2])
+    #Vrot_NFW = V200 * np.sqrt( (C200 / x) * \
+    #    (( np.log(1+x) - x/(1+x) ) / (np.log(1+C200) - C200 / (1+C200) )) ) * pc_to_m
+    
+    print(Vrot_NFW)
+    
+for NR in range(Nrows):
+    for NC in range(Ncolumns):
+    
+        ax_sub = fig.add_subplot(gs[NR, NC])
         
-        N = np.int(N1*Ncolumns + N2)
+        N = np.int(NR*Ncolumns + NC)
 
         for Nplot in range(Nbins[1]):
             
@@ -573,20 +659,49 @@ for N1 in range(Nrows):
             if 'mice' not in cat:
                 if Nsize==Nbins:
                     ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
-                    color=colors[Nplot], ls='', marker='.', zorder=4)
+                    color=colors[Nplot], ls='', marker='.', zorder=8)
                 else:
                     ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
-                    color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=4)
+                    color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
             else:
                 if Nsize==Nbins:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=colors[Nplot], ls='-', marker='.', zorder=4)
+                    color=colors[Nplot], ls='-', marker='.', zorder=8)
                 else:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=colors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=4)
+                    color=colors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
         
-            if vrot:
-                ax_sub.plot(R_lelli[info_mask], Vobs_lelli[info_mask], marker='.', ls='')
+            if 'MICE' in plotfilename:
+                
+                Rmin_mask = data_x_mock[Ndata]>Rmin[Ndata]
+                
+                if miceoffset and ('KiDS' in plotfilename) and ('iso' in plotfilename):
+                    ax_sub.fill_between((data_x_mock[Ndata])[Rmin_mask], (data_y_mock[Ndata])[Rmin_mask], \
+                        (data_y_mock_offset[Ndata])[Rmin_mask], color=colors[2], label=mocklabels[Nplot], alpha=valpha, zorder=6)
+                else:
+                    ax_sub.plot((data_x_mock[Ndata])[Rmin_mask], (data_y_mock[Ndata])[Rmin_mask], \
+                        color=colors[2], ls='-', marker='.', label=mocklabels[Nplot], zorder=6)
+                
+                #ax_sub.axvline(x = Rmin[Ndata], color=colors[2], ls=':', label='MICE resolution limit')
+                
+        if vrot:
+            
+            name_mask = (10.**massbins[Ndata] < Mstar_lelli) & (Mstar_lelli < 10.**massbins[Ndata+1])
+            info_mask = np.in1d(name_data, name_info[name_mask])
+                        
+            data_lelli_x_mean, data_lelli_y_mean, data_lelli_y_std = \
+                utils.mean_profile(R_lelli[info_mask], Vobs_lelli[info_mask], 3e-3, 6e-2, 11, True)
+            
+            ax_sub.plot(data_lelli_x_mean, data_lelli_y_mean, \
+                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', label='SPARC rotation curves, median (Lelli+2016)')
+            #ax_sub.fill_between(data_lelli_x_mean, data_lelli_y_mean+0.5*data_lelli_y_std,
+            #    data_lelli_y_mean-0.5*data_lelli_y_std, alpha=0.3, color=blues[3])
+            #ax_sub.scatter(R_lelli[info_mask], Vobs_lelli[info_mask], alpha=0.05, color=blues[1])
+            ax_sub.hist2d(R_lelli[info_mask], Vobs_lelli[info_mask], \
+                bins=[np.logspace(np.log10(3e-3), np.log10(3), 40), np.linspace(0., 330., 40)], cmin=1, cmap='Blues', zorder=0)
+            
+            ax_sub.plot(R/1e6, Vrot_NFW, label=r'NFW profile ($M_{200}=%g, R_s = %.3g$ Mpc/h'%(M200, Rs/1e6))
+        
         
         if 'mice' in cat:
             ax_sub.axvline(x=micelim, ls='--', color='grey')
@@ -598,14 +713,16 @@ for N1 in range(Nrows):
 
         ax.tick_params(labelleft='off', labelbottom='off', top='off', bottom='off', left='off', right='off')
 
-        if (N1+1) != Nrows:
+        if (NR+1) == Nrows:
+            ax_sub.tick_params(labelsize='14')
+        else:
             ax_sub.tick_params(axis='x', labelbottom='off')
-        else:
+
+        if NC == 0:
             ax_sub.tick_params(labelsize='14')
-        if N2 != 0:
+        else:
             ax_sub.tick_params(axis='y', labelleft='off')
-        else:
-            ax_sub.tick_params(labelsize='14')
+
         
         #plt.autoscale(enable=False, axis='both', tight=None)
         
@@ -615,22 +732,22 @@ for N1 in range(Nrows):
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.5, y = 0.9, fontsize=16)
 
-        plt.xlim([3e-4, 3.])
-        #plt.ylim([1e-1, 1e2])
+        plt.xlim([3e-3, 3.])
+        plt.ylim([0., 330.])
 
         plt.xscale('log')
-        plt.yscale('log')
+        #plt.yscale('log')
         
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
 ylabel = r'Excess Surface Density $\Delta\Sigma$ ($h_{%g} {\rm M_{\odot} / {\rm pc^2}}$)'%(h*100)
 if vrot:
-    ylabel = r'Rotational velocity $(m/s)$)'
+    ylabel = r'Rotational velocity [$h_{%g} \, {\rm km/s}$])'%(h*100)
     
 ax.set_xlabel(xlabel, fontsize=16)
 ax.set_ylabel(ylabel, fontsize=16)
 
-handles, labels = ax_sub.get_legend_handles_labels()
+#handles, labels = ax_sub.get_legend_handles_labels()
 
 # Plot the legend
 #plt.legend()
@@ -649,7 +766,7 @@ else:
 plt.tight_layout()
 
 # Save plot
-for ext in ['pdf', 'png']:
+for ext in ['pdf']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     

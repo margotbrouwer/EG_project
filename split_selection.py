@@ -45,9 +45,9 @@ masscatname = 'baryonic_mass_catalog_%s.fits'%cat
 structcatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
 
 # Binning parameter
-binname = 'mu0_2dphot' #'logmstar_GL'
-bincatname = structcatname # masscatname
-Nbins = 4
+binname = 'logmstar_GL' #'logmstar_GL'
+bincatname = masscatname # masscatname
+Nbins = 2
 
 if 'gama' in cat:
     paramnames = np.array(['logmstar', 'nQ', 'dist0p1perc'])
@@ -55,9 +55,9 @@ if 'gama' in cat:
     lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
 if 'kids' in cat:
-    paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'mu0_2dphot'])
-    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [0.,23.] ])
-    lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])
+    paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'n_2dphot'])#, 'mu0_2dphot'])
+    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [2.,inf] ])#, [10.,inf] ])
+    lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])#, structcatname])
 
 # Path to shear catalog
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
