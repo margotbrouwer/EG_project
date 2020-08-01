@@ -20,9 +20,9 @@ cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 ## Configuration
 
 # Data selection
-cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice)
+#cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice)
 #cat = 'gama-offsetZ'
-#cat = 'kids'
+cat = 'mice'
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -33,7 +33,7 @@ print('Lens catalogue:', lenscatname)
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
     
-    Sigma_Z = 0.018*(1+lensZ)
+    Sigma_Z = 0.021*(1+lensZ)
     Sigma_M = [0.21]*len(logmstar)
     
     if 'Z' in cat:
@@ -43,7 +43,7 @@ if 'offset' in cat:
         print(dZlist)
 
     if 'M' in cat:
-        dMlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_M))
+        dMlist = np.random.normal(loc=0., scale=Sigma_M, size=len(Sigma_M))
         logmstar = logmstar+dMlist
         print('Added offset to lens masses')
         print(dMlist)

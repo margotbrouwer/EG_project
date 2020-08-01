@@ -151,7 +151,8 @@ def import_lenscat(cat, h, cosmo):
     if 'kids' in cat:
         fields = ['K1000']
         #lenscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
-        lenscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
+        #lenscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
+        lenscatname = 'photozs.DR4.1_bright_ugri+KV_struct.fits'
         lensID, lensRA, lensDEC, lensZ, rmag, rmag_abs, logmstar =\
         import_kidscat(path_lenscat, lenscatname, h)
 
@@ -163,7 +164,7 @@ def import_lenscat(cat, h, cosmo):
         
     if 'mice' in cat:
         fields = ['M1']
-        lenscatname = 'mice2_gama_catalog_400deg2.fits'
+        lenscatname = 'mice2_gama_catalog_1000deg2.fits'
         lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, e1, e2, logmstar =\
         import_micecat(path_lenscat, lenscatname, h)
     
@@ -575,7 +576,7 @@ def calc_chi2(data, model, covariance, masked=[]):
     # Sorting the covariance [Rbin1, Obsbin1, Rbin2, Obsbin2] and turning it into a matrix
     ind = np.lexsort((covariance[3,:], covariance[1,:], covariance[2,:], covariance[0,:]))
     covariance = np.reshape(covariance[4][ind], [Nbins*Rbins, Nbins*Rbins])
-    
+
     # Applying the mask to data, model and covariance matrix
     if len(masked) > 0:
         data, model = [np.delete(y, masked, 0) for y in [data, model]]

@@ -33,8 +33,11 @@ O_lambda = 0.7207
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 #plot_path = 'Users/users/brouwer/Documents/scp_files'
-plot_path = '/data/users/brouwer/Lensing_results/EG_results_Nov19'
-plot=True
+plot_path = '/data/users/brouwer/Lensing_results/EG_results_Jul20'
+plot=False
+
+z_min = 0.1
+z_max = 0.5
 
 ## Import GAMA catalogue
 
@@ -58,8 +61,8 @@ logmstar_gama = logmstar_gama - 2.*np.log10(h/0.7)
 ## Import KiDS catalogue
 
 # Full directory & name of the corresponding KiDS catalogue
-#kidscatname = 'photozs.DR4_GAMAequ_ugri_beta_100ANNs_masses.fits'
-kidscatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_masses.fits'
+kidscatname = 'photozs.DR4.1_bright_ugri+KV_struct.fits'
+
 kidscatfile = '%s/%s'%(path_lenscat, kidscatname)
 kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
 
@@ -81,9 +84,8 @@ print(np.sum(masked_kids==0)/len(masked_kids))
 
 ## Import matched catalogue
 
-# Full directory & name of the corresponding GAMA catalogue
-#matchcatname = 'Matched_gama_kids_mass_catalogue.fits'
-matchcatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_matched.fits'
+# Full directory & name of the corresponding matched KiDS-GAMA catalogue
+matchcatname = 'photozs.DR4.1_bright_ugri+KV_matched.fits'
 matchcatfile = '%s/%s'%(path_lenscat, matchcatname)
 matchcat = pyfits.open(matchcatfile, memmap=True)[1].data
 
@@ -113,8 +115,8 @@ massmedmask = (mass_med>0.)
 massmask_matched = (8.<logmstar_kids_matched)&(logmstar_kids_matched<12.)&(masked_matched==0)& \
                 (8.<logmstar_gama_matched)&(logmstar_gama_matched<12.)&(nQ_matched>=3.)
 
-Zmask_matched = (0.0<galZ_kids_matched)&(galZ_kids_matched<0.5)&(masked_matched==0)& \
-                (0.0<galZ_gama_matched)&(galZ_gama_matched<0.5)&(nQ_matched>=3.)
+Zmask_matched = (z_min<galZ_kids_matched)&(galZ_kids_matched<z_max)&(masked_matched==0)& \
+                (z_min<galZ_gama_matched)&(galZ_gama_matched<z_max)&(nQ_matched>=3.)
 
 Zmask = (0.<galZ_kids_matched)
 
@@ -172,7 +174,7 @@ if plot:
 
     # Define the labels for the plot
     xlabel = r'GAMA-II stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
-    ylabel = r'KiDS-1000 stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
+    ylabel = r'KiDS-bright stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
 
     plt.xlabel(xlabel, fontsize=14)
     plt.ylabel(ylabel, fontsize=14)
@@ -191,16 +193,16 @@ if plot:
 
 
     ## Plot 2D redshift histogram
-    Zline = np.linspace(0, 0.5, 50)
+    Zline = np.linspace(z_min, z_max, 50)
 
     plt.hist2d(galZ_gama_matched, galZ_kids_matched, bins=100)#, cmin=1, cmap='Blues')
     plt.plot(Zline, Zline, color='black', ls='--')
-    plt.plot(Zline, Zline+0.02, color='grey', ls='--')
-    plt.plot(Zline, Zline-0.02, color='grey', ls='--')
+    plt.plot(Zline, Zline+0.027, color='grey', ls='--')
+    plt.plot(Zline, Zline-0.027, color='grey', ls='--')
 
     # Define the labels for the plot
     xlabel = r'GAMA-II spectroscopic redshift'
-    ylabel = r'KiDS-1000 ANNZ redshift'
+    ylabel = r'KiDS-bright ANNZ redshift'
 
     plt.xlabel(xlabel, fontsize=14)
     plt.ylabel(ylabel, fontsize=14)
@@ -217,15 +219,20 @@ if plot:
     plt.show()
     plt.clf
 
+
 # Calculate the differences between the GAMA and KiDS redshifts/masses
-diff_Z = (galZ_kids_matched-galZ_gama_matched)/(1.+galZ_gama_matched)
+diff_Z = (galZ_kids_matched-galZ_gama_matched)/(galZ_gama_matched)
 diff_logmstar = logmstar_kids_matched - logmstar_gama_matched
 
-print('specZ GAMA (mean):', np.mean(galZ_gama_matched))
-print('ANNZ KiDS (mean):', np.mean(galZ_kids_matched))
+Zmask_gama = (z_min<galZ_gama)&(galZ_gama<z_max)
+Zmask_kids = (z_min<galZ_kids)&(galZ_kids<z_max)
+
+print('specZ GAMA (mean):', np.mean(galZ_gama))
+print('ANNZ KiDS (mean):', np.mean(galZ_kids))
 print()
 print('Diff. Fraction Z:', np.mean(diff_Z))
-print('Stand. Dev. Z:', np.std(diff_Z))
+print('Stand. Dev. Z:', np.std(galZ_kids_matched-galZ_gama_matched))
+print( 'dz/z:', np.std(galZ_kids_matched-galZ_gama_matched) / (1.+np.mean(galZ_kids[Zmask_kids])) )
 print()
 print('Diff. Mstar:', np.mean(diff_logmstar))
 print('Stand. Dev. Mstar:', np.std(diff_logmstar))

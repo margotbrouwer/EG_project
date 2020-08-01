@@ -364,8 +364,6 @@ vrot = True
 
 # Stellar mass bins (KiDS)
 
-#massbins = [8.5,10.5,10.7,10.9,11.]
-#massbins = [9.5,10.,10.5,10.75,11.]
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
@@ -420,7 +418,6 @@ Nmocks = [1, 1]
 
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
-
 
 """
 
@@ -659,17 +656,17 @@ for NR in range(Nrows):
             if 'mice' not in cat:
                 if Nsize==Nbins:
                     ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
-                    color=colors[Nplot], ls='', marker='.', zorder=8)
+                    color=blacks[Nplot], ls='', marker='.', zorder=8)
                 else:
                     ax_sub.errorbar(data_x_plot, data_y_vrot[Ndata], yerr=[error_l_vrot[Ndata], error_h_vrot[Ndata]], \
-                    color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
+                    color=blacks[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
             else:
                 if Nsize==Nbins:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=colors[Nplot], ls='-', marker='.', zorder=8)
+                    color=blacks[Nplot], ls='-', marker='.', zorder=8)
                 else:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=colors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
+                    color=blacks[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
         
             if 'MICE' in plotfilename:
                 
@@ -700,7 +697,7 @@ for NR in range(Nrows):
             ax_sub.hist2d(R_lelli[info_mask], Vobs_lelli[info_mask], \
                 bins=[np.logspace(np.log10(3e-3), np.log10(3), 40), np.linspace(0., 330., 40)], cmin=1, cmap='Blues', zorder=0)
             
-            ax_sub.plot(R/1e6, Vrot_NFW, label=r'NFW profile ($M_{200}=%g, R_s = %.3g$ Mpc/h'%(M200, Rs/1e6))
+            #ax_sub.plot(R/1e6, Vrot_NFW, label=r'NFW profile ($M_{200}=%g, R_s = %.3g$ Mpc/h'%(M200, Rs/1e6))
         
         
         if 'mice' in cat:
@@ -730,7 +727,7 @@ for NR in range(Nrows):
         ax.yaxis.set_label_coords(-0.1/Ncolumns, 0.5)
         
         if Nbins[0]>1:
-            plt.title(datatitles[N], x = 0.5, y = 0.9, fontsize=16)
+            plt.title(datatitles[N], x = 0.5, y = 0.87, fontsize=16)
 
         plt.xlim([3e-3, 3.])
         plt.ylim([0., 330.])

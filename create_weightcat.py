@@ -50,7 +50,7 @@ if 'mice' not in cat:
     # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
     if 'kids' in cat:
         #diff_GL = -0.10978165582547783
-        diff_GL = -0.05640601480271284
+        diff_GL = -0.056
     if 'gama' in cat:
         diff_GL = 0.
     bias = 0.2

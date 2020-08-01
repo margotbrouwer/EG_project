@@ -78,23 +78,16 @@ config_files = create_config(replacefile, findlist, replacelist)
 
 # Run the three stellar mass limits
 #replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
-#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_gama_replace.config'
+#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_gama.config'
 findlist = np.array(['masslim'])
 replacelist = np.array([['GL', 'min', 'max']])
 config_files = create_config(replacefile, findlist, replacelist)
 
-# Run the 2D isolation criteria
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
-#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_mice.config'
-findlist = np.array(['sigmalim'])
-replacelist = np.array([['sigma0p002', 'sigma0p003', 'sigma0p004']])
-config_files = create_config(replacefile, findlist, replacelist)
-
 # Run the random ESD profiles
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_randoms.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/random_configs/ggl_mdm_randoms.config'
 findlist = np.array(['randnum'])
-replacelist = np.array([np.arange(100)])
+replacelist = np.array([np.arange(55)])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Run MICE with and without offset
@@ -103,12 +96,6 @@ findlist = np.array(['typu', 'typh'])
 replacelist = np.array([['', '_offsetZM'], ['', '-offsetZM']])
 config_files = create_config(replacefile, findlist, replacelist)
 """
-# Run MICE with and without offset
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_mice.config'
-findlist = np.array(['typu', 'typh'])
-replacelist = np.array([[''], ['']])
-config_files = create_config(replacefile, findlist, replacelist)
-
 """
 
 # Running the created config files (one by one)

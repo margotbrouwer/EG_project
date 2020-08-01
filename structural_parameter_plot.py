@@ -73,11 +73,14 @@ logmstar_GL = masscat['logmstar_GL']
 
 lenscat = pyfits.open('%s/%s'%(path_lenscat, lenscatname), memmap=True)[1].data
 mu0 = lenscat['mu0_2dphot']
-color_gr = lenscat['MAG_GAAP_g'] - lenscat['MAG_GAAP_r']
+mue = lenscat['mue_2dphot']
+color_gr = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
+
+
+plt.figure(figsize=(7,7))
 
 ## Plot central surface brightness
 
-plt.figure(figsize=(7,7))
 valpha = 0.07
 
 for m in range(len(maskvals)):
@@ -89,37 +92,37 @@ for m in range(len(maskvals)):
 
     # Masking the binning values and shear catalog
     if m==0:
-        plt.scatter(logmstar_GL[lensmask], mu0[lensmask], marker='.', alpha=valpha, color=colors[m], label='Ellipticals (n>2)')
+        plt.scatter(logmstar_GL[lensmask], mue[lensmask], marker='.', alpha=valpha, color=colors[m], label='Ellipticals (n>2)')
     else:
         if m==1:
-            plt.scatter(logmstar_GL[lensmask], mu0[lensmask], marker='.', alpha=valpha, color=colors[m], label='Spirals (n<2)')
+            plt.scatter(logmstar_GL[lensmask], mue[lensmask], marker='.', alpha=valpha, color=colors[m], label='Spirals (n<2)')
         else:
-            plt.scatter(logmstar_GL[lensmask], mu0[lensmask], marker='.', alpha=valpha, color=colors[m])
+            plt.scatter(logmstar_GL[lensmask], mue[lensmask], marker='.', alpha=valpha, color=colors[m])
 
 plt.axvline(x=11., color='black')
 
-plt.axvline(x=10.7, color='black', ymin=5./11.)
-plt.axhline(y=10., color='black', xmax=10./13.)
+#plt.axvline(x=10.7, color='black')#, ymin=5./11.)
+#plt.axhline(y=10., color='black', xmax=10./13.)
 
-plt.text(10., 20., r'1', fontsize=15)
-plt.text(10.8, 20., r'2', fontsize=15)
-plt.text(10.5, 13., r'3', fontsize=15)
-plt.text(10.8, 13., r'4', fontsize=15)
-plt.text(10.8, 6., r'5', fontsize=15)
+#plt.text(10., 20., r'1', fontsize=15)
+#plt.text(10.8, 20., r'2', fontsize=15)
+#plt.text(10.5, 13., r'3', fontsize=15)
+#plt.text(10.8, 13., r'4', fontsize=15)
+#plt.text(10.8, 6., r'5', fontsize=15)
 
 
 plt.xlabel(r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)')
-plt.ylabel(r'Central surface brightness')# $\mu_0$ (mag/arcsec$^2$)')
+plt.ylabel(r'Effective surface brightness $\mu_e$ (mag/arcsec$^2$)')
 
-plt.xlim([8.5, 11.75])
-plt.ylim([-2.5, 25.])
+plt.xlim([8.5, 12.])
+plt.ylim([16., 28.])
 
 leg = plt.legend(loc='best')
 
 for lh in leg.legendHandles: 
     lh.set_alpha(1)
 
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_mu0_samples'
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_mue_samples'
 
 # Save plot
 for ext in ['pdf', 'png']:
@@ -134,8 +137,7 @@ plt.clf()
 
 ## Plot colour
 
-
-valpha = 0.03
+valpha = 0.01
 for m in range(len(maskvals)):
     
     print('Sample:', m+1)
@@ -153,12 +155,20 @@ for m in range(len(maskvals)):
             plt.scatter(logmstar_GL[lensmask], color_gr[lensmask], marker='.', alpha=valpha, color=colors[m])
 
 plt.axvline(x=11., color='black')
+plt.axvline(x=10.5, ymax=4./9., color='black', ls='--')
+plt.axvline(x=10.8, ymin=4./9., color='black', ls='--')
+plt.axhline(y=2.5, color='black', ls='--')
+
+plt.text(10.6, 3., r'1', fontsize=15)
+plt.text(10.85, 3., r'2', fontsize=15)
+plt.text(10.25, 2., r'3', fontsize=15)
+plt.text(10.7, 2., r'4', fontsize=15)
 
 plt.xlabel(r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)')
-plt.ylabel(r'Colour (g-r)')
+plt.ylabel(r'Colour (u-r)')
 
 plt.xlim([8.5, 11.75])
-plt.ylim([0., 2.])
+plt.ylim([0.5, 5.])
 #plt.ylim([1., 6.])
 
 leg = plt.legend(loc='best')
@@ -166,10 +176,10 @@ leg = plt.legend(loc='best')
 for lh in leg.legendHandles: 
     lh.set_alpha(1)
 
-plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_color_g-r'
+plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_color_u-r'
 
 # Save plot
-for ext in ['pdf', 'png']:
+for ext in ['png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     
@@ -177,3 +187,4 @@ print('Written: ESD profile plot:', plotname)
 
 plt.show()
 plt.clf()
+

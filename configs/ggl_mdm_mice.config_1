@@ -1,14 +1,14 @@
 ### General settings ###
 
 # Source and lens catalogues
-KiDS_path           /data/users/brouwer/SourceCatalogues/mice2_source_catalog_400deg2.fits       # Path to folder that contains the KiDS catalogs (optional - supersedes KiDS_version).
+KiDS_path           /data/users/brouwer/SourceCatalogues/mice2_source_catalog_1000deg2.fits       # Path to folder that contains the KiDS catalogs (optional - supersedes KiDS_version).
 KiDS_version        0
- kids_columns       unique_gal_id,ra_gal,dec_gal,z_cgal,model_SNratio,MASK,THELI_NAME,weight,m_cor,gamma1,gamma2
+kids_columns       unique_gal_id,ra_gal,dec_gal,z_cgal,model_SNratio,MASK,THELI_NAME,weight,m_cor,gamma1,gamma2
 
 specz_file           /data/users/brouwer/SourceCatalogues/IMSIM_Gall30th_2016-01-14_deepspecz_photoz_1000_4_specweight.cat
 m_corr_file         /data/users/brouwer/SourceCatalogues/m_corr_kids_450.txt # NEW! This entry is required. It is a file with m-bias corrections in thin redhshift slices. See the same file in the demo folder for structure.
 
-lens_catalog        /data/users/brouwer/LensCatalogues/mice2_gama_catalog_400deg2.fits     # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog),
+lens_catalog        /data/users/brouwer/LensCatalogues/mice2_gama_catalog_1000deg2.fits     # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog),
 lens_columns        unique_gal_id,ra_gal,dec_gal,z_cgal                                          #     containing columns for: 'ID', 'RA', 'DEC', optional: 'Z' (if Runit = *pc), used lens paramaters.
 
 
@@ -22,17 +22,17 @@ h                   0.7                                         # Reduced Hubble
 ### ESD Production ###
 
 # Algorithm
- ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jan20            # Path to ESD output folder.
+ ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jul20            # Path to ESD output folder.
 #ESD_output_filename    mice                             # This flag will be appended to the filenames (optional).
 
- ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
-#ESD_purpose            shearcovariance
+#ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
+ ESD_purpose            shearcovariance
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
 
- Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
- Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
-#Rbins                  15,1e-15,5e-12
-#Runit                  mps2
+#Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
+#Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
+ Rbins                  15,1e-15,5e-12
+ Runit                  mps2
 
  ncores                 6                               # Any number of cores your machine can use to run the code.
 
@@ -41,15 +41,15 @@ h                   0.7                                         # Reduced Hubble
 
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
 
- lens_weights       None
-#lens_weights       logmbar        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_mice.fits       # Weight name and path to fits file
+#lens_weights       None
+ lens_weights       logmbar        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_mice.fits       # Weight name and path to fits file
 
 #lens_binning       None
  lens_binning       logmstar      /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits    8.5,10.3,10.6,10.8,11.0
 #lens_binning       Z              self               0.0,0.1,0.2,0.3,0.4,0.5
 
 
- lens_limits1    z_cgal                    self               0.,0.5
+ lens_limits1    z_cgal                    self               0.1,0.5
  lens_limits2    dist0p1perc           /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       3.,inf
 #lens_limits3    logmstar              /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       0.,11.
 
@@ -57,4 +57,4 @@ lensID_file        None                                                         
  src_limits1           z_cgal        0.1,1.2             # Source parameter for limits and one value, or
 #src_limits2                                          #     two comma separated limits between -inf and inf.
 
-kids_blinds           A
+kids_blinds           C

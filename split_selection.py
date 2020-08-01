@@ -47,7 +47,7 @@ structcatname = 'photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits'
 # Binning parameter
 binname = 'logmstar_GL' #'logmstar_GL'
 bincatname = masscatname # masscatname
-Nbins = 2
+Nbins = 1
 
 if 'gama' in cat:
     paramnames = np.array(['logmstar', 'nQ', 'dist0p1perc'])
@@ -55,9 +55,20 @@ if 'gama' in cat:
     lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
 if 'kids' in cat:
-    paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'n_2dphot'])#, 'mu0_2dphot'])
-    maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [2.,inf] ])#, [10.,inf] ])
-    lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])#, structcatname])
+    # Sersic index split
+    #paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc'])#, 'n_2dphot'])#, 'mu0_2dphot'])
+    #maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf]])#, [0.,2.], [10.,inf] ])
+    #lenscatnames = np.array([lenscatname, masscatname, isocatname])#, structcatname])#, structcatname])
+    
+    # U-R Colour split
+    #paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'COLOUR_GAAP_u_r'])
+    #maskvals = np.array([[0., 0.5], [8.5,11.], [3, inf], [0., 2.5]])
+    #lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])#, structcatname])
+
+    # Low mass galaxies
+    paramnames = np.array(['z_ANNZ_KV', 'logmstar_GL', 'dist0p1perc', 'n_2dphot'])
+    maskvals = np.array([[0., 0.5], [0.,10.3], [3, inf], [0.,inf]])
+    lenscatnames = np.array([lenscatname, masscatname, isocatname, structcatname])
 
 # Path to shear catalog
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'

@@ -1,14 +1,15 @@
 ### General settings ###
 
 # Source and lens catalogues
- KiDS_path           /data/users/brouwer/SourceCatalogues/KiDS1000/       # Path to folder that contains the KiDS catalogs (optional - supersedes KiDS_version).
+ KiDS_path           /data/users/brouwer/SourceCatalogues/KiDS_DR4p1_small/       # Path to folder that contains the KiDS catalogs (optional - supersedes KiDS_version).
  KiDS_version        3
 
  specz_file           /data/users/brouwer/SourceCatalogues/IMSIM_Gall30th_2016-01-14_deepspecz_photoz_1000_4_specweight.cat
  m_corr_file         /data/users/brouwer/SourceCatalogues/m_corr_kids_450.txt # NEW! This entry is required. It is a file with m-bias corrections in thin redhshift slices. See the same file in the demo folder for structure.
- kids_columns        SeqNr,ALPHA_J2000,DELTA_J2000,Z_B,model_SNratio,MASK,THELI_NAME,weight,m_cor,e1,e2
+ kids_columns        SeqNr,ALPHA_J2000,DELTA_J2000,Z_B,model_SNratio,MASK,THELI_NAME,recal_weight_C,m_cor,autocal_e1_C,autocal_e2_C
 
- GAMA_path        /data/users/brouwer/LensCatalogues/photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_masses.fits         # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog).
+ GAMA_path        /data/users/brouwer/LensCatalogues/photozs.DR4.1_bright_ugri+KV_struct.fits
+#GAMA_path        /data/users/brouwer/LensCatalogues/photozs.DR4_trained-on-GAMAequ_ugri+KV_version0.9_struct.fits         # Path to the fits file with your custom lens catalogue (supersedes GAMA catalog).
  lens_columns        IDENT,RAJ2000,DECJ2000,z_ANNZ_KV
 
 
@@ -22,20 +23,20 @@ h                   0.7                                         # Reduced Hubble
 ### ESD Production ###
 
 # Algorithm
- ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jan20            # Path to ESD output folder.
+ ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jul20            # Path to ESD output folder.
 #ESD_output_filename    EG_pipeline                             # This flag will be appended to the filenames (optional).
 
 #ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
  ESD_purpose            shearcovariance
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
 
- Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
- Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
-#Rbins                  15,1e-15,5e-12
-#Runit                  mps2
+#Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
+#Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
+ Rbins                  15,1e-15,5e-12
+ Runit                  mps2
 
  ncores                 6                                # Any number of cores your machine can use to run the code.
- com                sigmaz_0.018
+ com                sigmaz_0.021
 
 # Lens selection
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
@@ -45,16 +46,16 @@ lensID_file        None                                                         
 
  lens_binning       None
 #lens_binning logmstar_min  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
-#lens_binning logmstar_min  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.5,10.7,10.9,11.   # Equal S/N (isolated)
-#lens_binning logmstar_GL  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 9.5,10.,10.5,10.75,11.   # Equal S/N (isolated)
+#lens_binning      n_2dphot       self      0.,2.,inf
+#lens_binning      MAG_GAAP_u-r   /data/users/brouwer/LensCatalogues/mass_selection_catalog_color-offsetx0_kids.fits  0.,2.5,inf
 
- lens_limits1     z_ANNZ_KV             self               0.,0.5
- lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3,inf
+ lens_limits1     z_ANNZ_KV             self               0.1,0.5
+ lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3.,inf
+#lens_limits3     selected       /data/users/brouwer/LensCatalogues/mass_selection_catalog_color-offsetx0_kids.fits   1.
  lens_limits3     logmstar_min    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
-#lens_limits2     fsat_sigmalim     /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_2D_h70.fits     0,0.1
 
 # Source selection
  src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or
 #src_limits2                                          #     two comma separated limits between -inf and inf.
 
-kids_blinds           A
+kids_blinds           C
