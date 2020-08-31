@@ -1,0 +1,19 @@
+** Run info EG_results_Aug20 **
+
+All results in this folder have been created using the following parameters:
+
+Cosmology:
+- Omega matter = 0.2793
+- Omega lambda = 0.7207
+- h = 0.7
+
+Cuts:
+- Lens redshifts = 0.1 < z_l < 0.5
+- Source redshifts = 0.1 < z_s < 1.2
+- Isolation criterion = dist0p1perc > 3 Mpc
+- Stellar mass binning (optional) = [8.5,10.3,10.6,10.8,11.]
+
+Uncertainties and biases:
+- Stellar mass bias (masslim) = 0.2
+- Stellar mass offset from GAMA (diff_GL) = -0.056
+- Redshift uncertainty = 0.02

@@ -35,7 +35,7 @@ h                   0.7                                         # Reduced Hubble
  Runit                  mps2
 
  ncores                 6                                # Any number of cores your machine can use to run the code.
- com                sigmaz_0.018
+ com                sigmaz_0.02
 
 # Lens selection
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
@@ -45,7 +45,7 @@ lensID_file        None                                                         
 
  lens_binning       None
 
- lens_limits1       Z             self               0.,0.5
+ lens_limits1       Z             self               0.1,0.5
 
 # Source selection
  src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or

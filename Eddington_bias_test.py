@@ -26,7 +26,7 @@ import modules_EG as utils
 # Import lens catalog
 cat = 'kids'
 splittype = 'sersic'
-Noffset = 2
+Noffset = 1 # Minimum 1
 
 # Constants
 h = 0.7
@@ -40,25 +40,26 @@ else:
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 
-## Import "true" and "offset" catalogues
+## Import "true" and "offset" equal mass selection catalogues
 
-# Import "true" catalogue
+# Import "true" equal mass selection catalogue
 path_lenscat = '/data/users/brouwer/LensCatalogues'
 lenscatname = 'mass_selection_catalog_%s-offsetx%s_%s.fits'%(splittype, Noffset-1, cat)
 lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
 lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
 
+logmstar = lenscat['logmstar']
+
 # Define spiral and elliptical galaxies by sersic index or color
 if 'sersic' in splittype:
     typename = 'n_2dphot'
+    typelist = lenscat[typename]
     splitlim = 2.
     
 if 'color' in splittype:
     typename = 'MAG_GAAP_u-r'
+    typelist = lenscat[typename]
     splitlim = 2.5
-    
-typelist = lenscat[typename]
-logmstar = lenscat['logmstar']
 
 mask_ell = (typelist > splitlim)
 mask_spir = (typelist < splitlim)
@@ -73,7 +74,7 @@ isocat = pyfits.open(isocatfile, memmap=True)[1].data
 R_iso = isocat['dist0p1perc'] # Distance to closest satellite
 mask_iso = R_iso > 3. # Should be larger than 3 Mpc
 
-# Import mass selection (offset)
+# Import "offset" equal mass selection catalogue
 selcatname = 'mass_selection_catalog_%s-offsetx%s_%s.fits'%(splittype, Noffset, cat)
 selcatfile = '%s/%s'%(path_lenscat, selcatname)
 selcat = pyfits.open(selcatfile, memmap=True)[1].data

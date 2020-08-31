@@ -52,7 +52,7 @@ blacks = ['black', '#0571b0']
 # Dark blue, light blue, red, orange
 colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
-# Defining the paths to the data
+# Defining plot parameters
 blind = 'C'
 logplot = False
 massbias = True
@@ -117,17 +117,16 @@ Runit = 'pc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jul20'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
 
 ## Input lens selections
 
 """
 
-
 # KiDS + GAMA + Verlinde / Navarro (isolated)
 
 param1 = ['']
-param2 = ['GL-KiDS lens galaxies (isolated)', r'GAMA lens galaxies (isolated)']
+param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)', r'GAMA isolated lens galaxies ($180 \, {\rm deg}^2$)']
 
 N1 = 1
 N2 = len(param2)
@@ -141,8 +140,8 @@ path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 masses_navarro = ['7.8E10_full'] # (in Msun) No mass bins
 
 datalabels = param2
-#plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
-plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
+plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
+#plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
 
 # KiDS + Verlinde / MICE (isolated, 4 stellar mass bins)
@@ -171,6 +170,7 @@ datalabels = param2
 
 #plotfilename = '%s/Plots/RAR_KiDS+Verlinde_4-massbins_isolated'%path_sheardata # Substitute: Verlinde / MICE
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_isolated'%path_sheardata # Substitute: Verlinde / MICE
+
 
 
 # KiDS + BAHAMAS + MICE (isolated)
@@ -225,7 +225,7 @@ datalabels = param2
 #datatitles = [r'$%g < \log(M_*) < %g \, {\rm M_\odot}/h_{%g}^{2}$'%(param1[p1], param1[p1+1], h*100) for p1 in range(N1)]
 plotfilename = '%s/Plots/RAR_KiDS+MICE_4-massbins_all'%path_sheardata
 
-"""
+
 # Binning by galaxy type with same mass range (Kyle)
 
 param1 = ['Spirals', 'Ellipticals']
@@ -247,6 +247,29 @@ miceoffset = False
 datalabels = param1
 datatitles = param2
 plotfilename = '%s/Plots/RAR_KiDS_galtypes-sersic_isolated_samemass'%path_sheardata
+
+"""
+
+#Dwarf galaxies (Edwin)
+
+param1 = ['']
+param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)', r'Dwarfs (isolated spirals with $log(M_*/M_\odot) < 10$']
+
+N1 = 1
+N2 = len(param2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL', \
+                          'No_bins/MAGGAAPumr_0_2p5-dist0p1perc_3_inf-logmstarGL_0_10-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
+path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
+
+datalabels = param2
+plotfilename = '%s/Plots/RAR_KiDS+dwarfs_Nobins_isolated_zoomout'%path_sheardata
+#plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
+
+massbias = False
+
 """
 """
 
@@ -273,7 +296,7 @@ if massbias and ('KiDS' in plotfilename):
     foo, foo, data_y_max, error_h_max, foo, foo = utils.read_esdfiles(esdfiles_max)
 
 ## Random subtraction
-path_randoms = '%s/Randoms/combined_randoms_Jan20.txt'%path_sheardata
+path_randoms = '%s/Randoms/combined_randoms.txt'%path_sheardata
 
 #try:
 print()
@@ -373,7 +396,7 @@ print('mean logmbar:', mean_mbar)
 print('median logmbar:', median_mbar)
 print()
 
-# Print reliability limit of isolated KiDS-1000 galaxies
+# Reliability limit of isolated KiDS-1000 galaxies
 if ('KiDS' in plotfilename):# and ('isolated' in plotfilename):
     isoR = 0.3 # in Mpc
     isolim_log = (G * 10.**mean_mbar)/(isoR * 1e6)**2. * pc_to_m
@@ -386,7 +409,7 @@ if ('KiDS' in plotfilename):# and ('isolated' in plotfilename):
 
 # Create titles of the bins
 if 'massbins' in plotfilename:
-    datatitles = [r'$\log\langle M_{\rm g}/h_{%g}^{-2} {\rm M_\odot} \rangle = %.4g$'%(h*100, mean_mbar[p1]) for p1 in range(N1)]
+    datatitles = [r'$\log\langle M_{\rm gal}/h_{%g}^{-2} {\rm M_\odot} \rangle = %.4g$'%(h*100, mean_mbar[p1]) for p1 in range(N1)]
 """
 if 'galtypes' in plotfilename:
     datatitles[0] = r'n$<2$, %s'%datatitles[0]
@@ -724,7 +747,10 @@ for Nc in range(N2):
     if 'galtypes' in plotfilename:
 
         ## Difference: fractional and dex
-        diff_galtype = np.mean(data_y_log[Nc*N2]/data_y_log[Nc*N2+1])
+        #diff_galtype = np.mean(data_y_log[Nc*N2]/data_y_log[Nc*N2+1])
+        
+        diff_galtype = np.mean(data_y_log[Nc*N2]-data_y_log[Nc*N2+1]) / \
+            (np.mean(data_y_log[Nc*N2]+data_y_log[Nc*N2+1])/2)
         
         print('Fractional difference: %g (%g dex)'%(diff_galtype, np.log10(diff_galtype)) )
         
@@ -803,7 +829,7 @@ for NR in range(Nrows):
             #gD_2, gobs_2 = calc_gobs_2(gbar_uni)
             #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=4)
             #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=4)
-            ax_sub.plot(gbar_uni, np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[2], label = r'Verlinde+16 theory (point mass approximation)', zorder=5) #: ${\rm M_b}(r)$=const.)'
+            ax_sub.plot(gbar_uni, np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[2], label = r'Verlinde+16 Emergent Gravity (point mass)', zorder=5) #: ${\rm M_b}(r)$=const.)'
             
         # McGaugh fitting function
         ax_sub.plot(gbar_mond, gobs_mond_M16, color='grey', ls='-', marker='', zorder=4)
@@ -835,15 +861,16 @@ for NR in range(Nrows):
         if 'KiDS' in plotfilename:
             if 'iso' in plotfilename:
                 # Plot KiDS-1000 isolation limit
-                ax_sub.axvline(x=isolim[N], ls=':', color=blacks[1], \
+                #ax_sub.axvline(x=isolim[N], ls=':', color=blacks[1], \
+                #    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
+                ax_sub.axvspan(isolim[N], -16., color=blacks[1], alpha=0.1, \
                     label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
-                ax_sub.axvspan(isolim[N], -16., color=blacks[1], alpha=0.05)
                 
             if massbias:
             # Plot stellar mass limits
                 print('Plotting stellar mass bias')
                 ax_sub.fill_between(data_x_plot, data_y_min[N], data_y_max[N], \
-                color=blacks[Nplot], alpha=0.1, label=r'Systematic stellar mass bias (${\rm M_*} \pm 0.2$ dex)', zorder=4)
+                color=blacks[0], alpha=0.1, label=r'Systematic stellar mass bias (${\rm M_*} \pm 0.2$ dex)', zorder=4)
         print()
         
         # Navarro analytical model
@@ -855,7 +882,7 @@ for NR in range(Nrows):
         ## Plot McGaugh+16 observations
         
         # McGaugh - Binned
-        ax_sub.plot(gbar_mcgaugh_binned, gobs_mcgaugh_binned, label='McGaugh+16 rotation curves (mean)', \
+        ax_sub.plot(gbar_mcgaugh_binned, gobs_mcgaugh_binned, label='SPARC rotation curves (mean)', \
             ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=1)
         
         # McGaugh - 2D histogram
@@ -916,8 +943,8 @@ for NR in range(Nrows):
         
         #plt.autoscale(enable=False, axis='both', tight=None)
         
-        ax.xaxis.set_label_coords(0.5, -0.11)
-        ax.yaxis.set_label_coords(-0.07, 0.5)
+        ax.xaxis.set_label_coords(0.5, -0.1)
+        ax.yaxis.set_label_coords(-0.1, 0.5)
 
         plt.xlim(xlims)
         plt.ylim(ylims)

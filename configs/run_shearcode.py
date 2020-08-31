@@ -78,16 +78,10 @@ config_files = create_config(replacefile, findlist, replacelist)
 
 # Run the three stellar mass limits
 #replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
-#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_gama.config'
+replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
+#replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_gama.config'
 findlist = np.array(['masslim'])
 replacelist = np.array([['GL', 'min', 'max']])
-config_files = create_config(replacefile, findlist, replacelist)
-
-# Run the random ESD profiles
-replacefile = '/data/users/brouwer/Projects/EG_project/configs/random_configs/ggl_mdm_randoms.config'
-findlist = np.array(['randnum'])
-replacelist = np.array([np.arange(55)])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Run MICE with and without offset

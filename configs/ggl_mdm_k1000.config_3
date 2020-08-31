@@ -23,7 +23,7 @@ h                   0.7                                         # Reduced Hubble
 ### ESD Production ###
 
 # Algorithm
- ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Jul20            # Path to ESD output folder.
+ ESD_output_folder      /data/users/brouwer/Lensing_results/EG_results_Aug20            # Path to ESD output folder.
 #ESD_output_filename    EG_pipeline                             # This flag will be appended to the filenames (optional).
 
 #ESD_purpose            shearcatalog                  # One of {'shearcatalog', 'shearcovariance', 'shearbootstrap',
@@ -36,7 +36,7 @@ h                   0.7                                         # Reduced Hubble
  Runit                  mps2
 
  ncores                 6                                # Any number of cores your machine can use to run the code.
- com                sigmaz_0.021
+ com                sigmaz_0.02
 
 # Lens selection
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
@@ -44,15 +44,15 @@ lensID_file        None                                                         
 #lens_weights       None
  lens_weights       logmbar_max        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits       # Weight name and path to fits file
 
- lens_binning       None
-#lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
+#lens_binning       None
+ lens_binning logmstar_max  /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits 8.5,10.3,10.6,10.8,11.   # Equal S/N (isolated)
 #lens_binning      n_2dphot       self      0.,2.,inf
 #lens_binning      MAG_GAAP_u-r   /data/users/brouwer/LensCatalogues/mass_selection_catalog_color-offsetx0_kids.fits  0.,2.5,inf
 
  lens_limits1     z_ANNZ_KV             self               0.1,0.5
  lens_limits2     dist0p1perc    /data/users/brouwer/LensCatalogues/kids_isolated_galaxies_perc_h70.fits   3.,inf
 #lens_limits3     selected       /data/users/brouwer/LensCatalogues/mass_selection_catalog_color-offsetx0_kids.fits   1.
- lens_limits3     logmstar_max    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
+#lens_limits3     logmstar_max    /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_kids.fits        0.,11.
 
 # Source selection
  src_limits1           Z_B        0.1,1.2             # Source parameter for limits and one value, or

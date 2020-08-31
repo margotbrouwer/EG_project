@@ -10,19 +10,25 @@ import astropy.io.fits as pyfits
 
 import modules_EG as utils
 
-# Constants
-h = 0.7
-O_matter = 0.2793
-O_lambda = 0.7207
-
-cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 ## Configuration
 
 # Data selection
-#cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice)
-#cat = 'gama-offsetZ'
+#cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice/matched)
 cat = 'mice'
+#cat = 'gama-offsetZ'
+#cat = 'matched'
+
+# Constants
+if 'mice' in cat:
+    h = 0.7
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    h = 0.7
+    O_matter = 0.2793
+    O_lambda = 0.7207
+cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
@@ -33,8 +39,8 @@ print('Lens catalogue:', lenscatname)
 # Create normally distributed offsets for the redshifts
 if 'offset' in cat:
     
-    Sigma_Z = 0.021*(1+lensZ)
-    Sigma_M = [0.21]*len(logmstar)
+    Sigma_Z = 0.02*(1+lensZ)
+    Sigma_M = [0.12]*len(logmstar)
     
     if 'Z' in cat:
         dZlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_Z))
@@ -88,7 +94,7 @@ logmbins = logmlims[0:-1] + dlogm
 # The nearby galaxies should not be heavier than X times the galaxy
 rationame = 'perc'
 #massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
-massratios = [0.1]
+massratios = [0.1, 0.05, 0.01]
 rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 """
 rationame = 'dex'

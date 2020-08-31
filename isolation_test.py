@@ -55,7 +55,7 @@ else:
     magmax=20.
 
 print()
-print('Testing isolation criterion: r_sat(f_M*>%g)>%g Mpc'%(massratios[massratio_num],distval))
+print('Testing isolation criterion: r_sat(f_M*>%g)>%g Mpc/h'%(massratios[massratio_num],distval))
 #print('Testing isolation criterion: r_iso=%g Mpc'%distval)
 
 # Import lens catalog
@@ -107,10 +107,11 @@ print('Maglim:', maglim, magmax-maglim)
 print()
 print('Isolated galaxies:')
 print('Ngal_bright:', Ngal_bright, Ngal_bright/Ngal_tot*100., '% of total sample')
+print('Niso_tot:', Niso_tot, Niso_tot/Ngal_tot*100., '% of total sample')
 print('Niso_bright:', Niso_bright, Niso_bright/Ngal_bright*100., '% of bright sample')
 print('Niso_faint:', Niso_faint, Niso_faint/Ngal_faint*100., '% of faint sample')
 print('Niso_false:', Niso_false, Niso_false/Niso_tot*100., '% of isolated sample')
-print('Niso_tot:', Niso_tot, Niso_tot/Ngal_tot*100., '% of total sample')
+
 
 ## Plot the result
 
@@ -119,7 +120,7 @@ plotscale = 1.e3 # Scale the number of galaxies
 
 plt.plot(rmagcenters, rmaghist/plotscale, color=colors[1], label=r'All galaxies')
 plt.plot(rmagcenters, isohist/plotscale, color=colors[2], \
-    label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc'%(massratios[massratio_num], distval))
+    label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc$/h$'%(massratios[massratio_num], distval))
 plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction of isolated galaxies')
 plt.text(17.6, 7.e-2, r'f$_{\rm L}=%g$'%(massratios[massratio_num]), fontsize=12)
 

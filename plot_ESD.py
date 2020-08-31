@@ -20,13 +20,6 @@ from matplotlib import rc, rcParams
 
 from matplotlib import gridspec
 
-def bins_to_name(binlims):
-    binname = str(binlims).replace(', ', '_')
-    binname = str(binname).replace('[', '')
-    binname = str(binname).replace(']', '')
-    binname = str(binname).replace('.', 'p')
-    return(binname)
-
 # Make use of TeX
 rc('text',usetex=True)
 
@@ -45,7 +38,7 @@ blacks = ['black', '#0571b0']
 # Dark blue, light blue, red, orange
 colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
-# Import constants
+# Import cosmology
 cat = 'kids'
 
 h = 0.7
@@ -55,16 +48,34 @@ if 'mice' in cat:
 else:
     O_matter = 0.2793
     O_lambda = 0.7207
-
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
+# Import constants
 pi = np.pi
 G = const.G.to('pc3 / (M_sun s2)').value
-c = const.c.to('m/s').value
+c = const.c.to('pc/s').value
 H0 = h * 100 * (u.km/u.s)/u.Mpc
 H0 = H0.to('s-1').value
 pc_to_m = 3.08567758e16
 
+def vrot_mond(Mbar, r, g0=1.2e-10/pc_to_m):
+    gbar = (G * 10.**Mbar) / r**2
+    gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
+    Vobs = np.sqrt(gobs * r) * pc_to_m
+    return Vobs
+
+def vrot_verlinde(Mbar, r):
+    Mobs = 10.**Mbar + np.sqrt((c*H0)/(6.*G))*np.sqrt(10.**Mbar) * r
+    Vobs = np.sqrt((G * Mobs) / r) * pc_to_m
+    #Vobs = np.sqrt( (G*10.**Mbar)/r + np.sqrt((G*c*H0*10.**Mbar)/6.) ) * pc_to_m
+    return Vobs
+
+def bins_to_name(binlims):
+    binname = str(binlims).replace(', ', '_')
+    binname = str(binname).replace('[', '')
+    binname = str(binname).replace(']', '')
+    binname = str(binname).replace('.', 'p')
+    return(binname)
 
 ## Define paths of ESD profiles
 
@@ -72,8 +83,9 @@ pc_to_m = 3.08567758e16
 Runit = 'Mpc'
 datatitles = []
 Nrows = 1
+blind = 'C'
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Jan20'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
 
 """
 # KiDS vs. GAMA comparison
@@ -360,34 +372,33 @@ datalabels = params2
 plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
 
 """
-vrot = True
 
-# Stellar mass bins (KiDS)
+# Rotation curve KiDS - 4 stellar mass bins (KiDS)
 
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
 params1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
-params2 = ['Isolated KiDS lenses (1000 deg$^2$)']
+params2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)']
 N1 = len(params1)
 N2 = len(params2)
 Nrows = 2
 
-path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0_0p5'%(binname)]*N2]*N1)
+path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0p1_0p5'%(binname)]*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p1]*N2 for p1 in np.arange(N1)+1])
+path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1,blind)]*N2 for p1 in np.arange(N1)+1])
 
 path_mocksel =  np.array([['logmstar_%s/dist0p1perc_3_inf-zcgal_0_0p5'%(binname)]*N2]*N1)
 path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_mockfilename =  np.array([['shearcatalog/shearcatalog_bin_%i_A'%p1]*N2 for p1 in np.arange(N1)+1])
+path_mockfilename =  np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1,blind)]*N2 for p1 in np.arange(N1)+1])
 mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
 
+vrot = True
 miceoffset = True
 
-datatitles = params1
 datalabels = params2
 
-plotfilename = '%s/Plots/ESD_KiDS_MICE_NFW_Mstarbins-%s_iso'%(path_sheardata, binname)
+plotfilename = '%s/Plots/ESD_KiDS_massbins-%s_iso'%(path_sheardata, binname)
 
 """
 
@@ -423,7 +434,6 @@ plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sh
 
 ## Import measured ESD
 
-
 # Import the Lens catalogue
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
@@ -442,47 +452,7 @@ print('Plots, profiles:', Nbins)
 data_x, R_src, data_y, error_h, error_l, N_src = utils.read_esdfiles(esdfiles)
 #print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
-
-## Find the mean galaxy mass
-IDfiles = np.array([m.replace('A.txt', 'lensIDs.txt') for m in esdfiles])
-lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1
-N_selected = [len(m) for m in lensIDs_selected]
-
-# Import the mass catalogue
-path_masscat = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
-masscat = pyfits.open(path_masscat, memmap=True)[1].data
-
 """
-logmstar = masscat['logmstar_GL']
-logmbar = masscat['logmbar_GL']
-
-# Calculate the galaxy masses
-mean_mstar, median_mstar, mean_mbar, median_mbar = \
-    [np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles))]
-for m in range(len(esdfiles)):
-    IDmask = np.in1d(lensID, lensIDs_selected[m])
-    
-    print(np.amax(logmstar[IDmask*np.isfinite(logmstar)]))
-    
-    mean_mstar[m] = np.log10(np.mean(10.**logmstar[IDmask*np.isfinite(logmstar)]))
-    median_mstar[m] = np.median(logmstar[IDmask*np.isfinite(logmstar)])
-
-    mean_mbar[m] = np.log10(np.mean(10.**logmbar[IDmask*np.isfinite(logmbar)]))
-    median_mbar[m] = np.median(logmbar[IDmask*np.isfinite(logmbar)])
-
-print()
-print('Bin limits:', massbins)
-print('Number of galaxies:', N_selected) 
-print()
-print('mean logmstar:', mean_mstar)
-print('median logmstar:', median_mstar)
-print()
-print('mean logmbar:', mean_mbar)
-print('median logmbar:', median_mbar)
-print()
-"""
-
-
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
@@ -500,7 +470,7 @@ for n in range(len(data_y)-1):
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-
+"""
 
 if 'mice' in cat:
     z_mice = np.mean(lensZ)
@@ -509,7 +479,7 @@ if 'mice' in cat:
     micelim = 0.43/60. * np.pi/180. * Da_mice
     print('MICE limit:', micelim, Runit)
 
-if 'MICE' in plotfilename:
+if 'mice' in plotfilename:
 
     print()
     print('Import mock signal:')
@@ -569,6 +539,62 @@ else:
     print('No mock signal imported!')
     pass
 
+
+## Find the mean galaxy masses
+cat = 'kids'
+
+# Import the Lens catalogue
+fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
+utils.import_lenscat(cat, h, cosmo)
+
+IDfiles = np.array([m.replace('%s.txt'%blind, 'lensIDs.txt') for m in esdfiles])
+lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1 # Sometimes +1 is needed to line up the ID's
+N_selected = [len(m) for m in lensIDs_selected]
+
+# Import the mass catalogue
+path_masscat = '/data/users/brouwer/LensCatalogues/baryonic_mass_catalog_%s.fits'%cat
+masscat = pyfits.open(path_masscat, memmap=True)[1].data
+
+logmstar = masscat['logmstar_GL']
+logmbar = masscat['logmbar_GL']
+
+# Calculate the galaxy masses
+mean_mstar, median_mstar, mean_mbar, median_mbar = \
+    [np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles)), np.zeros(len(esdfiles))]
+m = []
+for m in range(len(esdfiles)):
+    IDmask = np.in1d(lensID, lensIDs_selected[m])
+       
+    mean_mstar[m] = np.log10(np.mean(10.**logmstar[IDmask*np.isfinite(logmstar)]))
+    median_mstar[m] = np.median(logmstar[IDmask*np.isfinite(logmstar)])
+    
+    mean_mbar[m] = np.log10(np.mean(10.**logmbar[IDmask*np.isfinite(logmbar)]))
+    median_mbar[m] = np.median(logmbar[IDmask*np.isfinite(logmbar)])
+
+print()
+print('Number of galaxies:', N_selected) 
+print()
+print('mean logmstar:', mean_mstar)
+print('median logmstar:', median_mstar)
+print()
+print('mean logmbar:', mean_mbar)
+print('median logmbar:', median_mbar)
+print()
+
+# Plot titles
+if 'massbins' in plotfilename:
+    datatitles = [r'$\log\langle M_{\rm gal}/h_{%g}^{-2} {\rm M_\odot} \rangle = %.4g$'%(h*100, mean_mbar[p1]) for p1 in range(N1)]
+
+# Reliability limit of isolated KiDS-1000 galaxies
+if ('KiDS' in plotfilename):# and ('isolated' in plotfilename):
+    isoR = 0.3 # in Mpc
+    print('Isolated KiDS signal reliability limit:', isoR)
+
+Rmin = 3.e-3 # Mpc
+Rmax = 3. # Mpc
+
+Rcenters = np.logspace(np.log10(Rmin), np.log10(Rmax), 100)
+
 ## Create the plot
 
 Ncolumns = int(Nbins[0]/Nrows)
@@ -592,7 +618,6 @@ if vrot:
     error_l_vrot, error_h_vrot = [ data_y_vrot * 0.5 * (d / data_y) for d in [error_l, error_h] ]
     
     ## Import Lelli's rotation curve data
-    
     data_lelli = np.loadtxt('Lelli_rotation_curves.txt', usecols=[2,3]).T
     name_data = np.array(list(np.genfromtxt('Lelli_rotation_curves.txt', dtype=None, usecols=[0])))
 
@@ -604,7 +629,7 @@ if vrot:
     
     Mstar_lelli = info_lelli * 1e9 * 0.5
    
-    
+if 'NFW' in plotfilename:
     ## NWF rotation curves
     
     C200 = 12.
@@ -626,14 +651,18 @@ if vrot:
     #Vrot_NFW = V200 * np.sqrt( (C200 / x) * \
     #    (( np.log(1+x) - x/(1+x) ) / (np.log(1+C200) - C200 / (1+C200) )) ) * pc_to_m
     
-    print(Vrot_NFW)
-    
+    print(Vrot_NFW)   
+
+
+## Create the plot
+
 for NR in range(Nrows):
     for NC in range(Ncolumns):
     
         ax_sub = fig.add_subplot(gs[NR, NC])
-        
+
         N = np.int(NR*Ncolumns + NC)
+        print('Plotting: row %i, column %i (panel %i)'%(NR, NC, N))
 
         for Nplot in range(Nbins[1]):
             
@@ -690,7 +719,7 @@ for NR in range(Nrows):
                 utils.mean_profile(R_lelli[info_mask], Vobs_lelli[info_mask], 3e-3, 6e-2, 11, True)
             
             ax_sub.plot(data_lelli_x_mean, data_lelli_y_mean, \
-                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', label='SPARC rotation curves, median (Lelli+2016)')
+                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', label='SPARC rotation curves (mean)')
             #ax_sub.fill_between(data_lelli_x_mean, data_lelli_y_mean+0.5*data_lelli_y_std,
             #    data_lelli_y_mean-0.5*data_lelli_y_std, alpha=0.3, color=blues[3])
             #ax_sub.scatter(R_lelli[info_mask], Vobs_lelli[info_mask], alpha=0.05, color=blues[1])
@@ -698,10 +727,19 @@ for NR in range(Nrows):
                 bins=[np.logspace(np.log10(3e-3), np.log10(3), 40), np.linspace(0., 330., 40)], cmin=1, cmap='Blues', zorder=0)
             
             #ax_sub.plot(R/1e6, Vrot_NFW, label=r'NFW profile ($M_{200}=%g, R_s = %.3g$ Mpc/h'%(M200, Rs/1e6))
+
+            # McGaugh rotation curve
+            #Vobs_mond = vrot_mond(mean_mstar[N], data_x[N]*1e6)
+            ax_sub.plot(data_x[N], vrot_mond(mean_mstar[N], data_x[N]*1e6)/1e3, \
+                color='grey', ls='-', marker='', label=r'McGaugh+16 fitting function (extrapolated)')
+            
+            # Verlinde rotation curve
+            Vobs_verlinde = vrot_verlinde(mean_mstar[N], data_x[N]*1e6)
+            ax_sub.plot(data_x[N], Vobs_verlinde/1e3, \
+                ls = '--', marker='', color=colors[2], label = r'Verlinde+16 Emergent Gravity (point mass)')
         
-        
-        if 'mice' in cat:
-            ax_sub.axvline(x=micelim, ls='--', color='grey')
+        #if 'mice' in plotfilename:
+        #    ax_sub.axvline(x=micelim, ls='--', color='grey')
         
         # Plot the axes and title
         
@@ -728,12 +766,21 @@ for NR in range(Nrows):
         
         if Nbins[0]>1:
             plt.title(datatitles[N], x = 0.5, y = 0.87, fontsize=16)
-
-        plt.xlim([3e-3, 3.])
+        
+        plt.xlim([Rmin, Rmax])
         plt.ylim([0., 330.])
 
         plt.xscale('log')
         #plt.yscale('log')
+        
+        # Extras for KiDS data (isolation limit and/or stellar mass bias)
+        if 'KiDS' in plotfilename:
+            if 'iso' in plotfilename:
+                # Plot KiDS-1000 isolation limit
+                #ax_sub.axvline(x=isoR, ls=':', color=blacks[1], \
+                #    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
+                ax_sub.axvspan(isoR, Rmax, color=blacks[1], alpha=0.1, \
+                    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
         
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
@@ -747,18 +794,15 @@ ax.set_ylabel(ylabel, fontsize=16)
 #handles, labels = ax_sub.get_legend_handles_labels()
 
 # Plot the legend
-#plt.legend()
+
+handles, labels = ax_sub.get_legend_handles_labels()
 
 if Nbins[0] > 1:
-    plt.legend(loc='lower left', fontsize=12)
-#    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.5*Ncolumns, 0.7*Nrows)) # side
-#    plt.legend(handles[::-1], labels[::-1], loc='lower right')
+    lgd = plt.legend(handles[::-1], labels[::-1], loc='lower left')
 else:
     plt.legend(loc='best', fontsize=12)#loc='lower right')
 #    plt.legend(handles[::-1], labels[::-1], loc='best')
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.85, 1.55)) # top
-
-
 
 plt.tight_layout()
 

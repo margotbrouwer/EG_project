@@ -15,45 +15,48 @@ from matplotlib.colors import LogNorm
 from matplotlib import gridspec
 from matplotlib import rc, rcParams
 
-# Constants
-h = 0.7
-O_matter = 0.2793
-O_lambda = 0.7207
-
-cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
-
-
 ## Configuration
 
 cat = 'mice' # Data selection: select the lens catalogue (kids/gama/mice)
-purpose = 'mstar' # Purpose of this run (isolated or mstar)
+purpose = 'isolated' # Purpose of this run (isolated or mstar)
 plot = True # To plot or not to plot
+isodef = 'dist0p01perc'
 
+# Constants
+if 'mice' in cat:
+    h = 0.7
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    h = 0.7
+    O_matter = 0.2793
+    O_lambda = 0.7207
+cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Import lens catalog
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
 path_isocat = '/data/users/brouwer/LensCatalogues'
-plotfile_path = '/data/users/brouwer/Lensing_results/EG_results_Nov19/Plots'
+plotfile_path = '/data/users/brouwer/Lensing_results/EG_results_Aug20/Plots'
 
 # Import isolated galaxy catalog
 isocatname = '%s_isolated_galaxies_perc_h70.fits'%cat
 isocatfile = '%s/%s'%(path_isocat, isocatname)
 isocat = pyfits.open(isocatfile, memmap=True)[1].data
-Riso =  isocat['dist0p1perc']
+Riso = isocat[isodef]
 
 # Import offset isolated galaxy catalog
 if 'kids' in cat:
     offset = ''
 else:
-    offset = '-offsetZ'
+    offset = '-offsetZM'
 
 isoffcatname = '%s%s_isolated_galaxies_perc_h70.fits'%(cat, offset)
 isoffcatfile = '%s/%s'%(path_isocat, isoffcatname)
 
 isoffcat = pyfits.open(isoffcatfile, memmap=True)[1].data
-Risoff = isoffcat['dist0p1perc%s'%offset.replace('-', '_')]
+Risoff = isoffcat['%s%s'%(isodef, offset.replace('-', '_'))]
 
 # Remove NAN from stellar masses
 nanmask = np.isfinite(logmstar)
@@ -178,7 +181,7 @@ if plot:
     plt.ylabel(ylabel, fontsize=16)
 
     plt.legend()
-    plotfilename = '%s/satellite_histogram_%s_%s%s'%(plotfile_path, cat, purpose, offset)
+    plotfilename = '%s/satellite_histogram_%s_%s_%s%s'%(plotfile_path, cat, purpose, isodef, offset)
 
     # Save plot
     for ext in ['png']:

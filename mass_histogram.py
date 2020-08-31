@@ -32,12 +32,19 @@ O_lambda = 0.7207
 
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 path_lenscat = '/data/users/brouwer/LensCatalogues'
+
+# Plotting information
+plot=False
 #plot_path = 'Users/users/brouwer/Documents/scp_files'
 plot_path = '/data/users/brouwer/Lensing_results/EG_results_Jul20'
-plot=False
+
 
 z_min = 0.1
 z_max = 0.5
+logmstar_min = 8.
+logmstar_max = 12.
+
+splittype = 'none' # sersic / color / none
 
 ## Import GAMA catalogue
 
@@ -47,7 +54,7 @@ gamacatfile = '%s/%s'%(path_lenscat, gamacatname)
 gamacat = pyfits.open(gamacatfile, memmap=True)[1].data
 
 # List of the observables of all lenses in the GAMA catalogue
-galZ_gama = gamacat['Z']
+Z_gama = gamacat['Z']
 rmag_gama = gamacat['Rpetro']
 rmag_abs_gama = gamacat['absmag_r']
 logmstar_gama = gamacat['logmstar']
@@ -67,20 +74,19 @@ kidscatfile = '%s/%s'%(path_lenscat, kidscatname)
 kidscat = pyfits.open(kidscatfile, memmap=True)[1].data
 
 # List of the observables of all sources in the KiDS catalogue
-#galZ_kids = kidscat['zANNz2ugri']
-galZ_kids = kidscat['Z_ANNZ_KV']
+#Z_kids = kidscat['zANNz2ugri']
+Z_kids = kidscat['Z_ANNZ_KV']
 
-rmag_kids = kidscat['MAG_AUTO_CALIB']
-rmag_gaap_kids = kidscat['MAG_GAAP_r']
+rmag_kids_auto = kidscat['MAG_AUTO_CALIB']
+rmag_kids_gaap = kidscat['MAG_GAAP_r']
+rmag_kids_sersic = kidscat['MAG_AUTO_2dphot']
 rmag_abs_kids = kidscat['MAG_ABS_r']
 
 logmstar_kids = kidscat['MASS_BEST']
-logmstar_kids = logmstar_kids + (rmag_gaap_kids-rmag_kids)/2.5
+logmstar_kids = logmstar_kids + (rmag_kids_gaap-rmag_kids_auto)/2.5
 mass_med = kidscat['MASS_MED']
 masked_kids = kidscat['masked']
 
-
-print(np.sum(masked_kids==0)/len(masked_kids))
 
 ## Import matched catalogue
 
@@ -90,8 +96,8 @@ matchcatfile = '%s/%s'%(path_lenscat, matchcatname)
 matchcat = pyfits.open(matchcatfile, memmap=True)[1].data
 
 # Matched redshifts
-galZ_gama_matched = matchcat['Z']
-galZ_kids_matched = matchcat['Z_ANNZ_KV']
+Z_gama_matched = matchcat['Z']
+Z_kids_matched = matchcat['Z_ANNZ_KV']
 
 # Matched masses
 logmstar_gama_matched = matchcat['logmstar']
@@ -100,44 +106,109 @@ logmstar_gama_matched = logmstar_gama_matched - 2.*np.log10(h/0.7)
 masked_matched = matchcat['masked']
 nQ_matched = matchcat['nQ']
 
-logmstar_kids_matched = matchcat['MASS_BEST']
-rmag_kids_matched = matchcat['MAG_AUTO_CALIB']
-rmag_gaap_kids_matched = matchcat['MAG_GAAP_r']
-logmstar_kids_matched = logmstar_kids_matched + (rmag_gaap_kids_matched-rmag_kids_matched)/2.5
+# Matched magnitudes
+rmag_gama_matched = matchcat['Rpetro']
+rmag_kids_auto_matched = matchcat['MAG_AUTO_CALIB']
+rmag_kids_gaap_matched = matchcat['MAG_GAAP_r']
 
+logmstar_kids_matched = matchcat['MASS_BEST']
+logmstar_kids_matched = logmstar_kids_matched + \
+    (rmag_kids_gaap_matched-rmag_kids_auto_matched)/2.5 - 2.*np.log10(h/0.7)
+
+if 'none' not in splittype:
+    
+    # Matched spiral and elliptical galaxies by sersic index or color
+    if 'sersic' in splittype:
+        typelist = matchcat['n_2dphot']
+        splitlim = 2.
+        
+    if 'color' in splittype:
+        typelist = matchcat['MAG_GAAP_u'] - matchcat['MAG_GAAP_r']
+        splitlim = 2.5
+
+    # Matched equal mass selection catalogue
+    selcatname = 'mass_selection_catalog_%s-offsetx0_matched.fits'%splittype
+    selcatfile = '%s/%s'%(path_lenscat, selcatname)
+    selcat = pyfits.open(selcatfile, memmap=True)[1].data
+    mask_sel = (selcat['selected'] == 1.)
+    logmstar_matched = selcat['logmstar']
 
 ## Select data for plotting
 
-kidsmask = (8.<logmstar_kids)&(logmstar_kids<12.)&(masked_kids==0.)
-gamamask = (8.<logmstar_gama)&(logmstar_gama<12.)&(nQ_gama<3.)
+kidsmask = (logmstar_min<logmstar_kids)&(logmstar_kids<logmstar_max)&(masked_kids==0.)
+gamamask = (logmstar_min<logmstar_gama)&(logmstar_gama<logmstar_max)&(nQ_gama<3.)
 massmedmask = (mass_med>0.)
 
-massmask_matched = (8.<logmstar_kids_matched)&(logmstar_kids_matched<12.)&(masked_matched==0)& \
-                (8.<logmstar_gama_matched)&(logmstar_gama_matched<12.)&(nQ_matched>=3.)
+massmask_matched = (logmstar_min<logmstar_kids_matched)&(logmstar_kids_matched<logmstar_max)&(masked_matched==0)& \
+                (logmstar_min<logmstar_gama_matched)&(logmstar_gama_matched<logmstar_max)&(nQ_matched>=3.)
 
-Zmask_matched = (z_min<galZ_kids_matched)&(galZ_kids_matched<z_max)&(masked_matched==0)& \
-                (z_min<galZ_gama_matched)&(galZ_gama_matched<z_max)&(nQ_matched>=3.)
+Zmask_matched = (z_min<Z_kids_matched)&(Z_kids_matched<z_max)&(masked_matched==0)& \
+                (z_min<Z_gama_matched)&(Z_gama_matched<z_max)&(nQ_matched>=3.)
 
-Zmask = (0.<galZ_kids_matched)
+Zmask = (0.<Z_kids_matched)
 
 # Masking the data
 logmstar_gama = logmstar_gama[gamamask]
 logmstar_kids = logmstar_kids[kidsmask]
 
-logmstar_gama_matched = logmstar_gama_matched[massmask_matched*Zmask]
-logmstar_kids_matched = logmstar_kids_matched[massmask_matched*Zmask]
+rmag_kids_auto_matched = rmag_kids_auto_matched[massmask_matched*Zmask]
+rmag_kids_gaap_matched = rmag_kids_gaap_matched[massmask_matched*Zmask]
+rmag_gama_matched = rmag_gama_matched[massmask_matched*Zmask]
 
-galZ_gama_matched = galZ_gama_matched[Zmask_matched]
-galZ_kids_matched = galZ_kids_matched[Zmask_matched]
+Zmask_gama = (z_min<Z_gama)&(Z_gama<z_max)&(nQ_gama<3.)
+Zmask_kids = (z_min<Z_kids)&(Z_kids<z_max)&(masked_kids==0.)
 
+if 'none' in splittype:
+    
+    Z_gama_matched = Z_gama_matched[Zmask_matched]
+    Z_kids_matched = Z_kids_matched[Zmask_matched]
+    
+    logmstar_gama_matched = logmstar_gama_matched[massmask_matched*Zmask]
+    logmstar_kids_matched = logmstar_kids_matched[massmask_matched*Zmask]
+    
+else:
+# Apply the elliptical and spiral masks to both KiDS and GAMA
+    
+    Z_gama_matched = Z_gama_matched[Zmask_matched*mask_sel]
+    Z_kids_matched = Z_kids_matched[Zmask_matched*mask_sel]
+    
+    mask_ell = (typelist[Zmask_matched*mask_sel] > splitlim)
+    mask_spir = (typelist[Zmask_matched*mask_sel] < splitlim)
+    
+    Z_gama_ell = Z_gama_matched[mask_ell]
+    Z_kids_ell = Z_kids_matched[mask_ell]
+    Z_gama_spir = Z_gama_matched[mask_spir]
+    Z_kids_spir = Z_kids_matched[mask_spir]
+    
+    logmstar_gama_matched = logmstar_gama_matched[massmask_matched*mask_sel]
+    logmstar_kids_matched = logmstar_kids_matched[massmask_matched*mask_sel]
+    
+    mask_ell = (typelist[massmask_matched*mask_sel] > splitlim)
+    mask_spir = (typelist[massmask_matched*mask_sel] < splitlim)
+    
+    logmstar_gama_ell = logmstar_gama_matched[mask_ell]
+    logmstar_kids_ell = logmstar_kids_matched[mask_ell]
+    logmstar_gama_spir = logmstar_gama_matched[mask_spir]
+    logmstar_kids_spir = logmstar_kids_matched[mask_spir]
+    
 if plot:
-    ## Plot mass histograms
-    plt.hist(logmstar_gama_matched, label=r'GAMA (matched)', bins=50, histtype='step', normed=1)
-    #plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step')
-    plt.hist(logmstar_kids_matched, label=r'KiDS (matched)', bins=50, histtype='step', normed=1)
-    plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step', normed=1)
-    #plt.hist(logmstar_massmed, label=r'KiDS (MASS$_{\rm MED}>0$)', bins=50, histtype='step', normed=1)
+    
+    # Define the guiding lines
+    massline = np.linspace(logmstar_min, logmstar_max, 50)
+    Zline = np.linspace(z_min, z_max, 50)
 
+
+    ## Plot mass histograms
+    if 'none' in splittype:
+        plt.hist(logmstar_gama_matched, label=r'GAMA (matched)', bins=50, histtype='step', normed=1)
+        plt.hist(logmstar_kids_matched, label=r'KiDS (matched)', bins=50, histtype='step', normed=1)
+        plt.hist(logmstar_kids, label=r'KiDS', bins=50, histtype='step', normed=1)
+    else:
+        plt.hist(logmstar_gama_ell, label=r'GAMA (elliptical)', bins=50, histtype='step', normed=1)
+        plt.hist(logmstar_gama_spir, label=r'GAMA (spiral)', bins=50, histtype='step', normed=1)
+        plt.hist(logmstar_kids_ell, label=r'KiDS (elliptical)', bins=50, histtype='step', normed=1)
+        plt.hist(logmstar_kids_spir, label=r'KiDS (spiral)', bins=50, histtype='step', normed=1)
+    
     # Define the labels for the plot
     xlabel = r'Galaxy stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
     ylabel = r'Number of galaxies (normalized)'
@@ -145,9 +216,6 @@ if plot:
     plt.ylabel(ylabel, fontsize=14)
 
     plt.legend(loc='upper left')
-
-    #plt.xlim([7., 12.])
-    #plt.ylim(ylims)
 
     plt.tight_layout()
 
@@ -163,76 +231,209 @@ if plot:
     plt.show()
     plt.clf
 
+    if 'none' in splittype:
+        ## Plot 2D mass histogram
 
-    ## Plot 2D histogram
-    massline = np.linspace(8, 12, 50)
+        plt.hist2d(logmstar_gama_matched, logmstar_kids_matched, bins=100)#, cmin=1, cmap='Blues')
+        plt.plot(massline, massline, color='black', ls='--')
+        plt.plot(massline, massline+0.2, color='grey', ls='--')
+        plt.plot(massline, massline-0.2, color='grey', ls='--')
 
-    plt.hist2d(logmstar_gama_matched, logmstar_kids_matched, bins=100)#, cmin=1, cmap='Blues')
-    plt.plot(massline, massline, color='black', ls='--')
-    plt.plot(massline, massline+0.2, color='grey', ls='--')
-    plt.plot(massline, massline-0.2, color='grey', ls='--')
+        # Define the labels for the plot
+        xlabel = r'GAMA-II stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
+        ylabel = r'KiDS-bright stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
 
-    # Define the labels for the plot
-    xlabel = r'GAMA-II stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
-    ylabel = r'KiDS-bright stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
+        plt.xlabel(xlabel, fontsize=14)
+        plt.ylabel(ylabel, fontsize=14)
 
-    plt.xlabel(xlabel, fontsize=14)
-    plt.ylabel(ylabel, fontsize=14)
+        plotfilename = '/%s/KiDS_GAMA_mass_2Dhist_matched'%plot_path
 
-    plotfilename = '/%s/KiDS_GAMA_mass_2Dhist_matched'%plot_path
+        # Save plot
+        for ext in ['png']:
+            plotname = '%s.%s'%(plotfilename, ext)
+            plt.savefig(plotname, format=ext, bbox_inches='tight')
+            
+        print('Written plot:', plotname)
 
-    # Save plot
-    for ext in ['png']:
-        plotname = '%s.%s'%(plotfilename, ext)
-        plt.savefig(plotname, format=ext, bbox_inches='tight')
+        plt.show()
+        plt.clf
+
+
+        ## Plot 2D redshift histogram
+
+        plt.hist2d(Z_gama_matched, Z_kids_matched, bins=100)#, cmin=1, cmap='Blues')
+        plt.plot(Zline, Zline, color='black', ls='--')
+        plt.plot(Zline, Zline+0.02, color='grey', ls='--')
+        plt.plot(Zline, Zline-0.02, color='grey', ls='--')
+
+        # Define the labels for the plot
+        xlabel = r'GAMA-II spectroscopic redshift'
+        ylabel = r'KiDS-bright ANNZ redshift'
+
+        plt.xlabel(xlabel, fontsize=14)
+        plt.ylabel(ylabel, fontsize=14)
+
+        plotfilename = '/%s/KiDS_GAMA_redshift_2Dhist_matched'%plot_path
+
+        # Save plot
+        for ext in ['png']:
+            plotname = '%s.%s'%(plotfilename, ext)
+            plt.savefig(plotname, format=ext, bbox_inches='tight')
+            
+        print('Written plot:', plotname)
+
+        plt.show()
+        plt.clf
+    
+    else:
         
-    print('Written plot:', plotname)
-
-    plt.show()
-    plt.clf
-
-
-    ## Plot 2D redshift histogram
-    Zline = np.linspace(z_min, z_max, 50)
-
-    plt.hist2d(galZ_gama_matched, galZ_kids_matched, bins=100)#, cmin=1, cmap='Blues')
-    plt.plot(Zline, Zline, color='black', ls='--')
-    plt.plot(Zline, Zline+0.027, color='grey', ls='--')
-    plt.plot(Zline, Zline-0.027, color='grey', ls='--')
-
-    # Define the labels for the plot
-    xlabel = r'GAMA-II spectroscopic redshift'
-    ylabel = r'KiDS-bright ANNZ redshift'
-
-    plt.xlabel(xlabel, fontsize=14)
-    plt.ylabel(ylabel, fontsize=14)
-
-    plotfilename = '/%s/KiDS_GAMA_redshift_2Dhist_matched'%plot_path
-
-    # Save plot
-    for ext in ['png']:
-        plotname = '%s.%s'%(plotfilename, ext)
-        plt.savefig(plotname, format=ext, bbox_inches='tight')
+        ## Plot 2D redshift histogram of ellipticals and spirals
         
-    print('Written plot:', plotname)
+        plt.scatter(Z_gama_spir, Z_kids_spir, marker='.', alpha=0.01, color='blue')
+        
+        plt.scatter(Z_gama_ell, Z_kids_ell, marker='.', alpha=0.01, color='red')
 
-    plt.show()
-    plt.clf
+        plt.plot(Zline, Zline, color='black', ls='--')
+        plt.plot(Zline, Zline+0.02, color='grey', ls='--')
+        plt.plot(Zline, Zline-0.02, color='grey', ls='--')
 
+        # Define the labels for the plot
+        xlabel = r'GAMA-II spectroscopic redshift'
+        ylabel = r'KiDS-bright ANNZ redshift'
 
-# Calculate the differences between the GAMA and KiDS redshifts/masses
-diff_Z = (galZ_kids_matched-galZ_gama_matched)/(galZ_gama_matched)
-diff_logmstar = logmstar_kids_matched - logmstar_gama_matched
+        plt.xlabel(xlabel, fontsize=14)
+        plt.ylabel(ylabel, fontsize=14)
+        
+        plt.xlim([z_min, z_max])
+        plt.ylim([z_min, z_max])
+        
+        plotfilename = '/%s/KiDS_GAMA_redshift_2Dhist_galtypes'%plot_path
 
-Zmask_gama = (z_min<galZ_gama)&(galZ_gama<z_max)
-Zmask_kids = (z_min<galZ_kids)&(galZ_kids<z_max)
+        # Save plot
+        for ext in ['png']:
+            plotname = '%s.%s'%(plotfilename, ext)
+            plt.savefig(plotname, format=ext, bbox_inches='tight')
+            
+        print('Written plot:', plotname)
 
-print('specZ GAMA (mean):', np.mean(galZ_gama))
-print('ANNZ KiDS (mean):', np.mean(galZ_kids))
+        plt.show()
+        plt.clf
+        
+        ## Plot 2D mass histogram of ellipticals and spirals
+
+        plt.scatter(logmstar_gama_spir, logmstar_kids_spir, marker='.', alpha=0.01, \
+                                            color='blue', label = 'Spirals')
+        plt.scatter(logmstar_gama_ell, logmstar_kids_ell, marker='.', alpha=0.01, \
+                                            color='red', label='Ellipticals')
+
+        plt.plot(massline, massline, color='black', ls='--')
+        plt.plot(massline, massline+0.2, color='grey', ls='--')
+        plt.plot(massline, massline-0.2, color='grey', ls='--')
+
+        # Define the labels for the plot
+        xlabel = r'GAMA-II stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
+        ylabel = r'KiDS-bright stellar mass [log(${\rm M/h_{%g}^{-2}M_{\odot}})$]'%(h*100)
+
+        plt.xlabel(xlabel, fontsize=14)
+        plt.ylabel(ylabel, fontsize=14)
+
+        plt.xlim([logmstar_min, logmstar_max])
+        plt.ylim([logmstar_min, logmstar_max])
+        
+        plotfilename = '/%s/KiDS_GAMA_mass_2Dhist_galtypes'%plot_path
+        
+        # Save plot
+        for ext in ['png']:
+            plotname = '%s.%s'%(plotfilename, ext)
+            plt.savefig(plotname, format=ext, bbox_inches='tight')
+            
+        print('Written plot:', plotname)
+
+        plt.show()
+        plt.clf
+    
+    
+## Calculate the differences between the GAMA and KiDS redshifts/masses
+
+# Mean redshifts of KiDS and GAMA
+Zmean_gama = np.mean(Z_gama[Zmask_gama])
+Zmean_kids = np.mean(Z_kids[Zmask_kids])
 print()
-print('Diff. Fraction Z:', np.mean(diff_Z))
-print('Stand. Dev. Z:', np.std(galZ_kids_matched-galZ_gama_matched))
-print( 'dz/z:', np.std(galZ_kids_matched-galZ_gama_matched) / (1.+np.mean(galZ_kids[Zmask_kids])) )
-print()
-print('Diff. Mstar:', np.mean(diff_logmstar))
-print('Stand. Dev. Mstar:', np.std(diff_logmstar))
+print('specZ GAMA (mean):', Zmean_gama)
+print('ANNZ KiDS (mean):', Zmean_kids)
+
+if 'none' in splittype:
+    
+    # Redshift offset and standard deviation between KiDS and GAMA
+    diff_Z = (Z_kids_matched-Z_gama_matched)
+    std_diff_Z = np.std(diff_Z)
+    print()
+    print('Diff. Fraction Z:', np.mean(diff_Z/(1.+Z_gama_matched)))
+    print('Stand. Dev. Z:', std_diff_Z)
+    print( 'std(z)/(1+z):', std_diff_Z / (1.+np.mean(Z_kids_matched)) )
+
+    # Stellar mass offset and standard deviation between KiDS and GAMA
+    diff_logmstar = (logmstar_kids_matched-logmstar_gama_matched)
+    std_diff_logmstar = np.std(diff_logmstar)
+    print()
+    print('Diff. Mstar:', np.mean(diff_logmstar))
+    print('Stand. Dev. Mstar:', std_diff_logmstar)
+    print('std(M)/M:', np.std( \
+        10.**logmstar_kids_matched-10.**logmstar_gama_matched)/np.mean(10.**logmstar_gama_matched))
+
+    # Estimate the mass uncertainty caused by the redshift uncertainty
+    dist_kids_matched = (1.+Z_kids_matched) * cosmo.comoving_distance(Z_kids_matched)
+    dist_gama_matched = (1.+Z_gama_matched) * cosmo.comoving_distance(Z_gama_matched)
+    std_diff_dist = np.std(dist_kids_matched - dist_gama_matched)
+    std_diff_lum = np.std(dist_kids_matched**2 - dist_gama_matched**2)
+    print()
+    print('dD/D:', std_diff_dist / np.mean(dist_gama_matched) )
+    print('L+dL/L = %s dex'%(np.log10(std_diff_lum/np.mean(dist_gama_matched**2)+1.)) )
+
+    # Estimate the mass uncertainty caused by the magnitude uncertainty
+    magmask_kids = (0.<rmag_kids_sersic)&(rmag_kids_sersic<30.)&(0.<rmag_kids_auto)&(rmag_kids_auto<20.)
+    diff_rmag = rmag_kids_sersic[Zmask_kids*magmask_kids] - rmag_kids_auto[Zmask_kids*magmask_kids]
+    
+    std_ratio_flux = 10.**(0.4*np.std(diff_rmag))
+    mean_ratio_flux = 10.**(0.4*np.mean(diff_rmag))
+    
+    print()
+    print('Mag offset: mean(dm)=', np.mean(diff_rmag))
+    print('Mag uncertainty: std(dm)=', np.std(diff_rmag))
+    print(std_ratio_flux)
+    print('Flux offset: mean(F+dF/F)= %g dex'%np.log10(std_ratio_flux))
+    print('Flux uncertainty: std(F+dF/F)= %g dex'%np.log10(mean_ratio_flux))
+
+    #plt.hist(logmstar_gama_matched, label=r'GAMA (matched)', bins=50, histtype='step', normed=1)
+
+else:
+    # Redshift offset of ellipticals and spirals
+    diff_Z_ell = (Z_kids_ell-Z_gama_ell)
+    diff_Z_spir = (Z_kids_spir-Z_gama_spir)
+    mean_diff_Z_ell = np.mean(diff_Z_ell)
+    mean_diff_Z_spir = np.mean(diff_Z_spir)
+    print()
+    print('dZ for ellipticals: %g'%( mean_diff_Z_ell ))
+    print('dZ for spirals: %g'%( mean_diff_Z_spir ))
+    #print('Difference in dZ: %g dex'%( np.log10(mean_diff_Z_ell/mean_diff_Z_spir) ))
+    print('dZe+dZs/Z:', (np.abs(mean_diff_Z_ell)+np.abs(mean_diff_Z_spir)) / \
+        np.mean(Z_gama_matched))
+    
+    # Stellar mass offset of ellipticals and spirals
+    diff_mstar_ell = (10.**logmstar_kids_ell-10.**logmstar_gama_ell)
+    diff_mstar_spir = (10.**logmstar_kids_spir-10.**logmstar_gama_spir)
+    diff_logmstar_ell = (logmstar_kids_ell-logmstar_gama_ell)
+    diff_logmstar_spir = (logmstar_kids_spir-logmstar_gama_spir)
+    mean_diff_mstar_ell = np.mean(diff_mstar_ell)
+    mean_diff_mstar_spir = np.mean(diff_mstar_spir)
+    mean_diff_mstar_gama = np.mean(10**logmstar_gama_ell) / np.mean(10**logmstar_gama_spir)
+    mean_diff_mstar_kids = np.mean(10**logmstar_kids_ell) / np.mean(10**logmstar_kids_spir)
+    
+    print()
+    print('M_ell/M_spir (GAMA): %g (%g dex)'%(mean_diff_mstar_gama, np.log10(mean_diff_mstar_gama) ))
+    print('M_ell/M_spir (KiDS): %g (%g dex)'%(mean_diff_mstar_kids, np.log10(mean_diff_mstar_kids) ))
+    print('dlogM for ellipticals: %g'%( np.mean(diff_logmstar_ell) ))
+    print('dlogM for spirals: %g'%( np.mean(diff_logmstar_spir) ))
+    #print('Difference in dlogM: %g dex'%( np.log10(mean_diff_logmstar_ell/mean_diff_logmstar_spir) ))
+    print('dMe+dMs/M:', (np.abs(mean_diff_mstar_ell)+np.abs(mean_diff_mstar_spir)) / \
+        np.mean(10.**logmstar_gama_matched))

@@ -23,11 +23,11 @@ from matplotlib import rc, rcParams
 
 import modules_EG as utils
 
+
 # Import lens catalog
-cat = 'kids'
-#splittype = 'sersic'
-splittype = 'color'
-Noffset = 0
+cat = 'kids' # kids / gama / matched
+splittype = 'color' #sersic / color
+Noffset = 0 # Minimum 0
 
 plot=False
 
@@ -47,23 +47,7 @@ fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag,
 utils.import_lenscat(cat, h, cosmo)
 Nlenses = len(lensZ) # Total number of lenses
 
-if Noffset > 1:
-    # Import "true" catalogue
-    lenscatname = 'mass_selection_catalog_%s-offsetx%s_%s.fits'%(splittype, Noffset-1, cat)
-    lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
-    lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
-    logmstar = lenscat['logmstar']
-
-# Adding a random offset to each stellar mass to estimate the Eddington bias
-Sigma_M = [0.21]*len(logmstar)
-dMlist = np.random.normal(loc=0., scale=Sigma_M, size=len(Sigma_M))
-logmstar = logmstar+dMlist
-print()
-print('Adding offset to lens masses: x%i'%(Noffset))
-print()
-
 # Full directory & name of the corresponding lens catalogue
-lenscatname = 'photozs.DR4.1_bright_ugri+KV_struct.fits'
 lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
 lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
 
@@ -71,16 +55,32 @@ lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
 if 'sersic' in splittype:
     typename = 'n_2dphot'
     typelist = lenscat['n_2dphot']
-
-    mask_ell = (typelist > 2.)
-    mask_spir = (typelist < 2.)
+    splitlim = 2.
     
 if 'color' in splittype:
     typename = 'MAG_GAAP_u-r'
     typelist = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
+    splitlim = 2.5
     
-    mask_ell = (typelist > 2.5)
-    mask_spir = (typelist < 2.5)
+mask_ell = (typelist > splitlim)
+mask_spir = (typelist < splitlim)
+
+# If we are creating an offset catalogue
+if Noffset > 1:
+    # Import masses from the catalogue that is one offset less than the one we want to make
+    lenscatname = 'mass_selection_catalog_%s-offsetx%s_%s.fits'%(splittype, Noffset-1, cat)
+    lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
+    lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
+    logmstar = lenscat['logmstar']
+
+if Noffset > 0:
+    # Add a random offset to each stellar mass to estimate the Eddington bias
+    Sigma_M = [0.12]*len(logmstar)
+    dMlist = np.random.normal(loc=0., scale=Sigma_M, size=len(Sigma_M))
+    logmstar = logmstar+dMlist
+    print()
+    print('Adding offset to lens masses: x%i'%(Noffset))
+    print()
 
 # Isolated galaxy catalogue
 isocatname = '%s_isolated_galaxies_perc_h70.fits'%cat
@@ -166,13 +166,9 @@ for m in np.arange(Nbins):
     output = [lensID, logmstar, typelist, selection_list]
     outputnames = ['ID', 'logmstar', typename, 'selected']
 
-
-
-
 # Create the output catalogue
 filename = '/data/users/brouwer/LensCatalogues/mass_selection_catalog_%s-offsetx%i_%s.fits'%(splittype, Noffset, cat)
 
 formats = ['D']*len(outputnames)
 
 utils.write_catalog(filename, outputnames, formats, output)
-print('Written catalog:', filename)
