@@ -29,10 +29,10 @@ h                   0.7                                         # Reduced Hubble
  ESD_purpose            shearcovariance
 #ESD_purpose            randomcatalog                    #     'randomcatalog', 'randombootstrap'}.
 
-#Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
-#Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
- Rbins                  15,1e-15,5e-12
- Runit                  mps2
+ Rbins                  15,0.03,3                       #     comma-separated list with (Rmin,Rmax,Nbins).
+ Runit                  Mpc                              # One of these physical {pc, kpc, Mpc} or sky {arcsec, arcmin, deg} coordinates.
+#Rbins                  15,1e-15,5e-12
+#Runit                  mps2
 
  ncores                 6                               # Any number of cores your machine can use to run the code.
 
@@ -41,18 +41,19 @@ h                   0.7                                         # Reduced Hubble
 
 lensID_file        None                                                                      # Path to text file with chosen lens IDs (optional).
 
-#lens_weights       None
- lens_weights       logmbar        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_mice.fits       # Weight name and path to fits file
+ lens_weights       None
+#lens_weights       logmbar        /data/users/brouwer/LensCatalogues/baryonic_mass_catalog_mice.fits       # Weight name and path to fits file
 
- lens_binning       None
-#lens_binning       logmstar      /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits    8.5,10.3,10.6,10.8,11.0
+#lens_binning       None
+ lens_binning       logmstar      /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits    8.5,10.3,10.6,10.8,11.0
 #lens_binning       logmstar      /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits    8.5,10.3,10.6,10.8,11.0
 #lens_binning       Z              self               0.0,0.1,0.2,0.3,0.4,0.5
 
 
  lens_limits1    z_cgal                    self               0.1,0.5
  lens_limits2    dist0p1perc           /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       3.,inf
- lens_limits3    logmstar              /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       0.,11.
+#lens_limits2    dist0p01perc           /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       3.,inf
+#lens_limits3    logmstar              /data/users/brouwer/LensCatalogues/mice_isolated_galaxies_perc_h70.fits       0.,11.
 
 # Source selection
  src_limits1           z_cgal        0.1,1.2             # Source parameter for limits and one value, or

@@ -75,13 +75,14 @@ replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mice_test.con
 findlist = np.array(['percvalue', 'distmin'])
 replacelist = np.array([['0p3', '0p2', '0p1'], [3,4.5]])
 config_files = create_config(replacefile, findlist, replacelist)
-
+"""
 # Run the three stellar mass limits
 #replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_k1000_replace.config'
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
 #replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_gama.config'
 findlist = np.array(['masslim'])
-replacelist = np.array([['GL', 'min', 'max']])
+#replacelist = np.array([['GL', 'min', 'max']])
+replacelist = np.array([['9.3', '10.', '11.']])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Run MICE with and without offset
@@ -89,7 +90,7 @@ replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_mice.conf
 findlist = np.array(['typu', 'typh'])
 replacelist = np.array([['', '_offsetZM'], ['', '-offsetZM']])
 config_files = create_config(replacefile, findlist, replacelist)
-"""
+
 """
 
 # Running the created config files (one by one)

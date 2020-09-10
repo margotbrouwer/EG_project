@@ -29,18 +29,22 @@ blues = ['#332288', '#44AA99', '#117733', '#88CCEE']
 reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
 #colors = np.array([reds,blues])
 
-#colors = ['#0571b0', '#92c5de', '#d7191c']*2#, '#fdae61']
-colors = ['#d7191c', '#0571b0', '#92c5de', '#fdae61']
+# Dark blue, orange, red, light blue
+colors = ['#0571b0', '#fdae61', '#d7191c', '#92c5de']
 
+# Select the lens catalogue (kids/gama/mice)
+cat = 'kids'
 
 # Constants
 h = 0.7
-O_matter = 0.315
-O_lambda = 0.685
+if 'mice' in cat:
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    O_matter = 0.2793
+    O_lambda = 0.7207
 cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
-
-cat = 'kids' # Select the lens catalogue (kids/gama/mice)
 rationame = 'perc'
 massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
 massratio_names = [str(p).replace('.','p') for p in massratios]
@@ -118,10 +122,12 @@ print('Niso_false:', Niso_false, Niso_false/Niso_tot*100., '% of isolated sample
 plt.figure(figsize=(4.7,3.7))
 plotscale = 1.e3 # Scale the number of galaxies
 
-plt.plot(rmagcenters, rmaghist/plotscale, color=colors[1], label=r'All galaxies')
-plt.plot(rmagcenters, isohist/plotscale, color=colors[2], \
-    label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc$/h$'%(massratios[massratio_num], distval))
-plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction of isolated galaxies')
+plt.plot(rmagcenters, rmaghist/plotscale, color=colors[2], label=r'All KiDS galaxies')
+plt.plot(rmagcenters, isohist/plotscale, color=colors[1], \
+    label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc$/h_{70}$'%(massratios[massratio_num], distval))
+    
+    
+plt.plot(rmagcenters, isohist/rmaghist, color=colors[0], label=r'Fraction (isolated/all galaxies)')
 plt.text(17.6, 7.e-2, r'f$_{\rm L}=%g$'%(massratios[massratio_num]), fontsize=12)
 
 #plt.plot(rmagcenters, np.cumsum(isohist)/np.cumsum(rmaghist))
@@ -130,7 +136,7 @@ plt.axvline(x=magmax-maglim, color='grey', ls='--')
 #plt.axvline(x=magmax, color='black', ls='--')
 
 xlabel = r'Apparent magnitude $m_{\rm r}$'
-ylabel = r'Number of galaxies (x$%g$)'%plotscale
+ylabel = r'Number of galaxies ($\times %g$)'%plotscale
 
 plt.xlabel(xlabel, fontsize=12)
 plt.ylabel(ylabel, fontsize=12)

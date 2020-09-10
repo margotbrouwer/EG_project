@@ -23,13 +23,24 @@ from matplotlib import rc, rcParams
 
 import modules_EG as utils
 
+# Make use of TeX
+rc('text',usetex=True)
+rc('text',usetex=True)
+
+# Change all fonts to 'Computer Modern'
+rc('font',**{'family':'serif','serif':['DejaVu Sans']})
+
+# Colours
+
+# Dark blue, light blue, red, orange
+colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']
 
 # Import lens catalog
 cat = 'kids' # kids / gama / matched
 splittype = 'color' #sersic / color
 Noffset = 0 # Minimum 0
 
-plot=False
+plot=True
 
 # Constants
 h = 0.7
@@ -102,23 +113,26 @@ bincenters = binedges[0:-1] + np.diff(binedges)/2.
 
 # Creating stellar mass histograms for ellipticals and spirals
 N_ell, foo, foo = plt.hist(logmstar[mask_ell*mask_iso], bins=binedges, histtype='step', \
-    label='Isolated Ellipticals', color='red')
+    label=r'Isolated ellipticals', color=colors[2])
 N_spir, foo, foo = plt.hist(logmstar[mask_spir*mask_iso], bins=binedges, histtype='step', \
-    label='Isolated Spirals', color='blue')
+    label=r'Isolated spirals', color=colors[0])
 
 # Finding the smallest number of galaxies in each M-bin
 Nmin = np.array([np.amin(np.array([N_ell[x], N_spir[x]])) for x in np.arange(Nbins)])
 
 if plot:
     # Plot the resulting histograms
-    plt.plot(bincenters, Nmin, \
-        label='Selected Ellipticals/Spirals (without Eddington bias)', color='green')
+    plt.fill_between(bincenters, Nmin, 0., \
+        label=r'Selected ellipticals \& spirals', color=colors[1], alpha=0.3)
 
-    xlabel = r'Stellar mass log($M_*$)'
-    plt.xlabel(xlabel, fontsize=14)
+    xlabel = r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)'
+    ylabel = r'Number of galaxies'
+    plt.xlabel(xlabel, fontsize=15)
+    plt.ylabel(ylabel, fontsize=15)
+        
+    plt.tick_params(labelsize='14')
+    plt.legend(loc='upper left', fontsize=14)
 
-    plt.legend(loc='upper left')
-    
     # Save plot
     plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Jul20/Plots/mass_range_selection_offsetx%i'%(Noffset)
     for ext in ['pdf']:

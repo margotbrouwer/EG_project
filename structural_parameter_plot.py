@@ -19,14 +19,22 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
 from matplotlib import gridspec
 from matplotlib import rc, rcParams
+from matplotlib.lines import Line2D
 
 import modules_EG as utils
 
-#colors = ['#0571b0', '#d7191c', 'grey', 'darkgrey']
-#colors = ['#0571b0', '#92c5de']*2
+# Make use of TeX
+rc('text',usetex=True)
+rc('text',usetex=True)
+
+# Change all fonts to 'Computer Modern'
+rc('font',**{'family':'serif','serif':['DejaVu Sans']})
+
+# Red, light blue, dark grey, grey
+colors = ['#d7191c', '#0571b0', 'darkgrey', 'grey']
 
 # Dark blue, light blue, red, orange
-colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
+#colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
 
 # Import constants
 G = const.G.to('pc3/Msun s2')
@@ -77,8 +85,9 @@ mue = lenscat['mue_2dphot']
 color_gr = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
 
 
-plt.figure(figsize=(7,7))
+plt.figure(figsize=(6,5))
 
+"""
 ## Plot central surface brightness
 
 valpha = 0.07
@@ -133,7 +142,7 @@ print('Written: ESD profile plot:', plotname)
 
 plt.show()
 plt.clf()
-
+"""
 
 ## Plot colour
 
@@ -146,40 +155,40 @@ for m in range(len(maskvals)):
     lensmask, filename_var = utils.define_lensmask(paramnames, maskvals[m], path_lenscat, lenscatnames, h)
 
     # Masking the binning values and shear catalog
-    if m==0:
-        plt.scatter(logmstar_GL[lensmask], color_gr[lensmask], marker='.', alpha=valpha, color=colors[m], label='Ellipticals (n>2)')
-    else:
-        if m==1:
-            plt.scatter(logmstar_GL[lensmask], color_gr[lensmask], marker='.', alpha=valpha, color=colors[m], label='Spirals (n<2)')
-        else:
-            plt.scatter(logmstar_GL[lensmask], color_gr[lensmask], marker='.', alpha=valpha, color=colors[m])
+    plt.plot(logmstar_GL[lensmask], color_gr[lensmask], marker='.', ls='', alpha=valpha, color=colors[m], rasterized=True)
+
 
 plt.axvline(x=11., color='black')
-plt.axvline(x=10.5, ymax=4./9., color='black', ls='--')
-plt.axvline(x=10.8, ymin=4./9., color='black', ls='--')
 plt.axhline(y=2.5, color='black', ls='--')
 
+"""
+# Elliptical and spiral mass bins
+plt.axvline(x=10.5, ymax=4./9., color='black', ls='--')
+plt.axvline(x=10.8, ymin=4./9., color='black', ls='--')
 plt.text(10.6, 3., r'1', fontsize=15)
 plt.text(10.85, 3., r'2', fontsize=15)
 plt.text(10.25, 2., r'3', fontsize=15)
 plt.text(10.7, 2., r'4', fontsize=15)
+"""
 
-plt.xlabel(r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)')
-plt.ylabel(r'Colour (u-r)')
+plt.xlabel(r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)', fontsize=15)
+plt.ylabel(r'Colour ($u-r$)', fontsize=15)
 
 plt.xlim([8.5, 11.75])
 plt.ylim([0.5, 5.])
-#plt.ylim([1., 6.])
 
-leg = plt.legend(loc='best')
+plt.tick_params(labelsize='14')
 
-for lh in leg.legendHandles: 
-    lh.set_alpha(1)
+legend_elements = [Line2D([0], [0], marker='.', ls = '', color=colors[0], label=r'Ellipticals (n$>2$)'), \
+                   Line2D([0], [0], marker='.', ls = '', color=colors[1], label=r'Spirals (n$<2$)')]
+
+plt.legend(handles=legend_elements, loc='best', fontsize=15)
+
 
 plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_color_u-r'
 
 # Save plot
-for ext in ['png']:
+for ext in ['pdf', 'png']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     

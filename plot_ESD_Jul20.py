@@ -38,26 +38,17 @@ blacks = ['black', '#0571b0']
 # Dark blue, orange, red, light blue
 colors = ['#0571b0', '#fdae61', '#d7191c', '#92c5de']*2
 
-# Import cosmology
-cat = 'kids'
-
-h = 0.7
-if 'mice' in cat:
-    O_matter = 0.25
-    O_lambda = 0.75
-else:
-    O_matter = 0.2793
-    O_lambda = 0.7207
-cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
 
 # Import constants
 pi = np.pi
 G = const.G.to('pc3 / (M_sun s2)').value
 c = const.c.to('pc/s').value
+h = 0.7
 H0 = h * 100 * (u.km/u.s)/u.Mpc
 H0 = H0.to('s-1').value
 pc_to_m = 3.08567758e16
 
+# Define functions
 def vrot_mond(Mbar, r, g0=1.2e-10/pc_to_m):
     gbar = (G * 10.**Mbar) / r**2
     gobs = gbar / (1 - np.exp( -np.sqrt(gbar/g0) ))
@@ -85,6 +76,8 @@ datatitles = []
 Nrows = 1
 blind = 'C'
 vrot = False
+isolim = True
+cat = 'kids'
 
 # Define minimum and maximum radius
 Rmin = 0.03 # Mpc
@@ -94,250 +87,84 @@ Rmax = 3. # Mpc
 path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
 
 """
-# KiDS vs. GAMA comparison
-params = ['Z', 'zANNz2ugri']
-N = len(params)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins/%s_0_0p5'%p for p in params]])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N])
-path_filename = np.array([['shearcovariance/No_bins_A']*N])
-
-datalabels = [r'GAMA', 'KiDS']
-datatitles = [r'']
-
-plotfilename = '%s/Plots/ESD_GAMA_KiDS_all'%path_sheardata
-
-
-# Lens redshift comparison
-params1 = ['KiDS', 'GAMA']
-params2 = np.arange(4)+1
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 2
-
-path_lenssel = np.array([['zANNz2ugri_0p1_0p2_0p3_0p4_0p5/zANNz2ugri_0_0p5',
-                            'Z_0p1_0p2_0p3_0p4_0p5_GAMA/Z_0_0p5']]*N2)
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
-path_filename = np.array([['shearcatalog/shearcatalog_bin_%i_A'%p2]*N1 for p2 in params2])
-
-datalabels = params1
-datatitles = [r'$0.1<Z<0.2$',r'$0.2<Z<0.3$',r'$0.3<Z<0.4$',r'$0.4<Z<0.5$']
-
-plotfilename = '%s/Plots/ESD_KiDS_GAMA_Zbins'%path_sheardata
-
-
-# Isolation test: f_iso (KiDS)
-
-params1 = ['KiDS']
-params2 = ['0p0', '0p1', '0p2']
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins/dist%sperc_3_inf-logmstar_10p4_10p6-zANNz2ugri_0_0p5'%p for p in params2]])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
-
-datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$', r'$f_{\rm iso}=0.3$']
-datatitles = params1
-
-plotfilename = '%s/Plots/ESD_KiDS_isotest_fiso'%path_sheardata
-
-
-# Isolation test: f_iso (MICE)
-
-params1 = ['KiDS']
-params2 = ['0p0', '0p1', '0p2']
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins_400deg2/dist%sperc_3_inf-logmstar_10p4_10p6-zcgal_0_0p5'%p for p in params2]])
-path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
-
-datalabels = [r'$f_{\rm iso}=0.0$', r'$f_{\rm iso}=0.1$', r'$f_{\rm iso}=0.2$']#, r'$f_{\rm iso}=0.3$']
-datatitles = params1
-
-plotfilename = '%s/Plots/ESD_MICE_isotest_fiso'%path_sheardata
-
-
-# Isolation test: r_iso (KiDS)
-
-params1 = ['0p1']
-params2 = ['3', '4', '5', '6']
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins/dist%sperc_%s_inf-logmstarGL_0_11-zANNz2ugri_0_0p5'%(p1,p2) \
-                                                            for p2 in params2] for p1 in params1])
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
-
-datatitles = ['']
-datalabels = [r'$r_{\rm sat} = %s$ Mpc/h'%p for p in params2]
-
-plotfilename = '%s/Plots/ESD_KiDS_isotest_riso'%path_sheardata
-
-
-# Isolation test: r_iso (MICE)
-
-params1 = ['0p1']
-params2 = ['3', '4p5', '6']
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins_400deg2/dist%sperc_%s_inf-logmstar_10p9_11p1-zcgal_0_0p5'%(p1,p2) \
-                                                                for p2 in params2] for p1 in params1])
-path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
-
-datatitles = ['']
-datalabels = ['3 Mpc', '4.5 Mpc', '6 Mpc']
-
-plotfilename = '%s/Plots/ESD_MICE_isotest_riso_fsat0p1'%path_sheardata
-
 
 
 # Isolated vs. not isolated (KiDS)
 
-params1 = ['KiDS']
-params2 = [r'Isolated, bright (m$_{\rm r}<17.5$ mag)', \
-        r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$', \
-        r'All galaxies']
-N1 = len(params1)
-N2 = len(params2)
+param1 = ['KiDS']
+param2 = [r'Isolated, bright (m$_{\rm r}<17.5$ mag)', \
+        r'Isolated: $r_{\rm sat}>3$ Mpc/$h_{70}$, $M_*<10^{11}\,{\rm M_\odot}/h_{70}^2$', \
+        r'All KiDS galaxies']
+N1 = len(param1)
+N2 = len(param2)
 Nrows = 1
-vrot = False
+isolim = False
 
 path_lenssel = np.array([['No_bins/MAGAUTOCALIB_0_17p5-dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5', \
                            'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5', 'No_bins/zANNZKV_0p1_0p5']])
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_C']*N2]*N1)
 
-datatitles = params1
-datalabels = params2
+datatitles = param1
+datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 
-"""
+
 
 # True vs. offset redshifts (MICE)
 
-params1 = ['MICE']
-params2 = [r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.02$, $\sigma_{\rm M_*}=0.12$ dex', \
-    r'Isolated: $r_{\rm sat}(f_{\rm M_*}>0.1)>$3 Mpc/$h_{70}$, log$(M_*)<11\,{\rm M_\odot}/h_{70}^2$', 'All galaxies']
-N1 = len(params1)
-N2 = len(params2)
+cat = 'mice'
+param1 = ['MICE']
+param2 = [r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.02$, $\sigma_{\rm M_*}=0.12$ dex', \
+    r'Isolated: $r_{\rm sat}>3$ Mpc/$h_{70}$, $M_*<10^{11}\,{\rm M_\odot}/h_{70}^2$', 'All MICE mock galaxies']
+N1 = len(param1)
+N2 = len(param2)
 Nrows = 1
 
 path_lenssel = np.array([['No_bins/dist0p1percoffsetZM_3_inf-logmstaroffsetZM_0_11-zcgal_0p1_0p5', \
                         'No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0p1_0p5', 'No_bins/zcgal_0p1_0p5']])
 path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_%s'%blind]*N2]*N1)
+path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 
-datatitles = params1
-datalabels = params2
+datatitles = param1
+datalabels = param2
+
+plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
+
+
+
+# Isolation test (MICE)
+
+cat = 'mice'
+param1 = ['MICE']
+param2 = [r'Isolated: $r_{\rm sat}(f_{\rm M_*}<0.1)>3$ Mpc/$h_{70}$', \
+    r'Isolated: $r_{\rm sat}(f_{\rm M_*}<0.01)>3$ Mpc/$h_{70}$', 'All MICE mock galaxies']
+N1 = len(param1)
+N2 = len(param2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0p1_0p5', \
+                        'No_bins/dist0p01perc_3_inf-logmstar_0_11-zcgal_0p1_0p5', 'No_bins/zcgal_0p1_0p5']])
+path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
+path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
+
+datatitles = param1
+datalabels = param2
 
 plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
 
 """
-
-# 2D isolation test (MICE): True vs. offset redshifts 
-dz = [0.001, 0.005, 0.01, 0.018]
-
-params1 = ['', 'offset']
-params2 = [str(s).replace('.', 'p') for s in dz]
-print(params2)
-
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 2
-
-path_lenssel = np.array([['No_bins_mice/fsatsigma%s%s_0_0p1-logmstar_0_11-zcgal_0_0p5'%(p2,p1) \
-                            for p1 in params1] for p2 in params2])
-path_cosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N1]*N2)
-path_filename = np.array([['shearcatalog/No_bins_A']*N1]*N2)
-
-datatitles = ['Isolated, $\delta z=%s$'%s for s in dz]
-datalabels = ['MICE', 'MICE-offset']
-
-plotfilename = '%s/Plots/ESD_MICE_isotest-sigma_offset'%path_sheardata
-
-
-# 2D isolation test (KiDS)
-#dz = [0.001, 0.005, 0.01, 0.018]
-dz = [0.001, 0.002, 0.003, 0.004, 0.005]
-
-params1 = ['KiDS-1000']
-params2 = [str(s).replace('.', 'p') for s in dz]
-print(params2)
-
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins/fsatsigma%s_0_0p1-logmstarGL_0_11-zANNz2ugri_0_0p5'%(p2) for p2 in params2]]*N1)
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
-
-datatitles = params1
-datalabels = ['Isolated, $\delta z=%s$'%s for s in dz]
-
-plotfilename = '%s/Plots/ESD_KiDS_isotest_dz-0p001-0p005'%path_sheardata
-
-
-# Stellar mass bins (KiDS)
-
-massbins = [8.5,10.3,10.6,10.8,11.]
-
-params1 = ['Isolated']
-params2 = ['$%g <$ log($M_*$) $< %g M_\odot$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['logmstar_GL_8p5_10p3_10p6_10p8_11p0/dist0p1perc_3_inf-zANNZKV_0_0p5']*N2]*N1)
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_A'%p2 for p2 in np.arange(N2)+1]*N1])
-
-datatitles = params1
-datalabels = params2
-
-plotfilename = '%s/Plots/ESD_Mstarbins-4_eqSNall_isolated'%path_sheardata
-
-
-# Lens photoz errors versus no photoz errors
-
-params1 = ['GAMA']
-params2 = ['Without lens photo-z errors', 'With lens photo-z errors']
-N1 = len(params1)
-N2 = len(params2)
-Nrows = 1
-
-path_lenssel = np.array([['No_bins_gamatest/Z_0p1_0p2', 'No_bins_gamatest_withsigma/Z_0p1_0p2']]*N1)
-path_cosmo = np.array([['ZB_0p1_1p2-Om_0p315-Ol_0p685-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
-path_filename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
-
-datatitles = params1
-datalabels = params2
-
-plotfilename = '%s/Plots/ESD_photoz-test'%path_sheardata
-
-
 
 # Rotation curve KiDS - 4 stellar mass bins (KiDS)
 
 massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
-params1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
-params2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)']
-N1 = len(params1)
-N2 = len(params2)
+param1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
+param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)']
+N1 = len(param1)
+N2 = len(param2)
 Nrows = 2
 
 path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0p1_0p5'%(binname)]*N2]*N1)
@@ -352,11 +179,11 @@ mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
 vrot = True
 miceoffset = True
 
-datalabels = params2
+datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS+MICE_massbins-%s_iso'%(path_sheardata, binname)
 
-
+"""
 
 # Lensing rotation curve KiDS + GAMA
 
@@ -388,6 +215,15 @@ plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sh
 
 """
 
+# Define cosmological parameters
+if 'mice' in cat:
+    O_matter = 0.25
+    O_lambda = 0.75
+else:
+    O_matter = 0.2793
+    O_lambda = 0.7207
+cosmo = LambdaCDM(H0=h*100., Om0=O_matter, Ode0=O_lambda)
+
 ## Import measured ESD
 
 # Import the Lens catalogue
@@ -406,9 +242,12 @@ print('Plots, profiles:', Nbins)
 
 # Importing the shearprofiles and lens IDs
 data_x, R_src, data_y, error_h, error_l, N_src = utils.read_esdfiles(esdfiles)
-#print('mean error ratio:', np.mean(error_h[0]/error_h[1]))
 
-"""
+IDfiles = np.array([m.replace('%s.txt'%blind, 'lensIDs.txt') for m in esdfiles])
+lensIDs_selected = np.array([np.loadtxt(m) for m in IDfiles])#+1 # Sometimes +1 is needed to line up the ID's
+N_selected = [len(m) for m in lensIDs_selected]
+
+
 # Calculate the difference between subsequent bins
 for n in range(len(data_y)-1):
     chisquared = np.sum((data_y[n] - data_y[n+1])**2. / ((error_h[n]+error_h[n+1])/2.))
@@ -418,21 +257,23 @@ for n in range(len(data_y)-1):
     diff = (data_y[n+1] - data_y[n])/((data_y[n+1] + data_y[n])/2.)
     diff_error = (error_h[n+1] - error_h[n])/((error_h[n+1] + error_h[n])/2.)
     
-    print()
     print('Difference:', np.mean(diff[8:-1]))
     print('Difference, error:', np.mean(diff_error))
-    #print(params2[n], 'vs.', params2[n+1])
+    #print(param2[n], 'vs.', param2[n+1])
     print('Chi2:', chisquared)
     print('DoF:', dof)
     print('P-value:', prob)
 print()
-"""
+
 
 if 'mice' in cat:
-    z_mice = np.mean(lensZ)
-    Da_mice = utils.calc_Dc(z_mice, cosmo)/(1.+z_mice)
-    Da_mice = Da_mice.to(Runit).value
-    micelim = 0.43/60. * np.pi/180. * Da_mice
+    lensDa = lensDc.to('Mpc').value/(1.+lensZ)
+    
+    IDmask = np.in1d(lensID, lensIDs_selected[1])
+    Da_mean = np.mean(lensDa[IDmask*np.isfinite(lensDa)])
+    
+    pixelsize = 2. * 0.43 / 60. * pi/180. # arcmin to radian
+    micelim = pixelsize * Da_mean
     print('MICE limit:', micelim, Runit)
 
 if 'MICE' in plotfilename:
@@ -592,7 +433,7 @@ if 'massbins' in plotfilename:
     datatitles = [r'$\log\langle M_{\rm gal}/h_{%g}^{-2} {\rm M_\odot} \rangle = %.4g$'%(h*100, mean_mbar[p1]) for p1 in range(N1)]
 
 # Reliability limit of isolated KiDS-1000 galaxies
-if ('KiDS' in plotfilename):# and ('isolated' in plotfilename):
+if 'iso' in plotfilename:
     isoR = 0.3 # in Mpc
     print('Isolated KiDS signal reliability limit:', isoR)
 
@@ -611,6 +452,11 @@ gs_full = gridspec.GridSpec(1,1)
 gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subplot_spec=gs_full[0,0])
 
 ax = fig.add_subplot(gs_full[0,0])
+
+if len(param2) > 2:
+    plotcolors = colors
+else:
+    plotcolors = blacks
 
 for NR in range(Nrows):
     for NC in range(Ncolumns):
@@ -631,7 +477,7 @@ for NR in range(Nrows):
             print()
             """
             
-            if Nbins[1] > 1:
+            if (Nbins[1] > 1) and ('mice' not in cat):
                 dx = 0.04
                 data_x_plot = data_x[Ndata] * (1.-dx/2.+dx*Nplot)
             else:
@@ -641,17 +487,17 @@ for NR in range(Nrows):
             if 'mice' not in cat:
                 if Nsize==Nbins:
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                    color=blacks[Nplot], ls='', marker='.', zorder=8)
+                    color=plotcolors[Nplot], ls='', marker='.', zorder=8)
                 else:
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                    color=colors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
+                    color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
             else:
                 if Nsize==Nbins:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=blacks[Nplot], ls='-', marker='.', zorder=8)
+                    color=plotcolors[Nplot], ls='-', marker='.', zorder=8)
                 else:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
-                    color=blacks[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
+                    color=plotcolors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
         
             if 'MICE' in plotfilename:
                 
@@ -659,10 +505,10 @@ for NR in range(Nrows):
                 
                 if miceoffset and ('KiDS' in plotfilename) and ('iso' in plotfilename):
                     ax_sub.fill_between((data_x_mock[Ndata])[Rmin_mask], (data_y_mock[Ndata])[Rmin_mask], \
-                        (data_y_mock_offset[Ndata])[Rmin_mask], color=colors[2], label=mocklabels[Nplot], alpha=valpha, zorder=6)
+                        (data_y_mock_offset[Ndata])[Rmin_mask], color=plotcolors[2], label=mocklabels[Nplot], alpha=valpha, zorder=6)
                 else:
                     ax_sub.plot((data_x_mock[Ndata])[Rmin_mask], (data_y_mock[Ndata])[Rmin_mask], \
-                        color=colors[2], ls='-', marker='.', label=mocklabels[Nplot], zorder=6)
+                        color=plotcolors[2], ls='-', marker='.', label=mocklabels[Nplot], zorder=6)
                 
                 #ax_sub.axvline(x = Rmin[Ndata], color=colors[2], ls=':', label='MICE resolution limit')
                 
@@ -694,8 +540,8 @@ for NR in range(Nrows):
             ax_sub.plot(data_x[N], Vobs_verlinde/1e3, \
                 ls = '--', marker='', color=colors[2], label = r'Verlinde+16 Emergent Gravity (point mass)')
         
-        #if 'mice' in plotfilename:
-        #    ax_sub.axvline(x=micelim, ls='--', color='grey')
+        if 'mice' in plotfilename:
+            ax_sub.axvline(x=micelim, ls='--', color='grey', label=r'MICE resolution limit ($2\times0.43$ arcmin)')
         
         # Plot the axes and title
         
@@ -732,16 +578,13 @@ for NR in range(Nrows):
             plt.yscale('log')
         
         plt.xscale('log')
-        """
-        # Extras for KiDS data (isolation limit and/or stellar mass bias)
-        if 'KiDS' in plotfilename:
-            if 'iso' in plotfilename:
-                # Plot KiDS-1000 isolation limit
-                #ax_sub.axvline(x=isoR, ls=':', color=blacks[1], \
-                #    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
-                ax_sub.axvspan(isoR, Rmax, color=blacks[1], alpha=0.1, \
-                    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
-        """
+        
+        # Extras for KiDS data (isolation limit)
+        if isolim:
+            # Plot KiDS-1000 isolation limit
+            ax_sub.axvspan(isoR, Rmax, color=blacks[1], alpha=0.1, \
+                label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc}/h_{70}$)'%isoR)
+        
 # Define the labels for the plot
 xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
 ylabel = r'Excess Surface Density $\Delta\Sigma$ ($h_{%g} {\rm M_{\odot} / {\rm pc^2}}$)'%(h*100)
