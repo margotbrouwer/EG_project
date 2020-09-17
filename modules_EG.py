@@ -617,9 +617,9 @@ def mean_profile(data_x, data_y, binmin, binmax, Nbins, log):
     inds = np.digitize(data_x, binedges) # Indices indicated the bin of each values
     
     # Calculating the mean (x and y) and standard deviation (y) in each x-bin
-    data_x_mean = np.array([np.mean(data_x[inds==x]) for x in range(Nbins)])
-    data_y_mean = np.array([np.mean(data_y[inds==x]) for x in range(Nbins)])
-    data_y_std = np.array([np.std(data_y[inds==x]) for x in range(Nbins)])
+    data_x_mean = np.array([np.nanmean(data_x[inds==x]) for x in range(Nbins)])
+    data_y_mean = np.array([np.nanmean(data_y[inds==x]) for x in range(Nbins)])
+    data_y_std = np.array([np.nanstd(data_y[inds==x]) for x in range(Nbins)])
         
     return data_x_mean, data_y_mean, data_y_std
 

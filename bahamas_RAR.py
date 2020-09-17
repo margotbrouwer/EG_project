@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""Plot and compare the Bahamas RAR from the true mass profiles and the density maps (ESD)"""
+
 # Import the necessary libraries
 import sys
 import numpy as np
@@ -100,11 +102,13 @@ for c in range(catnum):
     profiles_radius[c] = profile_c[0] * 1e6 # * r200list[c] # in pc # profile_c[0,0:Nbins]
     profiles_Menclosed[c] = profile_c[1]# * M200list[c] # in Msun # profile_c[1,0:Nbins]
 
-# Calculate true gbar and gobs from enclosed mass profiles
+## Calculate true gbar and gobs from enclosed mass profiles
 profiles_gbar = (G * mstarlist) / (profiles_radius*xvalue)**2. * pc_to_m # in m/s^2
 profiles_gobs = (G * profiles_Menclosed) / (profiles_radius*xvalue)**2. * pc_to_m # in m/s^2
 
-gbar_profiles_mean, gobs_profiles_mean, mock_y_std = utils.mean_profile(profiles_gbar, profiles_gobs, profbins, True)
+# Calculate the mean and standard deviation from enclosed mass profiles
+gbar_profiles_mean, gobs_profiles_mean, gobs_profiles_std = \
+    utils.mean_profile(profiles_gbar, profiles_gobs, 1e-15, 1e-10, profbins, True)
 
 ## Calculate gbar and gobs from the ESD profiles
 
@@ -118,7 +122,7 @@ if method == 'SIS':
     
     print(np.shape(gobs_list))
     print(np.nanmean(gobs_list, 0))
-    
+
 # Calculate gobs using Kyle's numerical integration method
 if method == 'numerical':
     
@@ -149,7 +153,7 @@ if method == 'numerical':
     gobs_list = (G * Menc_values) / (Menc_radii*xvalue)**2. * pc_to_m # in m/s^2
     
     """
-    print('Performing analitical method')
+    print('Performing analytical method')
     ## density profile, not shallower than -1 in outer part!
     
     # Create a SIS for the 'guess' ESD(gbar)
@@ -193,6 +197,14 @@ if method == 'numerical':
         plt.plot(r, rho)
         plt.show()
     """
+
+# Calculate the mean and standard deviation from density maps
+#gbar_maps_mean, gobs_maps_mean, gobs_maps_std = \
+#    utils.mean_profile(gbar_list, gobs_list, Rmin, Rmax, Nbins, True)
+gbar_maps_mean = np.nanmean(gbar_list, 0)
+gobs_maps_mean = np.nanmean(gobs_list, 0)
+gobs_maps_std = np.nanstd(gobs_list, 0)
+
     
 ## Plotting the result
 
@@ -206,20 +218,29 @@ if 'pc' in plotunit:
     ylabel = r'Excess Surface Density [$M_\odot/pc^2$]'
 
 else:
+    #"""
+    # Plot all individual lines
     for i in range(catnum):
-    
-        plt.plot(gbar_list[i], gobs_list[i], color='blue', marker='.', alpha=0.03)
-        plt.plot(profiles_gbar[i], profiles_gobs[i], color='red', marker='.', alpha=0.03)
-    
-    # Mean gobs from the density maps
-    gbar_maps_mean = np.nanmean(gbar_list, 0) 
-    gobs_maps_mean = np.nanmean(gobs_list, 0)
+        plt.plot(gbar_list[i], gobs_list[i], color='blue', marker='.', alpha=0.01)
+        plt.plot(profiles_gbar[i], profiles_gobs[i], color='red', marker='.', alpha=0.01)
+    #"""
 
+    # From true mass profiles
     plt.plot(gbar_maps_mean, gobs_maps_mean, color='darkblue', marker='.', label='From density maps (%s)'%method)
+    plt.fill_between(gbar_maps_mean, gobs_maps_mean-0.5*gobs_maps_std, \
+        gobs_maps_mean+0.5*gobs_maps_std, color='blue', alpha=0.5)
+    #print('Profiles:', gbar_profiles_mean, gobs_profiles_mean, gobs_profiles_std)
+
+    # From density maps
     plt.plot(gbar_profiles_mean, gobs_profiles_mean, color='darkred', marker='.', label='Calculated from mass profiles')
+    plt.fill_between(gbar_profiles_mean, gobs_profiles_mean-0.5*gobs_profiles_std, \
+        gobs_profiles_mean+0.5*gobs_profiles_std, color='red', alpha=0.5)
     
+    # Plot guiding lines
     plt.plot(gbar_uni, gbar_uni, ls=':', color='grey')
     plt.plot(gbar_mond, gobs_mond(gbar_mond), ls='--', color='black')
+
+    #print('Maps:', gbar_maps_mean, gobs_maps_mean, gobs_maps_std)
     
     """
     #chi2 = np.sum((gobs_list - profiles_gobs)**2. / profiles_gobs)

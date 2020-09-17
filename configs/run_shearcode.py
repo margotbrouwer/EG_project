@@ -81,8 +81,8 @@ config_files = create_config(replacefile, findlist, replacelist)
 replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_k1000.config'
 #replacefile = '/data/users/brouwer/Projects/EG_project/configs/ggl_mdm_gama.config'
 findlist = np.array(['masslim'])
-#replacelist = np.array([['GL', 'min', 'max']])
-replacelist = np.array([['9.3', '10.', '11.']])
+replacelist = np.array([['GL', 'min', 'max']])
+#replacelist = np.array([['9.3', '10.', '11.']])
 config_files = create_config(replacefile, findlist, replacelist)
 """
 # Run MICE with and without offset

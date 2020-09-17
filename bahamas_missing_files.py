@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""Find which Bahamas clusters are missing from the folder"""
+
 # Import the necessary libraries
 import sys
 import numpy as np

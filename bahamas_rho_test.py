@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""Plot the true Bahamas density profiles against Kyles density fits"""
+
 # Import the necessary libraries
 import sys
 import numpy as np
@@ -41,14 +43,15 @@ print('R-bins: %i bins between %g and %g %s'%(Nbins, Rmin, Rmax, Runit))
 ## Import galaxy observables from Bahamas catalog
 
 # Define the list of 'used' galaxies
-catnum = 402 #1039
+catnum = 515
 lenslist = np.arange(catnum)
-lenslist = np.delete(lenslist, [322,326,648,758,867])
+#lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
+print('Number of Bahamas lenses:', catnum)
 
 
 # Path to the Bahamas catalog
-path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
+path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_new/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 catname = '%s/catalog.dat'%path_cat
 catalog = np.loadtxt(catname).T[:,lenslist]
 
@@ -69,8 +72,11 @@ for c in range(catnum):
     profiles_radius[c] = profile_c[0,0:Nbins] * r200list[c] # in Xpc
     profiles_rho[c] = profile_c[1,0:Nbins] * rho_crit # in Msun/pc^3
 
+profiles_radius_mean = np.mean(profiles_radius,0)
+profiles_rho_mean = np.mean(profiles_rho,0)
 
-# Import Kyle's rho(r) fits
+"""
+## Import Kyle's rho(r) fits
 
 fitsfile = '%s/ESD/deproject_bahamas.npy'%(path_cat)
 fitscat = np.load(fitsfile)
@@ -81,13 +87,9 @@ profiles_radius = profiles_radius[~np.isnan(fitscat).any(axis=1)]
 fitscat_rho = fitscat[~np.isnan(fitscat).any(axis=1)] / 1e6
 catnum = len(fitscat_rho) # Assign new number to catnum
 
-
-## Plot the results
-
-profiles_radius_mean = np.mean(profiles_radius,0)
-profiles_rho_mean = np.mean(profiles_rho,0)
 fitscat_rho_mean = np.mean(fitscat_rho,0)
 
+# Compute the difference
 difference = (fitscat_rho - profiles_rho) / profiles_rho
 mean_diff = np.mean(np.abs(difference))
 chi2 = stats.chisquare(fitscat_rho, f_exp=profiles_rho, axis=None)
@@ -96,13 +98,16 @@ print('chi^2:', chi2)
 print('difference:', difference)
 print('mean difference:', mean_diff)
 
+"""
+
+## Plot the results
 
 for i in range(catnum):
-    plt.plot(profiles_radius[i], fitscat_rho[i], color='blue', marker='.', alpha=0.03)
+    #plt.plot(profiles_radius[i], fitscat_rho[i], color='blue', marker='.', alpha=0.03)
     plt.plot(profiles_radius[i], profiles_rho[i], color='red', marker='.', alpha=0.03)
 
 
-plt.plot(profiles_radius_mean, fitscat_rho_mean, color='lightblue', marker='.', label='From density maps (numerical)')
+#plt.plot(profiles_radius_mean, fitscat_rho_mean, color='lightblue', marker='.', label='From density maps (numerical)')
 plt.plot(profiles_radius_mean, profiles_rho_mean, color='pink', marker='.', label='True density profiles')
 
 # Define axis labels and legend

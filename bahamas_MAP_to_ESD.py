@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+"""From the density maps, create the ESD profiles as a function of R or gbar for all BAHAMAS lenses"""
+
 # Import the necessary libraries
 import sys
 import numpy as np
@@ -32,7 +34,7 @@ catnum = 515
 lenslist = np.arange(catnum)
 #lenslist = np.delete(lenslist, [322,326,648,758,867])
 catnum = len(lenslist)
-print(catnum)
+print('Number of Bahamas lenses:', catnum)
 
 #path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_all/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
 #path_cat = '/data/users/brouwer/Simulations/Bahamas/BAHAMAS_isolated_strong/BAHAMAS_nu0_L400N1024_WMAP9/z_0.250'
