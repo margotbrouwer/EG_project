@@ -181,7 +181,7 @@ miceoffset = True
 
 datalabels = param2
 
-plotfilename = '%s/Plots/ESD_KiDS+MICE_massbins-%s_iso'%(path_sheardata, binname)
+plotfilename = '%s/Plots/ESD_KiDS_massbins-%s_iso'%(path_sheardata, binname)
 
 """
 
@@ -428,6 +428,19 @@ if 'NFW' in plotfilename:
     
     print(Vrot_NFW)   
 
+if vrot:
+    # Import Kyle's rotation curves
+    filenames_kyle = ['RAR_profiles/gobs_isolated_massbin_%i.txt'%i for i in range(N1)]
+    data_kyle = np.array([np.loadtxt(f).T for f in filenames_kyle])
+    
+    Rcenters_kyle, gobs_kyle, gmin_kyle, gmax_kyle = [data_kyle[:,d] for d in range(4)]
+    Vrot_kyle, Vmin_kyle, Vmax_kyle = [np.sqrt(g_kyle * Rcenters_kyle*1e3*pc_to_m) \
+        for g_kyle in [gobs_kyle, gmin_kyle, gmax_kyle] ] # in km/s
+    
+    print(Rcenters_kyle)
+    print(Vrot_kyle)
+    quit()
+    
 # Plot titles
 if 'massbins' in plotfilename:
     datatitles = [r'$\log\langle M_{\rm gal}/h_{%g}^{-2} {\rm M_\odot} \rangle = %.4g$'%(h*100, mean_mbar[p1]) for p1 in range(N1)]

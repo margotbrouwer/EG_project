@@ -164,7 +164,7 @@ path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1e
 path_mockfilename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 mocklabels = np.array(['GL-MICE isolated mock galaxies'])
 
-labels_bhm = np.array(['BAHAMAS isolated mock galaxies (mass profiles)', 'BAHAMAS isolated mock galaxies (density maps)'])
+labels_bhm = np.array(['BAHAMAS isolated mock galaxies (mass profiles)', 'BAHAMAS isolated mock galaxies'])
 Nmocks = [1, 1]
 
 datalabels = param2
@@ -944,18 +944,18 @@ for NR in range(Nrows):
 
                 # From density maps
                 ax_sub.plot(data_x_maps[Nmock], data_y_maps[Nmock], \
-                marker='', ls='-', color=colors[4], label=labels_bhm[1], alpha=1., zorder=6)
+                marker='', ls='-', color=colors[3], label=labels_bhm[1], alpha=1., zorder=6)
                 
                 ax_sub.fill_between(data_x_maps[Nmock], (data_y_maps[Nmock]-0.5*std_y_maps[Nmock]), \
-                    (data_y_maps[Nmock]+0.5*std_y_maps[Nmock]), color=colors[4], alpha=0.5, zorder=6)
-                
+                    (data_y_maps[Nmock]+0.5*std_y_maps[Nmock]), color=colors[3], alpha=0.5, zorder=6)
+                """
                 # From true mass profiles
                 ax_sub.plot(data_x_profiles[Nmock], data_y_profiles[Nmock], \
                 marker='', ls='-', color=colors[3], label=labels_bhm[0], alpha=1., zorder=6)
                 
                 ax_sub.fill_between(data_x_profiles[Nmock], (data_y_profiles[Nmock]-0.5*std_y_profiles[Nmock]), \
                     (data_y_profiles[Nmock]+0.5*std_y_profiles[Nmock]), color=colors[3], alpha=0.5, zorder=6)
-                
+                """
             
         # Extras for KiDS data (isolation limit and/or stellar mass bias)
         if 'KiDS' in plotfilename:
