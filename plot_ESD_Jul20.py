@@ -162,7 +162,7 @@ massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
 param1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
-param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)']
+param2 = [r'GL-KiDS isolated lens galaxies (SIS assumption)']
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 2
@@ -383,7 +383,8 @@ print()
 if vrot:
     ## Convert the ESD into the rotation velocity
     data_y_vrot = np.sqrt(4 * G * data_x*1e6 * data_y) * pc_to_m/1e3
-    error_l_, error_h = [ data_y_vrot * 0.5 * (d / data_y) for d in [error_l, error_h] ]
+    
+    error_l, error_h = [ data_y_vrot * 0.5 * (d / data_y) for d in [error_l, error_h] ]
     data_y = data_y_vrot
     
     
@@ -403,7 +404,21 @@ if vrot:
     Rmin = 3.e-3 # Mpc
     Rmax = 3. # Mpc
     Rcenters = np.logspace(np.log10(Rmin), np.log10(Rmax), 100)
-   
+    
+    
+    ## Import Kyle's rotation curves
+    filenames_kyle = ['RAR_profiles/gobs_isolated_massbin_%i.txt'%i for i in range(N1)]
+    data_kyle = np.array([np.loadtxt(f).T for f in filenames_kyle])
+    
+    Rcenters_kyle, gobs_kyle, gmin_kyle, gmax_kyle = [data_kyle[:,d] for d in range(4)]
+    Vrot_kyle, Vmin_kyle, Vmax_kyle = [np.sqrt(g_kyle * Rcenters_kyle*pc_to_m) \
+        for g_kyle in [gobs_kyle, gmin_kyle, gmax_kyle] ] # in km/s
+    
+    # Calculate the difference between the two conversion methods
+    print('Difference Vrot (SIS/PPL): %g dex'%np.log10(np.mean(data_y[n]/Vrot_kyle[n])))
+    print('Difference in gobs (SIS/PPL): %g dex'%np.log10(np.mean(data_y[n]**2./Vrot_kyle[n]**2.)))
+    print()
+    
 if 'NFW' in plotfilename:
     ## NWF rotation curves
     
@@ -428,18 +443,6 @@ if 'NFW' in plotfilename:
     
     print(Vrot_NFW)   
 
-if vrot:
-    # Import Kyle's rotation curves
-    filenames_kyle = ['RAR_profiles/gobs_isolated_massbin_%i.txt'%i for i in range(N1)]
-    data_kyle = np.array([np.loadtxt(f).T for f in filenames_kyle])
-    
-    Rcenters_kyle, gobs_kyle, gmin_kyle, gmax_kyle = [data_kyle[:,d] for d in range(4)]
-    Vrot_kyle, Vmin_kyle, Vmax_kyle = [np.sqrt(g_kyle * Rcenters_kyle*1e3*pc_to_m) \
-        for g_kyle in [gobs_kyle, gmin_kyle, gmax_kyle] ] # in km/s
-    
-    print(Rcenters_kyle)
-    print(Vrot_kyle)
-    quit()
     
 # Plot titles
 if 'massbins' in plotfilename:
@@ -482,16 +485,12 @@ for NR in range(Nrows):
         for Nplot in range(Nbins[1]):
             
             Ndata = Nplot + N*(Nbins[1])
-            """
-            print('Ndata=',Ndata)
-            print('N=',N)
-            print('Nplot=',Nplot)
-            print('Nbins[0]=',Nbins[0])
+            print('Ndata =', Ndata)
+            print('Nplot =', Nplot)
             print()
-            """
             
+            dx = 0.15
             if (Nbins[1] > 1) and ('mice' not in cat):
-                dx = 0.04
                 data_x_plot = data_x[Ndata] * (1.-dx/2.+dx*Nplot)
             else:
                 data_x_plot = data_x[Ndata]
@@ -499,11 +498,24 @@ for NR in range(Nrows):
             # Plot data
             if 'mice' not in cat:
                 if Nsize==Nbins:
+                    # Margot's rotation curves
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
                     color=plotcolors[Nplot], ls='', marker='.', zorder=8)
+
+                    # Kyle's rotation curves
+                    ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], \
+                        yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
+                        color=plotcolors[1], ls='', marker='.', zorder=8)
+
                 else:
+                    # Margot's rotation curves
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
                     color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
+            
+                    # Kyle's rotation curves
+                    ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
+                        color=plotcolors[1], ls='', marker='.', label=r'GL-KiDS isolated lens galaxies (PPL method)', zorder=8)
+                    
             else:
                 if Nsize==Nbins:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
@@ -526,7 +538,8 @@ for NR in range(Nrows):
                 #ax_sub.axvline(x = Rmin[Ndata], color=colors[2], ls=':', label='MICE resolution limit')
                 
         if vrot:
-            # Plot Lelli rotation curves
+            
+            # Plot Lelli rotation curve data
             name_mask = (10.**massbins[Ndata] < Mstar_lelli) & (Mstar_lelli < 10.**massbins[Ndata+1])
             info_mask = np.in1d(name_data, name_info[name_mask])
                         
@@ -541,8 +554,15 @@ for NR in range(Nrows):
             ax_sub.hist2d(R_lelli[info_mask], Vobs_lelli[info_mask], \
                 bins=[np.logspace(np.log10(3e-3), np.log10(3), 40), np.linspace(0., 330., 40)], cmin=1, cmap='Blues', zorder=0)
             
+            # Kyle's rotation curves
+            #ax_sub.plot(Rcenters_kyle[N], Vrot_kyle[N], color=colors[1])
+            #ax_sub.fill_between(Rcenters_kyle[N], Vmin_kyle[N], \
+            #            Vmax_kyle[N], color=colors[1], alpha=0.3)
+            
+            """
+            # NFW profile
             #ax_sub.plot(R/1e6, Vrot_NFW, label=r'NFW profile ($M_{200}=%g, R_s = %.3g$ Mpc/h'%(M200, Rs/1e6))
-
+            
             # McGaugh rotation curve
             #Vobs_mond = vrot_mond(mean_mstar[N], data_x[N]*1e6)
             ax_sub.plot(data_x[N], vrot_mond(mean_mstar[N], data_x[N]*1e6)/1e3, \
@@ -552,6 +572,8 @@ for NR in range(Nrows):
             Vobs_verlinde = vrot_verlinde(mean_mstar[N], data_x[N]*1e6)
             ax_sub.plot(data_x[N], Vobs_verlinde/1e3, \
                 ls = '--', marker='', color=colors[2], label = r'Verlinde+16 Emergent Gravity (point mass)')
+            """
+        
         
         if 'mice' in plotfilename:
             ax_sub.axvline(x=micelim, ls='--', color='grey', label=r'MICE resolution limit ($2\times0.43$ arcmin)')
@@ -614,7 +636,7 @@ ax.set_ylabel(ylabel, fontsize=16)
 handles, labels = ax_sub.get_legend_handles_labels()
 
 if Nbins[0] > 1:
-    lgd = plt.legend(handles[::-1], labels[::-1], loc='lower left')
+    lgd = plt.legend(handles[::-1], labels[::-1], loc='lower left', fontsize=12)
 else:
     plt.legend(handles[::-1], labels[::-1], loc='best', fontsize=12)#loc='lower right')
 #    plt.legend(handles[::-1], labels[::-1], loc='best')
