@@ -144,7 +144,7 @@ datalabels = param2
 #plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
 plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
-"""
+
 
 # KiDS + BAHAMAS + MICE (isolated)
 
@@ -170,7 +170,7 @@ Nmocks = [1, 1]
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+MICE+Bahamas+Verlinde_No_Nobins_isolated_zoomout'%path_sheardata
 
-"""
+
 
 # KiDS + Verlinde + MICE (isolated, 4 stellar mass bins)
 
@@ -251,30 +251,29 @@ datalabels = param1
 datatitles = param2
 plotfilename = '%s/Plots/RAR_KiDS_galtypes_isolated_samemass'%path_sheardata
 
-
+"""
 #Dwarf galaxies (Edwin)
 
 param1 = ['']
-param2 = [r'Light dwarfs: isolated galaxies with log$(M_*/$M$_\odot) < 9.3$',  \
-    r'Dwarfs: isolated galaxies with log$(M_*/$M$_\odot) < 10$', r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)']
+param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)', \
+            r'Dwarfs: isolated galaxies with log$(M_* / h_{%g}^{-2}{\rm M_\odot}) < 10$'%(h*100.)]
 
 N1 = 1
 N2 = len(param2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_9p3-zANNZKV_0p1_0p5_lw-logmbar_GL', \
-                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_10-zANNZKV_0p1_0p5_lw-logmbar_GL', \
-                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL', \
+                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_10-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins5_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 
 datalabels = param2
-plotfilename = '%s/Plots/RAR_KiDS+dwarfs_Nobins_isolated_zoomout'%path_sheardata
+plotfilename = '%s/Plots/RAR_KiDS+dwarfs_Nobins_isolated'%path_sheardata
 #plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
 massbias = False
 randomsub = False
-
+"""
 """
 
 
@@ -914,10 +913,10 @@ for NR in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='', marker='.', zorder=8)
+                color=plotcolors[Nplot], ls='-', marker='.', zorder=8)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
+                color=plotcolors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
         
         # Plot the mocks in this panel
         if 'MICE' in plotfilename:

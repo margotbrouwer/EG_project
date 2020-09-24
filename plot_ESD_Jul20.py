@@ -110,7 +110,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 
-
+"""
 
 # True vs. offset redshifts (MICE)
 
@@ -132,7 +132,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
 
-
+"""
 
 # Isolation test (MICE)
 
@@ -154,7 +154,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
 
-"""
+
 
 # Rotation curve KiDS - 4 stellar mass bins (KiDS)
 
@@ -183,7 +183,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS_massbins-%s_iso'%(path_sheardata, binname)
 
-"""
+
 
 # Lensing rotation curve KiDS + GAMA
 
@@ -267,12 +267,13 @@ print()
 
 
 if 'mice' in cat:
+    # Calculate MICE resolution limit
     lensDa = lensDc.to('Mpc').value/(1.+lensZ)
     
     IDmask = np.in1d(lensID, lensIDs_selected[1])
     Da_mean = np.mean(lensDa[IDmask*np.isfinite(lensDa)])
     
-    pixelsize = 2. * 0.43 / 60. * pi/180. # arcmin to radian
+    pixelsize = 3. * 0.43 / 60. * pi/180. # arcmin to radian
     micelim = pixelsize * Da_mean
     print('MICE limit:', micelim, Runit)
 
@@ -328,7 +329,7 @@ if 'MICE' in plotfilename:
         IDmask = np.in1d(lensID_mock, lensIDs_selected_mock[m])
         Da_max = np.amax(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
         #mstar_mean_mock = np.mean(10.**logmstar_mock[IDmask*np.isfinite(logmstar_mock)])
-        pixelsize = 2. * 0.43 / 60. * pi/180. # arcmin to radian
+        pixelsize = 3. * 0.43 / 60. * pi/180. # arcmin to radian
         Rres[m] = pixelsize * Da_max / 1e6 # Minimum R due to MICE resolution (in Mpc)
     print('MICE resolution Rres=', Rres)
 
@@ -576,7 +577,7 @@ for NR in range(Nrows):
         
         
         if 'mice' in plotfilename:
-            ax_sub.axvline(x=micelim, ls='--', color='grey', label=r'MICE resolution limit ($2\times0.43$ arcmin)')
+            ax_sub.axvline(x=micelim, ls='--', color='grey', label=r'MICE resolution limit ($3\times0.43$ arcmin)')
         
         # Plot the axes and title
         
