@@ -76,6 +76,10 @@ micecat = pyfits.open(micecatfile, memmap=True)[1].data
 
 logmhalo_mice = micecat['lmhalo']
 
+# Import isolated galaxy catalogue
+
+
+
 """
 # Plot Bahamas mass histogram
 massbins = np.arange(12., 15., 0.25)

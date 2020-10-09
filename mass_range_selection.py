@@ -67,12 +67,14 @@ if 'sersic' in splittype:
     typename = 'n_2dphot'
     typelist = lenscat['n_2dphot']
     splitlim = 2.
-    
+    splitnames = ['bulge', 'disc']
+        
 if 'color' in splittype:
     typename = 'MAG_GAAP_u-r'
     typelist = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
     splitlim = 2.5
-    
+    splitnames = ['red', 'blue']
+
 mask_ell = (typelist > splitlim)
 mask_spir = (typelist < splitlim)
 
@@ -113,17 +115,18 @@ bincenters = binedges[0:-1] + np.diff(binedges)/2.
 
 # Creating stellar mass histograms for ellipticals and spirals
 N_ell, foo, foo = plt.hist(logmstar[mask_ell*mask_iso], bins=binedges, histtype='step', \
-    label=r'Isolated ellipticals', color=colors[2])
+    label=r'Isolated %s galaxies'%splitnames[0], color=colors[2])
 N_spir, foo, foo = plt.hist(logmstar[mask_spir*mask_iso], bins=binedges, histtype='step', \
-    label=r'Isolated spirals', color=colors[0])
+    label=r'Isolated %s galaxies'%splitnames[1], color=colors[0])
 
 # Finding the smallest number of galaxies in each M-bin
 Nmin = np.array([np.amin(np.array([N_ell[x], N_spir[x]])) for x in np.arange(Nbins)])
 
 if plot:
+    
     # Plot the resulting histograms
     plt.fill_between(bincenters, Nmin, 0., \
-        label=r'Selected ellipticals \& spirals', color=colors[1], alpha=0.3)
+        label=r'Selected %s \& %s galaxies'%(splitnames[0], splitnames[1]), color=colors[1], alpha=0.3)
 
     xlabel = r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)'
     ylabel = r'Number of galaxies'

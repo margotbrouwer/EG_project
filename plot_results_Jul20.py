@@ -144,7 +144,7 @@ datalabels = param2
 #plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
 plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
-
+"""
 
 # KiDS + BAHAMAS + MICE (isolated)
 
@@ -170,7 +170,7 @@ Nmocks = [1, 1]
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+MICE+Bahamas+Verlinde_No_Nobins_isolated_zoomout'%path_sheardata
 
-
+"""
 
 # KiDS + Verlinde + MICE (isolated, 4 stellar mass bins)
 
@@ -251,7 +251,7 @@ datalabels = param1
 datatitles = param2
 plotfilename = '%s/Plots/RAR_KiDS_galtypes_isolated_samemass'%path_sheardata
 
-"""
+
 #Dwarf galaxies (Edwin)
 
 param1 = ['']
@@ -273,7 +273,7 @@ plotfilename = '%s/Plots/RAR_KiDS+dwarfs_Nobins_isolated'%path_sheardata
 
 massbias = False
 randomsub = False
-"""
+
 """
 
 
@@ -505,9 +505,10 @@ if 'MICE' in plotfilename:
         utils.import_lenscat('mice', h, cosmo)
     lensDc_mock = lensDc_mock.to('pc').value
     lensDa_mock = lensDc_mock/(1.+lensZ_mock)
-
-    max_gbar = np.zeros(len(esdfiles_mock))
-    for m in range(len(esdfiles_mock)):
+    
+    # Calculate MICE resolution limit
+    max_gbar = np.zeros(Nbins[0])
+    for m in range(Nbins[0]):
         IDmask = np.in1d(lensID_mock, lensIDs_selected_mock[m])
         Da_max = np.amax(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
         Da_mean = np.mean(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
@@ -591,8 +592,17 @@ if 'Bahamas' in plotfilename:
     maps_gbar_bins = (G * mbar_bhm) / (maps_Rbins)**2. * pc_to_m # in m/s^2
     maps_gbar = np.array([(maps_gbar_bins[i])[0:-1] + np.diff(maps_gbar_bins[i])/2. for i in range(catnum)])
     
+    # Calculate BAHAMAS minimum resolution
+    #pixelsize_bhm = 15e3 / (1.+0.25)/h # The pixel size of the grid (in physical pc/h70)
+    #min_R_bhm = 5. * pixelsize_bhm
+    pixelsize_bhm = 4e3 / h # The pixel size of the grid (in physical pc/h70)
+    min_R_bhm = 10. * pixelsize_bhm
+    
+    print('min_R BAHAMAS (Mpc):', min_R_bhm/1e6)
+        
     ## Select Bahamas lenses with the right masses
     
+    max_gbar_bhm = np.zeros(Nbins[0])
     # For every stellar mass bin:
     for m in range(Nbins[0]):
       
@@ -623,7 +633,12 @@ if 'Bahamas' in plotfilename:
         data_x_maps.append(map_gbar_bin)
         data_y_maps.append(map_gobs_bin)
         std_y_maps.append(map_gobs_std)
-    
+        
+        # Calculate the resolution in acceleration
+        mstar_mean_bhm = np.mean(10.**logmstar_bhm[logmstarmask])
+        max_gbar_bhm[m] = (G * pc_to_m * mstar_mean_bhm)/min_R_bhm**2.
+        print('max_gbar BAHAMAS:', max_gbar_bhm)
+        
     # Make the lists into numpy arrays    
     data_x_profiles = np.array(data_x_profiles)
     data_y_profiles = np.array(data_y_profiles)
@@ -641,6 +656,8 @@ if 'Bahamas' in plotfilename:
         std_y_maps = 1./np.log(10.) * std_y_maps/data_y_maps # This must be calculated first
         data_x_maps = np.log10(data_x_maps)
         data_y_maps = np.log10(data_y_maps)
+        
+        max_gbar_bhm = np.log10(max_gbar_bhm)
 
 ## Perform chi2 analysis
 
@@ -913,10 +930,10 @@ for NR in range(Nrows):
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='-', marker='.', zorder=8)
+                color=plotcolors[Nplot], ls='', marker='.', zorder=8)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='-', marker='.', label=datalabels[Nplot], zorder=8)
+                color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
         
         # Plot the mocks in this panel
         if 'MICE' in plotfilename:
@@ -924,7 +941,7 @@ for NR in range(Nrows):
             for Nmock in range(Nmocks[1]):
 
                 Ndata = Nplot + N*(Nmocks[1])
-                gbar_mask = data_x[Ndata]<max_gbar[Ndata] # np.inf 
+                gbar_mask = data_x[Ndata]<max_gbar[Ndata]
                 
                 #ax_sub.axvline(x=max_gbar[Ndata], ls='--', color=colors[1])#, label='MICE pixel size (0.43 arcmin)')
                 
@@ -941,12 +958,18 @@ for NR in range(Nrows):
 
                 Ndata = Nplot + N*(Nmocks[1])
 
-                # From density maps
-                ax_sub.plot(data_x_maps[Nmock], data_y_maps[Nmock], \
-                marker='', ls='-', color=colors[3], label=labels_bhm[1], alpha=1., zorder=6)
+                gbar_mask_bhm = data_x_maps[Ndata] < max_gbar_bhm[Ndata]
+                print('BAHAMAS data_x:', data_x_maps)
+                print('BAHAMAS data_y:', data_y_maps)
+                print(max_gbar_bhm)
+                print(gbar_mask_bhm)
                 
-                ax_sub.fill_between(data_x_maps[Nmock], (data_y_maps[Nmock]-0.5*std_y_maps[Nmock]), \
-                    (data_y_maps[Nmock]+0.5*std_y_maps[Nmock]), color=colors[3], alpha=0.5, zorder=6)
+                # From density maps
+                ax_sub.plot((data_x_maps[Nmock])[gbar_mask_bhm], (data_y_maps[Nmock])[gbar_mask_bhm], \
+                marker='', ls='-', color=colors[3], label=labels_bhm[1], zorder=6)
+                
+                ax_sub.fill_between((data_x_maps[Nmock])[gbar_mask_bhm], (data_y_maps[Nmock]-0.5*std_y_maps[Nmock])[gbar_mask_bhm], \
+                    (data_y_maps[Nmock]+0.5*std_y_maps[Nmock])[gbar_mask_bhm], color=colors[3], alpha=0.5, zorder=6)
                 """
                 # From true mass profiles
                 ax_sub.plot(data_x_profiles[Nmock], data_y_profiles[Nmock], \

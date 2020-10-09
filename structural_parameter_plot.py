@@ -171,6 +171,9 @@ plt.text(10.25, 2., r'3', fontsize=15)
 plt.text(10.7, 2., r'4', fontsize=15)
 """
 
+plt.text(8.6, 2.6, r'Red', fontsize=15)
+plt.text(8.6, 2.2, r'Blue', fontsize=15)
+
 plt.xlabel(r'Stellar mass log($M_*$) (${\rm M_\odot}/h_{70}^2$)', fontsize=15)
 plt.ylabel(r'Colour ($u-r$)', fontsize=15)
 
@@ -179,8 +182,8 @@ plt.ylim([0.5, 5.])
 
 plt.tick_params(labelsize='14')
 
-legend_elements = [Line2D([0], [0], marker='.', ls = '', color=colors[0], label=r'Ellipticals (n$>2$)'), \
-                   Line2D([0], [0], marker='.', ls = '', color=colors[1], label=r'Spirals (n$<2$)')]
+legend_elements = [Line2D([0], [0], marker='.', ls = '', color=colors[0], label=r'Bulge-dominated (n$>2$)'), \
+                   Line2D([0], [0], marker='.', ls = '', color=colors[1], label=r'Disc-dominated (n$<2$)')]
 
 plt.legend(handles=legend_elements, loc='best', fontsize=15)
 
