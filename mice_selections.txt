@@ -32,7 +32,7 @@ WHERE `z_cgal` < 0.5 AND `sdss_r_true` < 20.
 
 Including faint galaxies (for isolated galaxy selection):
 SELECT `unique_gal_id`, `ra_gal`, `dec_gal`, `z_cgal`, `cgal`, `flag_central`, `lmhalo`, `lmstellar`, 
-`bulge_fraction`, `bulge_length`, `disk_length`, `sdss_r_true`, `sdss_r_abs_mag`
+`bulge_fraction`, `bulge_length`, `disk_length`, `sdss_r_true`, `sdss_r_abs_mag`, `sdss_u_true`, `sdss_u_abs_mag`
 FROM micecatv2_0_view
 WHERE `z_cgal` < 0.51 AND `sdss_r_true` < 25.
 

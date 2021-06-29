@@ -40,12 +40,6 @@ def calc_logmbar(logmstar):
 fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag, rmag_abs, logmstar =\
 utils.import_lenscat(cat, h, cosmo)
 
-# Calculate the total baryonic mass (stars + cold gas)
-fcold = 10.**(-0.69*logmstar + 6.63)
-mstar = 10.** logmstar
-mbar = mstar * (1 + fcold)
-logmbar = np.log10(mbar)
-
 # Mean difference with the GAMA masses (log(M_ANN)-log(M_G))
 if ('kids' in cat) or ('matched' in cat):
     #diff_GL = -0.10978165582547783

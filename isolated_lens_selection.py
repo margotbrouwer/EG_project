@@ -14,8 +14,8 @@ import modules_EG as utils
 ## Configuration
 
 # Data selection
-#cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice/matched)
-cat = 'mice'
+cat = 'mice-offsetZM' # Select the lens catalogue (kids/gama/mice/matched)
+#cat = 'mice'
 #cat = 'gama-offsetZ'
 #cat = 'matched'
 
@@ -40,7 +40,7 @@ print('Lens catalogue:', lenscatname)
 if 'offset' in cat:
     
     Sigma_Z = 0.02*(1+lensZ)
-    Sigma_M = [0.12]*len(logmstar)
+    Sigma_M = [0.29]*len(logmstar)
     
     if 'Z' in cat:
         dZlist = np.random.normal(loc=0., scale=Sigma_Z, size=len(Sigma_Z))
@@ -94,7 +94,7 @@ logmbins = logmlims[0:-1] + dlogm
 # The nearby galaxies should not be heavier than X times the galaxy
 rationame = 'perc'
 #massratios = [0.3, 0.25, 0.2, 0.15, 0.1]
-massratios = [0.1, 0.05, 0.01]
+massratios = [0.1]
 rationames = [('%s'%d).replace('.', 'p') for d in massratios]
 """
 rationame = 'dex'

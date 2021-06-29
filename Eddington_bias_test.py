@@ -26,7 +26,7 @@ import modules_EG as utils
 # Import lens catalog
 cat = 'kids'
 splittype = 'sersic'
-Noffset = 1 # Minimum 1
+Noffset = 2 # Minimum 1
 
 # Constants
 h = 0.7

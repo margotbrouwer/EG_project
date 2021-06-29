@@ -18,6 +18,7 @@ from matplotlib import gridspec
 from matplotlib import rc, rcParams
 from matplotlib import gridspec
 
+
 def bins_to_name(binlims):
     binname = str(binlims).replace(', ', '_')
     binname = str(binname).replace('[', '')
@@ -48,6 +49,10 @@ rc('text',usetex=True)
 rc('font',**{'family':'serif','serif':['DejaVu Sans']})
 
 # Colours
+
+# Color of the plot axes
+axcolor = 'black'
+
 # Blue, green, turquoise, cyan
 blues = ['#332288', '#44AA99', '#117733', '#88CCEE']
 
@@ -55,10 +60,15 @@ blues = ['#332288', '#44AA99', '#117733', '#88CCEE']
 reds = ['#CC6677', '#882255', '#CC99BB', '#AA4499']
 #colors = np.array([reds,blues])
 
-blacks = ['black', '#0571b0', 'grey', '#92c5de']
+blacks = [axcolor, '#0571b0', 'grey', '#92c5de']
+#blacks = ['orange', '#0571b0', 'black']
 
 # Dark blue, light blue, red, orange
 colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']*2
+
+redblue = [colors[2], colors[0]]
+
+
 
 # Defining default plot parameters
 blind = 'C'
@@ -74,6 +84,15 @@ def gobs_mond(gbar, g0=1.2e-10):
 def gobs_verlinde(gbar):
     gobs = gbar + np.sqrt((c*H0)/6) * np.sqrt(gbar)
     return gobs
+
+def gobs_efe(gbar, e_efe, g0=1.2e-10):
+    Ze = gbar/g0
+    Ae = e_efe * (1+e_efe/2.) / (1.+e_efe)
+    Be = (1+e_efe)
+    Ve = 1./2. - Ae/Ze + np.sqrt((1./2. - Ae/Ze)**2. + Be/Ze)
+    gobs = Ve * gbar
+    return gobs
+
 
 # rho = const
 def calc_gobs_0(gbar):
@@ -96,20 +115,22 @@ def calc_Md(Mb_r, r):
     return gd_r
 
 # Define guiding lines
-gbar_mond = np.logspace(-12, -8, 50)
-gbar_ext = np.logspace(-15, -12, 30)
-gbar_uni = np.logspace(-15, -8, 50)
-gbar_log = gbar_uni
+gbar_ext = np.logspace(-15, -8, 100)
+gbar_M16 = np.logspace(-12, -8, 50)
 
-gobs_mond_M16 = gobs_mond(gbar_mond)
+e_efe = 0.003
 gobs_mond_ext = gobs_mond(gbar_ext)
+gobs_mond_efe = gobs_efe(gbar_ext, e_efe)
+
 if not logplot:
-    gobs_mond_M16 = np.log10(gobs_mond_M16)
     gobs_mond_ext = np.log10(gobs_mond_ext)
+    gobs_mond_efe = np.log10(gobs_mond_efe)
     
-    gbar_mond = np.log10(gbar_mond)
     gbar_ext = np.log10(gbar_ext)
-    gbar_uni = np.log10(gbar_uni)
+    gbar_M16 = np.log10(gbar_M16)
+    
+gbar_log = np.logspace(-15, -8, 100)
+
 
 ## Import shear and random profiles
 
@@ -118,79 +139,108 @@ Runit = 'pc'
 datatitles = []
 Nrows = 1
 
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Oct20'
 
 ## Input lens selections
 
+"""
 """
 
 # KiDS + GAMA + Verlinde / Navarro (isolated)
 
 param1 = ['']
-param2 = [r'GL-KiDS isolated galaxies ($1000 \,{\rm deg}^2$)', r'GAMA isolated galaxies ($180 \, {\rm deg}^2$)']
+param2 = [r'KiDS-bright isolated lens galaxies ($1000 \,{\rm deg}^2$)']
+
+Nmassbias = 0
 
 N1 = 1
 N2 = len(param2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL', \
-                          'No_bins_gama/Z_0p1_0p5-dist0p1perc_3_inf-logmstarGL_0_11_lw-logmbar_GL']]*N1)
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL']])
+path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']])
+path_filename = np.array([['shearcovariance/No_bins_%s'%blind]])
+
+datalabels = param2
+
+plotfilename = '%s/Plots/RAR_KiDS+Verlinde_Nobins_isolated_zoomout'%path_sheardata
+
+"""
+
+
+# KiDS + GAMA + Verlinde / Navarro (isolated)
+
+param1 = ['']
+param2 = [r'KiDS-bright iso. gal. ($g_{\rm bar}$ incl. hot gas estimate)', \
+            r'GAMA isolated lens galaxies ($180 \, {\rm deg}^2$)', \
+            r'KiDS-bright isolated lens galaxies ($1000 \,{\rm deg}^2$)']
+
+Nmassbias = 2
+
+N1 = 1
+N2 = len(param2)
+Nrows = 1
+
+path_lenssel = np.array([['No_bins_hotgas1-100kpc/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmstar_GL', \
+                          'No_bins_gama/Z_0p1_0p5-dist0p1perc_3_inf-logmstarGL_0_11_lw-logmbar_GL', \
+                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 
 masses_navarro = ['4.8E10'] # (in Msun) No mass bins
 
 datalabels = param2
-#plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
-plotfilename = '%s/Plots/RAR_KiDS+GAMA+Navarro_Nobins_isolated'%path_sheardata
 
-"""
+plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde_Nobins_isolated_zoomout'%path_sheardata
+#plotfilename = '%s/Plots/RAR_KiDS+Verlinde_Nobins_isolated_hotgas_zoomout'%path_sheardata
+#plotfilename = '%s/Plots/RAR_KiDS+GAMA+Verlinde+Navarro_Nobins_isolated'%path_sheardata
+
+
 
 # KiDS + BAHAMAS + MICE (isolated)
 
 param1 = ['']
-param2 = [r'GL-KiDS isolated galaxies ($1000 \,{\rm deg}^2$)']
+param2 = [r'KiDS-bright isolated lens galaxies ($1000 \,{\rm deg}^2$)']
 
 N1 = 1
 N2 = len(param2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL']*N2]*N1)
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL']*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 
 path_mocksel =  np.array([['No_bins/dist0p1perc_3_inf-logmstar_0_11-zcgal_0p1_0p5_lw-logmbar']*N2]*N1)
 path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_mockfilename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
-mocklabels = np.array(['GL-MICE isolated mock galaxies'])
+mocklabels = np.array(['MICE isolated mock lens galaxies'])
 
-labels_bhm = np.array(['BAHAMAS isolated mock galaxies (mass profiles)', 'BAHAMAS isolated mock galaxies'])
+labels_bhm = np.array(['BAHAMAS isolated mock galaxies (mass profiles)', 'BAHAMAS isolated mock lens galaxies'])
 Nmocks = [1, 1]
 
 datalabels = param2
 plotfilename = '%s/Plots/RAR_KiDS+MICE+Bahamas+Verlinde_No_Nobins_isolated_zoomout'%path_sheardata
 
-"""
 
 # KiDS + Verlinde + MICE (isolated, 4 stellar mass bins)
 
 param1 = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(param1)
 
-param2 = [r'GL-KiDS isolated galaxies ($1000 \,{\rm deg}^2$)']
+param2 = [r'KiDS-bright isolated lens galaxies ($1000 \,{\rm deg}^2$)']
 
 N1 = len(param1)-1
 N2 = len(param2)
 Nrows = 2
 
-path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0p1_0p5_lw-logmbar_GL'%(binname)]*N2]*N1)
+path_lenssel = np.array([['logmstar_GL_%s//dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL'%(binname)]*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1, blind)]*N2 for p1 in np.arange(N1)+1])
 
 path_mocksel =  np.array([['logmstar_%s/dist0p1perc_3_inf-zcgal_0p1_0p5_lw-logmbar'%(binname)]*N2]*N1)
 path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_mockfilename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1, blind)]*N2 for p1 in np.arange(N1)+1])
-mocklabels = np.array(['GL-MICE isolated mock galaxies'])
+mocklabels = np.array(['MICE isolated mock lens galaxies'])
 
 #masses_navarro = ['1.3E10', '3.7E10', '6.0E10', '9.0E10'] # Mass bins (in Msun)
 
@@ -205,20 +255,20 @@ plotfilename = '%s/Plots/RAR_KiDS+MICE+Verlinde_4-massbins_isolated'%path_sheard
 param1 = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(param1)
 
-param2 = [r'All GL-KiDS galaxies ($1000 \,{\rm deg}^2$)']
+param2 = [r'All KiDS-bright galaxies ($1000 \,{\rm deg}^2$)']
 
 N1 = len(param1)-1
 N2 = len(param2)
 Nrows = 2
 
-path_lenssel = np.array([['logmstar_GL_%s/zANNZKV_0p1_0p5_lw-logmbar_GL'%(binname)]*N2]*N1)
+path_lenssel = np.array([['logmstar_GL_%s/masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL'%(binname)]*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1, blind)]*N2 for p1 in np.arange(N1)+1])
 
 path_mocksel =  np.array([['logmstar_%s/zcgal_0p1_0p5_lw-logmbar'%(binname)]*N2]*N1)
 path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N2]*N1)
 path_mockfilename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1, blind)]*N2 for p1 in np.arange(N1)+1])
-mocklabels = np.array(['All GL-MICE mock galaxies'])
+mocklabels = np.array(['All MICE mock galaxies'])
 
 massbias = True
 miceoffset = False
@@ -229,17 +279,26 @@ plotfilename = '%s/Plots/RAR_KiDS+MICE+Verlinde_4-massbins_all'%path_sheardata
 
 
 
-# Binning by galaxy type with same mass range
+# KiDS: Binning by galaxy type with same mass range
 
-param1 = [r'GL-KiDS isolated elipticals', r'GL-KiDS isolated spirals']
+param1 = [r'KiDS-bright isolated red/bulge-dominated galaxies', r'KiDS-bright isolated blue/disc-dominated galaxies']
 param2 = [r'Sersic index $n$ (split at 2)', r'$u-r$ colour (split at 2.5 mag)']
 
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 1
 
-path_lenssel = np.array([ ['n_2dphot_0p0_2p0_inf/selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL']*N1, \
-                          ['MAG_GAAP_u-r_0p0_2p5_inf/selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL']*N1 ])
+# Both color and Sersic split (with gas)
+#path_lenssel = np.array([ ['n_2dphot_0p0_2p0_inf_hotgas1-100kpc/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmstar_GL', 'n_2dphot_0p0_2p0_inf/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL'], \
+#                          ['MAG_GAAP_u-r_0p0_2p5_inf_hotgas1-100kpc/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmstar_GL', 'MAG_GAAP_u-r_0p0_2p5_inf/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL'] ])
+
+
+#path_lenssel = np.array([ ['n_2dphot_0p0_2p0_inf_hotgas1-100kpc/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmstar_GL']*N1, \
+#                          ['MAG_GAAP_u-r_0p0_2p5_inf_hotgas1-100kpc/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmstar_GL']*N1 ])
+
+path_lenssel = np.array([ ['n_2dphot_0p0_2p0_inf/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL']*N1, \
+                          ['MAG_GAAP_u-r_0p0_2p5_inf/masked_0-selected_1-zANNZKV_0p1_0p5_lw-logmbar_GL']*N1 ])
+
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_1em15_5em12_mps2']*N1]*N1)
 path_filename = np.array([['shearcovariance/shearcovariance_bin_2_%s'%blind, \
                             'shearcovariance/shearcovariance_bin_1_%s'%blind]]*N1)
@@ -252,18 +311,19 @@ datatitles = param2
 plotfilename = '%s/Plots/RAR_KiDS_galtypes_isolated_samemass'%path_sheardata
 
 
+
 #Dwarf galaxies (Edwin)
 
 param1 = ['']
-param2 = [r'GL-KiDS isolated lens galaxies ($1000 \,{\rm deg}^2$)', \
+param2 = [r'KiDS-bright isolated lens galaxies ($1000 \,{\rm deg}^2$)', \
             r'Dwarfs: isolated galaxies with log$(M_* / h_{%g}^{-2}{\rm M_\odot}) < 10$'%(h*100.)]
 
 N1 = 1
 N2 = len(param2)
 Nrows = 1
 
-path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5_lw-logmbar_GL', \
-                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_10-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
+path_lenssel = np.array([['No_bins/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL', \
+                          'No_bins/dist0p1perc_3_inf-logmstarGL_0_10-masked_0-zANNZKV_0p1_0p5_lw-logmbar_GL']]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins5_1em15_5em12_mps2']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_%s'%blind]*N2]*N1)
 
@@ -273,6 +333,7 @@ plotfilename = '%s/Plots/RAR_KiDS+dwarfs_Nobins_isolated'%path_sheardata
 
 massbias = False
 randomsub = False
+
 
 """
 
@@ -317,6 +378,7 @@ if randomsub:
         data_y_min, data_y_max = [data_y_min-random_data_y, data_y_max-random_data_y]
 
     print('Random percentage:', np.mean(abs(random_data_y)/data_y_log*100.,1))
+    print('Random error percentage:', np.mean(abs(random_error_h)/data_y_log*100.,1))
 else:
     print('No randoms subtracted!')
     print()
@@ -426,8 +488,11 @@ if 'Navarro' in plotfilename:
     gbar_navarro = []
     gobs_navarro = []
     for m in range(len(masses_navarro)):
-        data_navarro = np.loadtxt('RAR_profiles/RAR_Mbar%s.txt'%masses_navarro[m]).T
+        filename_navarro = 'RAR_profiles/RAR_Mbar%s.txt'%masses_navarro[m]
+        #filename_navarro = 'RAR_profiles/RAR_Mbar%s_full.txt'%masses_navarro[m]
         
+        data_navarro = np.loadtxt(filename_navarro).T
+                
         if logplot:
             gbar_navarro.append(data_navarro[1])
             gobs_navarro.append(data_navarro[1] + data_navarro[0])
@@ -507,8 +572,8 @@ if 'MICE' in plotfilename:
     lensDa_mock = lensDc_mock/(1.+lensZ_mock)
     
     # Calculate MICE resolution limit
-    max_gbar = np.zeros(Nbins[0])
-    for m in range(Nbins[0]):
+    max_gbar = np.zeros(len(esdfiles_mock))
+    for m in range(len(esdfiles_mock)):
         IDmask = np.in1d(lensID_mock, lensIDs_selected_mock[m])
         Da_max = np.amax(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
         Da_mean = np.mean(lensDa_mock[IDmask*np.isfinite(lensDa_mock)])
@@ -714,7 +779,7 @@ for Nc in range(N2):
         isomask = np.concatenate(isomask).ravel()
         
     
-    if 'Navarro' in plotfilename:
+    if ('Navarro' in plotfilename) and ('full' not in filename_navarro):
         
         if 'KiDS' in param2[Nc]:
             dof_iso = dof - len(np.ndarray.flatten(isomask))
@@ -723,6 +788,21 @@ for Nc in range(N2):
             sigma_navarro = np.sqrt(stats.chi2.ppf(pvalue_navarro, 1.))
             print('DOF (isomask): %i'%dof_iso)
             print( 'Navarro: chi2=%g / %i = %g, sigma=%g'%(chi2_navarro, dof_iso, chi2_navarro/dof_iso, sigma_navarro) )
+            
+            if massbias:
+                chi2_min = utils.calc_chi2(data_y_min_chi2, 10.**gobs_navarro[0], covariance_min, masked=isomask)
+                chi2_max = utils.calc_chi2(data_y_max_chi2, 10.**gobs_navarro[0], covariance_max, masked=isomask)
+                    
+                pvalue_min = stats.chi2.cdf(chi2_min, dof_iso)
+                pvalue_max = stats.chi2.cdf(chi2_max, dof_iso)
+            
+                sigma_min = np.sqrt(stats.chi2.ppf(pvalue_min, 1.))
+                sigma_max = np.sqrt(stats.chi2.ppf(pvalue_max, 1.))
+                
+                print( 'Navarro (mask + mass_min): chi2=%g / %i = %g, sigma=%g'%(chi2_min, dof_iso, chi2_min/dof_iso, sigma_min) )
+                print( 'Navarro (mask + mass_max): chi2=%g / %i = %g, sigma=%g'%(chi2_max, dof_iso, chi2_max/dof_iso, sigma_max) )
+                print()
+            
         else:
             chi2_navarro = utils.calc_chi2(data_y_chi2, 10.**gobs_navarro[0], covariance)
             pvalue_navarro = stats.chi2.cdf(chi2_navarro, dof)
@@ -754,7 +834,7 @@ for Nc in range(N2):
             chi2_mond = utils.calc_chi2(data_y_chi2, gobs_mond(data_x_chi2), covariance, masked=isomask)        
             chi2_EG = utils.calc_chi2(data_y_chi2, gobs_verlinde(data_x_chi2), covariance, masked=isomask)
 
-            print(np.ndarray.flatten(isomask))
+            #print(np.ndarray.flatten(isomask))
             dof_iso = dof - len(np.ndarray.flatten(isomask))
             print('DOF (isomask): %i'%dof_iso)
             
@@ -811,22 +891,13 @@ for Nc in range(N2):
     # Testing the difference between ellipticals and spirals
     if 'galtypes' in plotfilename:
 
-        ## Difference: fractional and dex
-        #diff_galtype = np.mean(data_y_log[Nc*N2]/data_y_log[Nc*N2+1])
+        ## Without isolation limit
         
+        # Difference: fractional and dex
         diff_galtype = np.mean(data_y_log[Nc*N2] / data_y_log[Nc*N2+1])
-            #(np.mean(data_y_log[Nc*N2]+data_y_log[Nc*N2+1])/2)
-        
         print('Fractional difference: %g (%g dex)'%(diff_galtype, np.log10(diff_galtype)) )
         
-        # With isolation limit
-        isomask_galtype = (isolim_log[Nc*N2] < data_x_log[Nc*N2])
-        diff_galtype_iso = np.mean((data_y_log[Nc*N2])[isomask_galtype] / (data_y_log[Nc*N2+1])[isomask_galtype] )
-        
-        print('... with isolation limit: %g (%g dex)'%(diff_galtype_iso, np.log10(diff_galtype_iso)) )
-        
-        ## Difference: Chi-squared
-        
+        # Difference: Chi-squared
         # Use only the covariance matrix and DOF of one galaxy type
         dof = nRbins
         covariance = np.delete(covariance, np.arange(nRbins**2., 4.*nRbins**2.), 1)
@@ -835,16 +906,30 @@ for Nc in range(N2):
         chi2_galtype = utils.calc_chi2([data_y_log[Nc*N2]], [data_y_log[Nc*N2+1]], covariance)#, masked=isomask)
         pvalue_galtype = stats.chi2.cdf(chi2_galtype, nRbins)
         sigma_galtype = np.sqrt(stats.chi2.ppf(pvalue_galtype, 1.))
-        
         print( 'Difference: chi2=%g / %i = %g, sigma=%g'%(chi2_galtype, dof, chi2_galtype/dof, sigma_galtype) )
         
-            
+        
+        ## With isolation limit
+        
+        # Difference: fractional and dex
+        isomask_galtype = (isolim_log[Nc*N2] < data_x_log[Nc*N2])
+        diff_galtype_iso = np.mean((data_y_log[Nc*N2])[isomask_galtype] / (data_y_log[Nc*N2+1])[isomask_galtype] )
+        print('... with isolation limit: %g (%g dex)'%(diff_galtype_iso, np.log10(diff_galtype_iso)) )
+        
+        # Calculate the chi-squared and sigma values
+        isomask_chi2_galtype = utils.calc_chi2([data_y_log[Nc*N2]], [data_y_log[Nc*N2+1]], covariance, masked=isomask)
+        isomask_pvalue_galtype = stats.chi2.cdf(isomask_chi2_galtype, nRbins)
+        isomask_sigma_galtype = np.sqrt(stats.chi2.ppf(isomask_pvalue_galtype, 1.))
+        
+        print( '... with isolation limit: chi2=%g / %i = %g, sigma=%g'%(isomask_chi2_galtype, dof, isomask_chi2_galtype/dof, isomask_sigma_galtype) )
+                
     print()
     
 print()
 
 
 ## Create the plot
+
 
 Ncolumns = int(Nbins[0]/Nrows)
 
@@ -867,10 +952,14 @@ else:
     xlims, ylims = [np.log10(xlims), np.log10(ylims)]
 
 # Define the colors of the ESD profiles
-if len(param2) > 2:
+if len(param2) > 3:
     plotcolors = colors
 else:
     plotcolors = blacks
+    #markers = ['x','.','.']
+    markers = ['.','.','.','.']
+if 'galtypes' in plotfilename:
+    plotcolors = redblue
 
 # Plotting the ueber matrix
 if Nbins[0] > 1:
@@ -883,6 +972,8 @@ gs = gridspec.GridSpecFromSubplotSpec(Nrows, Ncolumns, wspace=0, hspace=0, subpl
 
 ax = fig.add_subplot(gs_full[0,0])
 
+rc('axes',edgecolor=axcolor)
+
 # Create the plot panels
 for NR in range(Nrows):
     for NC in range(Ncolumns):
@@ -894,27 +985,29 @@ for NR in range(Nrows):
                 
         # Plot guiding lines
         if 'Bahamas' in plotfilename:
-            ax_sub.plot(gbar_uni, gbar_uni, color='grey', ls=':', marker='', zorder=5)
+            ax_sub.plot(gbar_ext, gbar_ext, color='grey', ls=':', marker='', zorder=5)
         else:
-            ax_sub.plot(gbar_uni, gbar_uni, color='grey', ls=':', marker='', zorder=5, \
+            ax_sub.plot(gbar_ext, gbar_ext, color='grey', ls=':', marker='', zorder=5, \
                 label = r'Unity (No dark matter: $g_{\rm obs} = g_{\rm bar}$)')
 
-        if ('Navarro' not in plotfilename):
-            # Verlinde's Emergent Gravity
-            ax_sub.plot(gbar_uni, np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[2], label = r'Verlinde+16 Emergent Gravity (point mass)', zorder=5) #: ${\rm M_b}(r)$=const.)'
-            
-            # Verlinde slopes
-            #gD_0, gobs_0 = calc_gobs_0(gbar_uni)
-            #gD_2, gobs_2 = calc_gobs_2(gbar_uni)
-            #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=4)
-            #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=4)
+        # Verlinde's Emergent Gravity
+        #ax_sub.plot(gbar_ext, np.log10(gobs_verlinde(gbar_log)), ls = '--', marker='', color=colors[2], \
+        #    label = r'Emergent Gravity (Verlinde+16, point mass)', zorder=5) #: ${\rm M_b}(r)$=const.)'
+        
+        # Verlinde slopes
+        #gD_0, gobs_0 = calc_gobs_0(gbar_ext)
+        #gD_2, gobs_2 = calc_gobs_2(gbar_ext)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_0), ls='--', marker='', color=colors[1], label=r'Verlinde (Flat density distribution: $\rho(r)$ = const.)', zorder=4)
+        #ax_sub.plot(np.log10(gbar_log), np.log10(gobs_2), ls='--', marker='', color=colors[2], label=r'Verlinde (Singular Isothermal Sphere: $\rho(r)\sim 1/r^2$)', zorder=4)
 
-            # McGaugh fitting function        
-            ax_sub.plot(gbar_mond, gobs_mond_M16, color='grey', ls='-', marker='', zorder=4)
-            ax_sub.plot(gbar_ext, gobs_mond_ext, label = r'McGaugh+16 fitting function (extrapolated)', \
-                color='grey', ls='-', marker='', zorder=4)
-        
-        
+        # MOND with External Field Effect (EFE)
+        #ax_sub.plot(gbar_ext, gobs_mond_efe, label = r'MOND (incl. external field effect: $e=%g$)'%e_efe, \
+        #color='grey', ls='--', marker='', zorder=4)
+
+        # McGaugh fitting function        
+        #ax_sub.plot(gbar_ext, gobs_mond_ext, label = r'MOND (McGaugh+16, extrapolated)', \
+        #    color='grey', ls='-', marker='', zorder=4)
+                
         # Plot the data in this panel
         for Nplot in range(Nbins[1]):
             Ndata = Nplot + N*(Nbins[1])
@@ -922,41 +1015,44 @@ for NR in range(Nrows):
             print('    Nplot %i (Ndata %i): %s'%(Nplot, Ndata, param2[Nplot]))
                        
             if Nbins[1] > 1:
-                shift = 0.004
+                shift = 0.002
                 data_x_plot = data_x[Ndata] * (1.-shift/2. + shift*Nplot)
             else:
                 data_x_plot = data_x[Ndata]
-                
+                        
             # Plot data
             if Nsize==Nbins:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='', marker='.', zorder=8)
+                color=plotcolors[Nplot], ls='', marker=markers[Nplot], zorder=8)
             else:
                 ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
-                color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
+                color=plotcolors[Nplot], ls='', marker=markers[Nplot], label=datalabels[Nplot], zorder=8)
         
         # Plot the mocks in this panel
         if 'MICE' in plotfilename:
             # Plot MICE mock shearprofiles
             for Nmock in range(Nmocks[1]):
-
-                Ndata = Nplot + N*(Nmocks[1])
+                
+                Ndata = Nmock + N*(Nmocks[1])
+                print('    Nmock %i (Ndata %i): %s'%(Nmock, Ndata, mocklabels[Nmock]))
+                
+                print(data_x)
                 gbar_mask = data_x[Ndata]<max_gbar[Ndata]
                 
-                #ax_sub.axvline(x=max_gbar[Ndata], ls='--', color=colors[1])#, label='MICE pixel size (0.43 arcmin)')
+                #ax_sub.axvline(x=max_gbar[N], ls='--', color=colors[1])#, label='MICE pixel size (0.43 arcmin)')
                 
                 if miceoffset and ('KiDS' in plotfilename) and ('isolated' in plotfilename):
                     ax_sub.fill_between(data_x_plot[gbar_mask], (data_y_mock[Ndata])[gbar_mask], \
-                    (data_y_mock_offset[Ndata])[gbar_mask], color=colors[2], label=mocklabels[0], alpha=valpha, zorder=7)
+                    (data_y_mock_offset[Ndata])[gbar_mask], color=colors[2], label=mocklabels[Nmock], alpha=valpha, zorder=7)
                 else:
                     ax_sub.plot(data_x_plot[gbar_mask], (data_y_mock[Ndata])[gbar_mask], \
-                    marker='', ls='-', color=colors[2], label=mocklabels[0], zorder=7)
+                    marker='', ls='-', color=colors[2], label=mocklabels[Nmock], zorder=7)
                     
         if 'Bahamas' in plotfilename:
             # Plot BAHAMAS mock shearprofiles
             for Nmock in range(Nmocks[1]):
 
-                Ndata = Nplot + N*(Nmocks[1])
+                Ndata = Nmock + N*(Nmocks[1])
 
                 gbar_mask_bhm = data_x_maps[Ndata] < max_gbar_bhm[Ndata]
                 print('BAHAMAS data_x:', data_x_maps)
@@ -981,34 +1077,32 @@ for NR in range(Nrows):
             
         # Extras for KiDS data (isolation limit and/or stellar mass bias)
         if 'KiDS' in plotfilename:
-            if 'iso' in plotfilename:
-                # Plot KiDS-1000 isolation limit
-                #ax_sub.axvline(x=isolim[N], ls=':', color=blacks[1], \
-                #    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
-                ax_sub.axvspan(isolim[N], -16., color=blacks[1], alpha=0.1, \
-                    label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
+            #if 'iso' in plotfilename:
+            # Plot KiDS-1000 isolation limit
+            ax_sub.axvspan(isolim[N], -16., color='#0571b0', alpha=0.1, \
+            label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc/h_{70}}$)'%isoR)
                 
             if massbias:
             # Plot stellar mass limits
                 print('Plotting stellar mass bias')
-                ax_sub.fill_between(data_x_plot, data_y_min[N], data_y_max[N], \
-                color=blacks[0], alpha=0.15, label=r'Systematic stellar mass bias (${\rm M_*} \pm 0.2$ dex)', zorder=4)
+                ax_sub.fill_between(data_x_plot, data_y_min[Nmassbias], data_y_max[Nmassbias], \
+                color=blacks[Nmassbias], alpha=0.15, label=r'Systematic stellar mass uncertainty (${\rm M_*} \pm 0.2$ dex)', zorder=4)
         print()
         
         # Navarro analytical model
         if ('Navarro' in plotfilename):
             # Plot Navarro predictions
             ax_sub.plot(gbar_navarro[N], gobs_navarro[N], ls='-', marker='', color=colors[3], \
-            label=r'Navarro+2017 prediction (based on $\langle M_{\rm gal} \rangle$)',  zorder=4)
+            label=r'Navarro+2017 analytical dark matter model',  zorder=4)
         
         ## Plot McGaugh+16 observations
         
         # McGaugh - Binned
-        ax_sub.plot(gbar_mcgaugh_binned, gobs_mcgaugh_binned, label='SPARC rotation curves (mean)', \
+        ax_sub.plot(gbar_mcgaugh_binned, gobs_mcgaugh_binned, label='SPARC rotation curves (mean + 2D histogram)', \
             ls='', marker='s', markerfacecolor='red', markeredgecolor='black', zorder=1)
         
         # McGaugh - 2D histogram
-        ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=[gbar_mond, gbar_mond], cmin=1, cmap='Blues', zorder=0)
+        ax_sub.hist2d(gbar_mcgaugh, gobs_mcgaugh, bins=[gbar_M16, gbar_M16], cmin=1, cmap='Blues', zorder=0)
 
         
         ## Plot the axes and title
@@ -1016,30 +1110,33 @@ for NR in range(Nrows):
         ax_sub.xaxis.set_label_position('top')
         ax_sub.yaxis.set_label_position('right')
 
-        ax.tick_params(labelleft='off', labelbottom='off', top='off', bottom='off', left='off', right='off')
+        ax.tick_params(colors=axcolor, which='both', labelleft='off', labelbottom='off', top='off', bottom='off', left='off', right='off')
 
         xticklabels = np.linspace(xlims[0], xlims[1], 5)
         yticklabels = np.linspace(ylims[0], ylims[1], 7)
         
         if (NR+1) != Nrows:
-            ax_sub.tick_params(axis='x', labelbottom='off')
+            ax_sub.tick_params(axis='x', colors=axcolor, which='both', labelbottom='off')
         else:
-            ax_sub.tick_params(labelsize='14')
+            ax_sub.tick_params(colors=axcolor, which='both', labelsize='14')
             if (Nbins[0]>1) and ('zoomout' not in plotfilename):
                 ax_sub.set_xticklabels(['%.0f'%x for x in xticklabels[0:-1]])
                 ax_sub.set_yticklabels(['%.1f'%y for y in yticklabels[0:-1]])
                 
         if NC != 0:
-            ax_sub.tick_params(axis='y', labelleft='off')
+            ax_sub.tick_params(axis='y', colors=axcolor, which='both', labelleft='off')
             ax_sub.set_xticklabels(['%.0f'%x for x in xticklabels])
         else:
-            ax_sub.tick_params(labelsize='14')
+            ax_sub.tick_params(colors=axcolor, which='both', labelsize='14')
         
         #plt.autoscale(enable=False, axis='both', tight=None)
         
         ax.xaxis.set_label_coords(0.5, -0.1)
         ax.yaxis.set_label_coords(-0.1, 0.5)
-
+        
+        ax.yaxis.label.set_color(axcolor)
+        ax.xaxis.label.set_color(axcolor)
+        
         plt.xlim(xlims)
         plt.ylim(ylims)
         
@@ -1050,7 +1147,7 @@ for NR in range(Nrows):
             plt.title(datatitles[N], x = 0.50, y = 0.85, fontsize=16)
 
 # Define the labels for the plot
-xlabel = r'Baryonic (stars+cold gas) radial acceleration log($g_{\rm bar}$ [$h_{%g} \, {\rm m/s^2}$])'%(h*100)
+xlabel = r'Baryonic (stars+cold gas) radial acceleration log($g_{\rm bar}$ [$h_{%g} \, {\rm m/s^2}$])'%(h*100) #+hot gas est.
 ylabel = r'Observed radial acceleration log($g_{\rm obs}$ [$h_{%g} \, {\rm m/s^2}$])'%(h*100)
 ax.set_xlabel(xlabel, fontsize=16)
 ax.set_ylabel(ylabel, fontsize=16)
@@ -1069,7 +1166,7 @@ else:
 # Save plot
 for ext in ['pdf']:
     plotname = '%s.%s'%(plotfilename, ext)
-    plt.savefig(plotname, format=ext, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(plotname, format=ext, bbox_extra_artists=(lgd,), bbox_inches='tight')#, transparent=True)
     
 print('Written: ESD profile plot:', plotname)
 

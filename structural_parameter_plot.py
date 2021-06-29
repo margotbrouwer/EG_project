@@ -65,13 +65,13 @@ if 'gama' in cat:
     lenscatnames = np.array([lenscatname, lenscatname, isocatname])
 
 if 'kids' in cat:
-    paramnames = np.array(['z_ANNZ_KV', 'dist0p1perc', 'n_2dphot', 'logmstar_GL'])
-    lenscatnames = np.array([lenscatname, isocatname, lenscatname, masscatname])
+    paramnames = np.array(['z_ANNZ_KV', 'masked', 'dist0p1perc', 'n_2dphot', 'logmstar_GL'])
+    lenscatnames = np.array([lenscatname, lenscatname, isocatname, lenscatname, masscatname])
     maskvals = np.array([ \
-                        [[0., 0.5], [3, inf], [2.,inf], [8., 11.]], \
-                        [[0., 0.5], [3, inf], [0., 2.], [8., 11.]], \
-                        [[0., 0.5], [3, inf], [2., inf], [11., 13.]], \
-                        [[0., 0.5], [3, inf], [0., 2.], [11., 13.]], \
+                        [[0., 0.5], [-0.1, 0.1], [3, inf], [2.,inf], [8., 11.]], \
+                        [[0., 0.5], [-0.1, 0.1], [3, inf], [0., 2.], [8., 11.]], \
+                        [[0., 0.5], [-0.1, 0.1], [3, inf], [2., inf], [11., 13.]], \
+                        [[0., 0.5], [-0.1, 0.1], [3, inf], [0., 2.], [11., 13.]], \
                         ])
 
 
@@ -83,7 +83,6 @@ lenscat = pyfits.open('%s/%s'%(path_lenscat, lenscatname), memmap=True)[1].data
 mu0 = lenscat['mu0_2dphot']
 mue = lenscat['mue_2dphot']
 color_gr = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
-
 
 plt.figure(figsize=(6,5))
 
@@ -191,7 +190,7 @@ plt.legend(handles=legend_elements, loc='best', fontsize=15)
 plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar20/Plots/galaxy_morphology_color_u-r'
 
 # Save plot
-for ext in ['pdf', 'png']:
+for ext in ['png','pdf']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     

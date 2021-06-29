@@ -67,8 +67,16 @@ fields, path_lenscat, lenscatname, lensID, lensRA, lensDEC, lensZ, lensDc, rmag,
 utils.import_lenscat(cat, h, cosmo)
 logmstarlist = logmstar
 
-# Remove all galaxies with logmstar=NAN
-nanmask = np.isfinite(logmstar)# & (rmag < 17.3)
+lenscat = pyfits.open('%s/%s'%(path_lenscat,lenscatname), memmap=True)[1].data
+if 'kids' in cat:
+    kidsmask = lenscat['masked']
+
+# Remove all galaxies with logmstar=NAN and masked
+if 'kids' in cat:
+    nanmask = np.isfinite(logmstar) & (kidsmask==0)
+else:
+    nanmask = np.isfinite(logmstar)
+    
 lensRA, lensDEC, lensDc, logmstar, rmag = \
     [lensRA[nanmask], lensDEC[nanmask], lensDc[nanmask], logmstar[nanmask], rmag[nanmask]]
 
@@ -122,7 +130,7 @@ print('Niso_false:', Niso_false, Niso_false/Niso_tot*100., '% of isolated sample
 plt.figure(figsize=(4.7,3.7))
 plotscale = 1.e3 # Scale the number of galaxies
 
-plt.plot(rmagcenters, rmaghist/plotscale, color=colors[2], label=r'All KiDS galaxies')
+plt.plot(rmagcenters, rmaghist/plotscale, color=colors[2], label=r'All KiDS-bright lens galaxies')
 plt.plot(rmagcenters, isohist/plotscale, color=colors[1], \
     label=r'Isolated: $r_{\rm sat}(f_{\rm M_*}>%g)>%g$ Mpc$/h_{70}$'%(massratios[massratio_num], distval))
     
@@ -153,7 +161,7 @@ plt.tight_layout()
 # Save plot
 plotfilename = '/data/users/brouwer/Lensing_results/EG_results_Mar19/Plots/isolation_test_%s_%s%s-%gMpc'\
                                                 %(cat, rationame, massratio_names[massratio_num], distval)
-for ext in ['pdf', 'png']:
+for ext in ['png','pdf']:
     plotname = '%s.%s'%(plotfilename, ext)
     plt.savefig(plotname, format=ext, bbox_inches='tight')
     

@@ -453,9 +453,9 @@ def read_esdfiles(esdfiles):
         Rsrc = np.ones(len(bias))
         Nsrc = data[8]
         
-        data_x.append(datax)     
-        data_y.append(datay) 
-        error_h.append(errorh) 
+        data_x.append(datax)
+        data_y.append(datay)
+        error_h.append(errorh)
         error_l.append(errorl)
         R_src.append(Rsrc)
         N_src.append(Nsrc)
@@ -579,7 +579,8 @@ def calc_chi2(data, model, covariance, masked=[]):
     
     # Sorting the covariance [Rbin1, Obsbin1, Rbin2, Obsbin2] and turning it into a matrix
     ind = np.lexsort((covariance[3,:], covariance[1,:], covariance[2,:], covariance[0,:]))
-    covariance = np.reshape(covariance[4][ind], [Nbins*Rbins, Nbins*Rbins])
+    #covariance = np.reshape(covariance[4][ind], [Nbins*Rbins, Nbins*Rbins])
+    covariance = np.reshape((covariance[4]/covariance[6])[ind], [Nbins*Rbins, Nbins*Rbins]) # With multiplicative bias correction
 
     # Applying the mask to data, model and covariance matrix
     if len(masked) > 0:

@@ -84,7 +84,9 @@ Rmin = 0.03 # Mpc
 Rmax = 3. # Mpc
 
 # Define path to the lensing results
-path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
+#path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
+path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Oct20'
+
 
 """
 
@@ -92,16 +94,16 @@ path_sheardata = '/data/users/brouwer/Lensing_results/EG_results_Aug20'
 # Isolated vs. not isolated (KiDS)
 
 param1 = ['KiDS']
-param2 = [r'Isolated, bright (m$_{\rm r}<17.5$ mag)', \
+param2 = [r'Isolated, bright (m$_r<17.5$ mag)', \
         r'Isolated: $r_{\rm sat}>3$ Mpc/$h_{70}$, $M_*<10^{11}\,{\rm M_\odot}/h_{70}^2$', \
-        r'All KiDS galaxies']
+        r'All KiDS-bright lens galaxies']
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 1
 isolim = False
 
-path_lenssel = np.array([['No_bins/MAGAUTOCALIB_0_17p5-dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5', \
-                           'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-zANNZKV_0p1_0p5', 'No_bins/zANNZKV_0p1_0p5']])
+path_lenssel = np.array([['No_bins/MAGAUTOCALIB_0_17p5-dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5', \
+                           'No_bins/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5', 'No_bins/masked_0-zANNZKV_0p1_0p5']])
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcovariance/No_bins_C']*N2]*N1)
 
@@ -110,14 +112,14 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS_isotest'%path_sheardata
 
-"""
+
 
 # True vs. offset redshifts (MICE)
 
 cat = 'mice'
 param1 = ['MICE']
 param2 = [r'Isolated, offset: $\sigma_{\rm z}/(1+z)=0.02$, $\sigma_{\rm M_*}=0.12$ dex', \
-    r'Isolated: $r_{\rm sat}>3$ Mpc/$h_{70}$, $M_*<10^{11}\,{\rm M_\odot}/h_{70}^2$', 'All MICE mock galaxies']
+    r'Isolated: $r_{\rm sat}>3$ Mpc/$h_{70}$, $M_*<10^{11}\,{\rm M_\odot}/h_{70}^2$', 'All MICE mock lens galaxies']
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 1
@@ -132,14 +134,14 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
 
-"""
 
-# Isolation test (MICE)
+
+# Isolation test: fsat=0.1 vs. fsat=0.01 (MICE)
 
 cat = 'mice'
 param1 = ['MICE']
 param2 = [r'Isolated: $r_{\rm sat}(f_{\rm M_*}<0.1)>3$ Mpc/$h_{70}$', \
-    r'Isolated: $r_{\rm sat}(f_{\rm M_*}<0.01)>3$ Mpc/$h_{70}$', 'All MICE mock galaxies']
+    r'Isolated: $r_{\rm sat}(f_{\rm M_*}<0.01)>3$ Mpc/$h_{70}$', 'All MICE mock lens galaxies']
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 1
@@ -154,7 +156,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_mice_isotest_offset'%path_sheardata
 
-
+"""
 
 # Rotation curve KiDS - 4 stellar mass bins (KiDS)
 
@@ -162,19 +164,19 @@ massbins = [8.5,10.3,10.6,10.8,11.]
 binname = bins_to_name(massbins)
 
 param1 = [r'$%g <$ log($M_*$) $< %g \, {\rm M_\odot}$'%(massbins[m], massbins[m+1]) for m in range(len(massbins)-1)]
-param2 = [r'GL-KiDS isolated lens galaxies (SIS assumption)']
+param2 = [r'KiDS-bright isolated lens galaxies (SIS assumption)']
 N1 = len(param1)
 N2 = len(param2)
 Nrows = 2
 
-path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-zANNZKV_0p1_0p5'%(binname)]*N2]*N1)
+path_lenssel = np.array([['logmstar_GL_%s/dist0p1perc_3_inf-logmstarGL_0_11-masked_0-zANNZKV_0p1_0p5'%(binname)]*N2]*N1)
 path_cosmo = np.array([['ZB_0p1_1p2-Om_0p2793-Ol_0p7207-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_filename = np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1,blind)]*N2 for p1 in np.arange(N1)+1])
 
 path_mocksel =  np.array([['logmstar_%s/dist0p1perc_3_inf-zcgal_0p1_0p5'%(binname)]*N2]*N1)
 path_mockcosmo = np.array([['zcgal_0p1_1p2-Om_0p25-Ol_0p75-Ok_0-h_0p7/Rbins15_0p03_3_Mpc']*N2]*N1)
 path_mockfilename =  np.array([['shearcovariance/shearcovariance_bin_%i_%s'%(p1,blind)]*N2 for p1 in np.arange(N1)+1])
-mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
+mocklabels = np.array(['MICE mocks (isolated galaxies)'])
 
 vrot = True
 miceoffset = True
@@ -183,7 +185,7 @@ datalabels = param2
 
 plotfilename = '%s/Plots/ESD_KiDS_massbins-%s_iso'%(path_sheardata, binname)
 
-
+"""
 
 # Lensing rotation curve KiDS + GAMA
 
@@ -203,7 +205,7 @@ path_filename = np.array([['shearcatalog/No_bins_A']*N2]*N1)
 path_mocksel =  np.array([['']*N2]*N1)
 path_mockcosmo = np.array([['']*N2]*N1)
 path_mockfilename = np.array([['shearcovariance/No_bins_A']*N2]*N1)
-mocklabels = np.array(['GL-MICE mocks (isolated galaxies)'])
+mocklabels = np.array(['MICE mocks (isolated galaxies)'])
 
 bahlabels = np.array(['BAHAMAS mocks (isolated galaxies)'])
 Nmocks = [1, 1]
@@ -408,7 +410,7 @@ if vrot:
     
     
     ## Import Kyle's rotation curves
-    filenames_kyle = ['RAR_profiles/gobs_isolated_massbin_%i.txt'%i for i in range(N1)]
+    filenames_kyle = ['RAR_profiles/gobs_isolated_massbin_%i.dat'%i for i in range(N1)]
     data_kyle = np.array([np.loadtxt(f).T for f in filenames_kyle])
     
     Rcenters_kyle, gobs_kyle, gmin_kyle, gmax_kyle = [data_kyle[:,d] for d in range(4)]
@@ -490,7 +492,10 @@ for NR in range(Nrows):
             print('Nplot =', Nplot)
             print()
             
-            dx = 0.15
+            dx = 0.05
+            if vrot:
+                dx=0.15
+            
             if (Nbins[1] > 1) and ('mice' not in cat):
                 data_x_plot = data_x[Ndata] * (1.-dx/2.+dx*Nplot)
             else:
@@ -502,21 +507,21 @@ for NR in range(Nrows):
                     # Margot's rotation curves
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
                     color=plotcolors[Nplot], ls='', marker='.', zorder=8)
-
-                    # Kyle's rotation curves
-                    ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], \
-                        yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
-                        color=plotcolors[1], ls='', marker='.', zorder=8)
+                    if vrot:
+                        # Kyle's rotation curves
+                        ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], \
+                            yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
+                            color=plotcolors[1], ls='', marker='.', zorder=8)
 
                 else:
                     # Margot's rotation curves
                     ax_sub.errorbar(data_x_plot, data_y[Ndata], yerr=[error_l[Ndata], error_h[Ndata]], \
                     color=plotcolors[Nplot], ls='', marker='.', label=datalabels[Nplot], zorder=8)
-            
-                    # Kyle's rotation curves
-                    ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
-                        color=plotcolors[1], ls='', marker='.', label=r'GL-KiDS isolated lens galaxies (PPL method)', zorder=8)
-                    
+                    if vrot:
+                        # Kyle's rotation curves
+                        ax_sub.errorbar(Rcenters_kyle[N] * (1.-dx/2.+dx), Vrot_kyle[N], yerr=[Vrot_kyle[N]-Vmin_kyle[N], Vmax_kyle[N]-Vrot_kyle[N]], \
+                            color=plotcolors[1], ls='', marker='.', label=r'KiDS-bright isolated lens galaxies (PPL method)', zorder=8)
+                        
             else:
                 if Nsize==Nbins:
                     ax_sub.plot(data_x_plot, data_y[Ndata], \
@@ -548,7 +553,7 @@ for NR in range(Nrows):
                 utils.mean_profile(R_lelli[info_mask], Vobs_lelli[info_mask], 3e-3, 6e-2, 11, True)
             
             ax_sub.plot(data_lelli_x_mean, data_lelli_y_mean, \
-                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', label='SPARC rotation curves (mean)')
+                ls='', marker='s', markerfacecolor='red', markeredgecolor='black', label='SPARC rotation curves (mean + 2D histogram)')
             #ax_sub.fill_between(data_lelli_x_mean, data_lelli_y_mean+0.5*data_lelli_y_std,
             #    data_lelli_y_mean-0.5*data_lelli_y_std, alpha=0.3, color=blues[3])
             #ax_sub.scatter(R_lelli[info_mask], Vobs_lelli[info_mask], alpha=0.05, color=blues[1])
@@ -610,7 +615,7 @@ for NR in range(Nrows):
             plt.ylim([0., 330.])
         else:
             plt.xlim([Rmin, Rmax])
-            plt.ylim([2e-1, 2e2])
+            plt.ylim([1e-1, 2e2])
             plt.yscale('log')
         
         plt.xscale('log')
@@ -618,14 +623,14 @@ for NR in range(Nrows):
         # Extras for KiDS data (isolation limit)
         if isolim:
             # Plot KiDS-1000 isolation limit
-            ax_sub.axvspan(isoR, Rmax, color=blacks[1], alpha=0.1, \
-                label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc}/h_{70}$)'%isoR)
+            ax_sub.axvspan(isoR, Rmax, color=blacks[1], alpha=0.1)#, \
+                #label=r'KiDS isolation criterion limit ($R > %g \, {\rm Mpc}/h_{70}$)'%isoR)
         
 # Define the labels for the plot
-xlabel = r'Radius R (${\rm %s} / h_{%g}$)'%(Runit, h*100)
-ylabel = r'Excess Surface Density $\Delta\Sigma$ ($h_{%g} {\rm M_{\odot} / {\rm pc^2}}$)'%(h*100)
+xlabel = r'Radius R [${\rm %s} / h_{%g}$]'%(Runit, h*100)
+ylabel = r'Excess Surface Density $\Delta\Sigma$ [$h_{%g} {\rm M_{\odot} / {\rm pc^2}}$]'%(h*100)
 if vrot:
-    ylabel = r'Rotational velocity [$h_{%g} \, {\rm km/s}$])'%(h*100)
+    ylabel = r'Circular velocity $v_{\rm circ}$ [$h_{%g} \, {\rm km/s}$]'%(h*100)
     
 ax.set_xlabel(xlabel, fontsize=16)
 ax.set_ylabel(ylabel, fontsize=16)
@@ -637,9 +642,9 @@ ax.set_ylabel(ylabel, fontsize=16)
 handles, labels = ax_sub.get_legend_handles_labels()
 
 if Nbins[0] > 1:
-    lgd = plt.legend(handles[::-1], labels[::-1], loc='lower left', fontsize=12)
+    lgd = plt.legend(handles[::-1], labels[::-1], loc='lower left', fontsize=14)
 else:
-    plt.legend(handles[::-1], labels[::-1], loc='best', fontsize=12)#loc='lower right')
+    plt.legend(handles[::-1], labels[::-1], loc='best', fontsize=14)#loc='lower right')
 #    plt.legend(handles[::-1], labels[::-1], loc='best')
 #    lgd = ax_sub.legend(handles[::-1], labels[::-1], bbox_to_anchor=(0.85, 1.55)) # top
 

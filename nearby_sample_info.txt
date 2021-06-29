@@ -1,0 +1,9 @@
+[Nearby sample, Isolated sample, All galaxies]
+
+Number of galaxies: [3800, 259410, 900778]
+
+mean logmstar: [10.78244669 10.61359359 10.76604582]
+median logmstar: [10.79150036 10.57821734 10.58718234]
+
+mean logmbar: [10.843829   10.68831438 10.82272465]
+median logmbar: [10.85322006 10.66254472 10.67042441]

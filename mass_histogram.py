@@ -44,7 +44,7 @@ z_max = 0.5
 logmstar_min = 8.
 logmstar_max = 12.
 
-splittype = 'none' # sersic / color / none
+splittype = 'color' # sersic / color / none
 
 ## Import GAMA catalogue
 
@@ -79,8 +79,11 @@ Z_kids = kidscat['Z_ANNZ_KV']
 
 rmag_kids_auto = kidscat['MAG_AUTO_CALIB']
 rmag_kids_gaap = kidscat['MAG_GAAP_r']
-rmag_kids_sersic = kidscat['MAG_AUTO_2dphot']
+rmag_kids_sersic = kidscat['MAG_2dphot']
 rmag_abs_kids = kidscat['MAG_ABS_r']
+
+# Masking the sersic and auto magnitudes to exclude unphysical values
+magmask_kids = (0.<rmag_kids_sersic)&(rmag_kids_sersic<30.)&(0.<rmag_kids_auto)&(rmag_kids_auto<20.)
 
 logmstar_kids = kidscat['MASS_BEST']
 logmstar_kids = logmstar_kids + (rmag_kids_gaap-rmag_kids_auto)/2.5
@@ -120,10 +123,12 @@ if 'none' not in splittype:
     # Matched spiral and elliptical galaxies by sersic index or color
     if 'sersic' in splittype:
         typelist = matchcat['n_2dphot']
+        typelist_kids = kidscat['n_2dphot']
         splitlim = 2.
         
     if 'color' in splittype:
         typelist = matchcat['MAG_GAAP_u'] - matchcat['MAG_GAAP_r']
+        typelist_kids = kidscat['MAG_GAAP_u'] - kidscat['MAG_GAAP_r']
         splitlim = 2.5
 
     # Matched equal mass selection catalogue
@@ -174,6 +179,10 @@ else:
     
     mask_ell = (typelist[Zmask_matched*mask_sel] > splitlim)
     mask_spir = (typelist[Zmask_matched*mask_sel] < splitlim)
+    
+    mask_ell_kids = (typelist_kids > splitlim)
+    mask_spir_kids = (typelist_kids < splitlim)
+    
     
     Z_gama_ell = Z_gama_matched[mask_ell]
     Z_kids_ell = Z_kids_matched[mask_ell]
@@ -362,6 +371,7 @@ print()
 print('specZ GAMA (mean):', Zmean_gama)
 print('ANNZ KiDS (mean):', Zmean_kids)
 
+
 if 'none' in splittype:
     
     # Redshift offset and standard deviation between KiDS and GAMA
@@ -391,7 +401,6 @@ if 'none' in splittype:
     print('L+dL/L = %s dex'%(np.log10(std_diff_lum/np.mean(dist_gama_matched**2)+1.)) )
 
     # Estimate the mass uncertainty caused by the magnitude uncertainty
-    magmask_kids = (0.<rmag_kids_sersic)&(rmag_kids_sersic<30.)&(0.<rmag_kids_auto)&(rmag_kids_auto<20.)
     diff_rmag = rmag_kids_sersic[Zmask_kids*magmask_kids] - rmag_kids_auto[Zmask_kids*magmask_kids]
     
     std_ratio_flux = 10.**(0.4*np.std(diff_rmag))
@@ -401,12 +410,26 @@ if 'none' in splittype:
     print('Mag offset: mean(dm)=', np.mean(diff_rmag))
     print('Mag uncertainty: std(dm)=', np.std(diff_rmag))
     print(std_ratio_flux)
-    print('Flux offset: mean(F+dF/F)= %g dex'%np.log10(std_ratio_flux))
-    print('Flux uncertainty: std(F+dF/F)= %g dex'%np.log10(mean_ratio_flux))
+    print('Flux offset: mean(F+dF/F)= %g dex'%np.log10(mean_ratio_flux))
+    print('Flux uncertainty: std(F+dF/F)= %g dex'%np.log10(std_ratio_flux))
 
     #plt.hist(logmstar_gama_matched, label=r'GAMA (matched)', bins=50, histtype='step', normed=1)
 
 else:
+    
+    # Difference between Sercic and auto magnitudes for ellipticals and spirals
+    diff_rmag = rmag_kids_sersic[Zmask_kids*magmask_kids] - rmag_kids_auto[Zmask_kids*magmask_kids]
+    diff_rmag_ell = rmag_kids_sersic[mask_ell_kids*Zmask_kids*magmask_kids] - rmag_kids_auto[mask_ell_kids*Zmask_kids*magmask_kids]
+    diff_rmag_spir = rmag_kids_sersic[mask_spir_kids*Zmask_kids*magmask_kids] - rmag_kids_auto[mask_spir_kids*Zmask_kids*magmask_kids]
+    
+    mean_ratio_flux = 10.**(0.4*( np.mean(diff_rmag_ell) - np.mean(diff_rmag_spir) ))
+    
+    print()
+    print('Mag offset: mean(dm)=', np.mean(diff_rmag))
+    print('Ellipticals vs. spirals: mean(dm)=', np.mean(diff_rmag_ell), np.mean(diff_rmag_spir))
+    print('Difference:', np.mean(diff_rmag_ell) - np.mean(diff_rmag_spir))
+    print('Flux offset: mean(F+dF/F)= %g dex'%np.log10(mean_ratio_flux))
+        
     # Redshift offset of ellipticals and spirals
     diff_Z_ell = (Z_kids_ell-Z_gama_ell)
     diff_Z_spir = (Z_kids_spir-Z_gama_spir)

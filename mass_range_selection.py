@@ -35,12 +35,21 @@ rc('font',**{'family':'serif','serif':['DejaVu Sans']})
 # Dark blue, light blue, red, orange
 colors = ['#0571b0', '#92c5de', '#d7191c', '#fdae61']
 
+# Calculate the total baryonic mass (stars + cold gas)
+def calc_logmbar(logmstar):
+    fcold = 10.**(-0.69*logmstar + 6.63)
+    mstar = 10.** logmstar
+    mbar = mstar * (1 + fcold)
+    logmbar = np.log10(mbar)
+    return logmbar
+
 # Import lens catalog
 cat = 'kids' # kids / gama / matched
 splittype = 'color' #sersic / color
 Noffset = 0 # Minimum 0
+masstype = 'GL' # GL for GAMA-like, or var for varying IMF
 
-plot=True
+plot=False # Choose True for the plots, False for the catalogue
 
 # Constants
 h = 0.7
@@ -70,13 +79,38 @@ if 'sersic' in splittype:
     splitnames = ['bulge', 'disc']
         
 if 'color' in splittype:
-    typename = 'MAG_GAAP_u-r'
-    typelist = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
-    splitlim = 2.5
-    splitnames = ['red', 'blue']
+    if 'kids' in cat:
+        typename = 'MAG_GAAP_u-r'
+        typelist = lenscat['MAG_GAAP_u'] - lenscat['MAG_GAAP_r']
+        splitlim = 2.5
+        splitnames = ['red', 'blue']
+    if 'mice' in cat:
+        typename = 'sdss_u-r_true'
+        typelist = lenscat['sdss_u_true'] - lenscat['sdss_r_true']
+        splitlim = 2.5
+        splitnames = ['red', 'blue']
 
 mask_ell = (typelist > splitlim)
 mask_spir = (typelist < splitlim)
+
+## Stellar mass corrections
+
+# Adding GAMA-like correction to the masses
+diff_GL = -0.056
+logmstar_GL = logmstar - diff_GL
+
+if 'var' in masstype:
+    # Adding a 0.09 offset to the early-type galaxies
+    logmstar_GL[mask_ell] = logmstar_GL[mask_ell] + 0.09
+    Noffset = 0 # Set offset to 0
+    print('Varying IMF: Adding 0.09 to early-type galaxies; setting offset to 0.')
+
+# Calculate the total baryonic mass (stars + cold gas)
+logmbar_GL = calc_logmbar(logmstar_GL)
+
+# Import mask
+if 'kids' in cat:
+    masked = lenscat['masked']
 
 # If we are creating an offset catalogue
 if Noffset > 1:
@@ -85,12 +119,14 @@ if Noffset > 1:
     lenscatfile = '%s/%s'%(path_lenscat, lenscatname)
     lenscat = pyfits.open(lenscatfile, memmap=True)[1].data
     logmstar = lenscat['logmstar']
+    logmstar_GL = logmstar - diff_GL
 
 if Noffset > 0:
     # Add a random offset to each stellar mass to estimate the Eddington bias
-    Sigma_M = [0.12]*len(logmstar)
+    Sigma_M = [0.29]*len(logmstar)
     dMlist = np.random.normal(loc=0., scale=Sigma_M, size=len(Sigma_M))
     logmstar = logmstar+dMlist
+    logmstar_GL = logmstar - diff_GL
     print()
     print('Adding offset to lens masses: x%i'%(Noffset))
     print()
@@ -102,7 +138,11 @@ isocat = pyfits.open(isocatfile, memmap=True)[1].data
 
 # Import isolation criterion
 R_iso = isocat['dist0p1perc'] # Distance to closest satellite
-mask_iso = R_iso > 3. # Should be larger than 3 Mpc
+# Should have no satellites within 3 Mpc, masked and within 0.1 < z < 0.5
+if 'kids' in cat:
+    mask_iso = (R_iso > 3.) & (masked==0.) & (0.1<lensZ)&(lensZ<0.5)
+if 'mice' in cat:
+    mask_iso = (R_iso > 3.) & (0.1<lensZ)&(lensZ<0.5)
 
 print('Galaxies, isolated:', sum(mask_iso))
 print('Ellipticals:', sum(mask_ell*mask_iso))
@@ -114,9 +154,9 @@ binedges = np.linspace(8., 11., Nbins+1)
 bincenters = binedges[0:-1] + np.diff(binedges)/2.
 
 # Creating stellar mass histograms for ellipticals and spirals
-N_ell, foo, foo = plt.hist(logmstar[mask_ell*mask_iso], bins=binedges, histtype='step', \
+N_ell, foo, foo = plt.hist(logmstar_GL[mask_ell*mask_iso], bins=binedges, histtype='step', \
     label=r'Isolated %s galaxies'%splitnames[0], color=colors[2])
-N_spir, foo, foo = plt.hist(logmstar[mask_spir*mask_iso], bins=binedges, histtype='step', \
+N_spir, foo, foo = plt.hist(logmstar_GL[mask_spir*mask_iso], bins=binedges, histtype='step', \
     label=r'Isolated %s galaxies'%splitnames[1], color=colors[0])
 
 # Finding the smallest number of galaxies in each M-bin
@@ -161,16 +201,20 @@ print('Mstar Min. Ell. Spir.')
 
 # For each M-bin, select Nmin random galaxies from each galaxy type
 for m in np.arange(Nbins):
-    mask_mstar = (binedges[m] < logmstar) & (logmstar <= binedges[m+1])
+    mask_mstar = (binedges[m] < logmstar_GL) & (logmstar_GL <= binedges[m+1])
     
     # Number of isolated ellipticals and spirals in each mass bin
     Nell_bin, Nspir_bin = \
         [sum(mask_iso*mask_ell*mask_mstar), sum(mask_iso*mask_spir*mask_mstar)]
-    print((binedges[m]+binedges[m+1])/2., Nmin[m], Nell_bin, Nspir_bin)
+    
+    # The least amount of lenses Nmin in this mass bin
+    Nmin_bin = np.amin(np.array([Nell_bin, Nspir_bin]))
+    
+    print((binedges[m]+binedges[m+1])/2., Nmin_bin, Nell_bin, Nspir_bin)
     
     # Create two lists of Nmin selected galaxies, one for each type
-    arr_ell = np.array([1]*int(Nmin[m]) + [0]*int(Nell_bin-Nmin[m]))
-    arr_spir = np.array([1]*int(Nmin[m]) + [0]*int(Nspir_bin-Nmin[m]))
+    arr_ell = np.array([1]*int(Nmin_bin) + [0]*int(Nell_bin-Nmin_bin))
+    arr_spir = np.array([1]*int(Nmin_bin) + [0]*int(Nspir_bin-Nmin_bin))
     
     # Shuffle the two arrays to randomize the selected galaxies
     np.random.shuffle(arr_ell)
@@ -180,11 +224,11 @@ for m in np.arange(Nbins):
     selection_list[mask_iso*mask_ell*mask_mstar] = arr_ell
     selection_list[mask_iso*mask_spir*mask_mstar] = arr_spir
     
-    output = [lensID, logmstar, typelist, selection_list]
-    outputnames = ['ID', 'logmstar', typename, 'selected']
+    output = [lensID, logmstar_GL, logmbar_GL, typelist, selection_list]
+    outputnames = ['ID', 'logmstar_GL', 'logmbar_GL', typename, 'selected']
 
 # Create the output catalogue
-filename = '/data/users/brouwer/LensCatalogues/mass_selection_catalog_%s-offsetx%i_%s.fits'%(splittype, Noffset, cat)
+filename = '/data/users/brouwer/LensCatalogues/logmstar_%s_selection_catalog_%s-offsetx%i_%s.fits'%(masstype, splittype, Noffset, cat)
 
 formats = ['D']*len(outputnames)
 
